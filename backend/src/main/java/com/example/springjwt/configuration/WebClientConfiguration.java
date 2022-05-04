@@ -23,6 +23,14 @@ import java.util.concurrent.TimeUnit;
 @Configuration
 public class WebClientConfiguration {
 
+    // New API endpoints
+    @Value("${bsandor.app.cryptocurrencyBaseUrl}")
+    String cryptocurrencyBaseUrl;
+    @Value("${bsandor.app.cryptocurrencyCoinsUrl}")
+    String cryptocurrencyCoinsUrl;
+    @Value("${bsandor.app.cryptocurrencyMarketsUrl}")
+    String cryptocurrencyMarketsUrl;
+
     @Value("${bsandor.app.rapidApiHostHeaderName}")
     String apiHostHeaderName;
 

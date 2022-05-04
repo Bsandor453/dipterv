@@ -29,12 +29,16 @@ bsandor:
     # JWT refresh token expiration time (86400000 ms = 1 day)
     # For testing: jwtRefreshExpirationMs: 120000 (60000 ms = 1 minute)
     jwtRefreshExpirationMs: 86400000
-    # RapidAPI headers
+    # Coingecko API endpoints
+    cryptocurrencyBaseUrl: https://api.coingecko.com/api/v3
+    cryptocurrencyCoinsUrl: https://api.coingecko.com/api/v3/coins
+    cryptocurrencyMarketsUrl: https://api.coingecko.com/api/v3/coins/markets
+    # [Deprecated] RapidAPI - Coinranking headers
     rapidApiHostHeaderName: x-rapidapi-host
     rapidApiHostHeaderValue: coinranking1.p.rapidapi.com
     rapidApiKeyHeaderName: x-rapidapi-key
     rapidApiKeyHeaderValue: 81a66bdda4msheefb6515cdf3f90p1e6f99jsn56b0d38c7a7c
-    # RapidAPI endpoints
+    # [Deprecated] RapidAPI - Coinranking endpoints
     cryptoCurrencyBaseUrl: https://coinranking1.p.rapidapi.com
     cryptoCurrencyStatsUrl: /stats
     cryptoCurrencyCurrenciesUrl: /coins
