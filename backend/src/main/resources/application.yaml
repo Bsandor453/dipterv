@@ -1,0 +1,42 @@
+# Spring application properties
+spring:
+  main:
+    # To disable logo in stdout -> banner-mode: off
+    banner-mode: console
+  # Memory configuration for larger HTTP requests and responses
+  codec:
+    max-in-memory-size: 30MB
+  data:
+    elasticsearch:
+      client:
+        reactive:
+          max-in-memory-size: 30MB
+    # MongoDB configuration
+    mongodb:
+      database: stock
+      host: localhost
+      port: 27017
+      authentication-database: admin
+      username: rootuser
+      password: rootpass
+# Custom application properties
+bsandor:
+  app:
+    jwtSecret: jwtSecretKey
+    # JWT access token expiration time (3600000 ms = 1 hour)
+    # For testing: jwtExpirationMs: 60000 (60000 ms = 1 minute)
+    jwtExpirationMs: 3600000
+    # JWT refresh token expiration time (86400000 ms = 1 day)
+    # For testing: jwtRefreshExpirationMs: 120000 (60000 ms = 1 minute)
+    jwtRefreshExpirationMs: 86400000
+    # RapidAPI headers
+    rapidApiHostHeaderName: x-rapidapi-host
+    rapidApiHostHeaderValue: coinranking1.p.rapidapi.com
+    rapidApiKeyHeaderName: x-rapidapi-key
+    rapidApiKeyHeaderValue: 81a66bdda4msheefb6515cdf3f90p1e6f99jsn56b0d38c7a7c
+    # RapidAPI endpoints
+    cryptoCurrencyBaseUrl: https://coinranking1.p.rapidapi.com
+    cryptoCurrencyStatsUrl: /stats
+    cryptoCurrencyCurrenciesUrl: /coins
+    cryptoCurrencyCurrencyUrl: /coin
+    cryptoCurrencyHistoryUrl: /history
