@@ -55,6 +55,9 @@ const Transition = React.forwardRef(function Transition(
 });
 
 const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
+  //TODO
+
+  /*
   const coinId = props.match.params.number;
 
   const [openBuyDialog, setOpenBuyDialog] = useState(false);
@@ -103,7 +106,7 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
   const infoMessage = useSelector((state: State) => state.MESSAGE.info);
 
   useEffect(() => {
-    getCryptocurrencyHistory(coinId, timeframe, backupURL);
+    getCryptocurrencyHistory(coinId, timeframe);
   }, [timeframe]);
 
   useEffect(() => {
@@ -111,20 +114,20 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
   }, [infoMessage]);
 
   useEffect(() => {
-    getCryptocurrencies();
+    // TODO: Why do we need this here?
+    //getCryptocurrencies();
     getWallet();
   }, []);
 
   useLayoutEffect(() => {
     getCryptocurrency(coinId);
-    getCryptocurrencyHistory(coinId, timeframe, backupURL);
+    getCryptocurrencyHistory(coinId, timeframe);
   }, [coinId]);
 
   const interval = 5000;
   useInterval(() => {
     getCryptocurrency(coinId);
-    (timeframe === '24h' || timeframe === '7d') &&
-      getCryptocurrencyHistory(coinId, timeframe, backupURL);
+    (timeframe === '24h' || timeframe === '7d') && getCryptocurrencyHistory(coinId, timeframe);
   }, interval);
 
   function formatXAxis(tickItem: MomentInput) {
@@ -227,8 +230,11 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
       coin.price &&
       sellCryptocurrency(coin.id, sellAmount, sellAmount * parseFloat(coin.price), coin.name);
   };
+  */
 
   return (
+    <p>TODO</p>
+    /*
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
       <Grid container spacing={3}>
         <Grid item xs={12}>
@@ -818,6 +824,7 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
       </Grid>
       <Copyright sx={{ pt: 4 }} />
     </Container>
+    */
   );
 };
 

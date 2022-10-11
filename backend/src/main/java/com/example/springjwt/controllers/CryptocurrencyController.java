@@ -29,19 +29,10 @@ public class CryptocurrencyController {
         this.cryptocurrencyService = cryptocurrencyService;
     }
 
-    @GetMapping("/stats")
-    public String getStats() {
-        return cryptocurrencyService.getGlobalStats();
-    }
-
     @GetMapping("/all")
-    public String getCurrencies() {
+    public String getCurrencies(@RequestParam Integer page, @RequestParam Integer size, @RequestParam String sortBy, @RequestParam Boolean asc) {
+        // TODO: Implement [page, size, sortBy, asc]
         return cryptocurrencyService.getCurrencies();
-    }
-
-    @GetMapping("/all/global")
-    public String getCurrenciesAll(@RequestParam Integer page, @RequestParam Integer size, @RequestParam String sortBy, @RequestParam Boolean asc) {
-        return cryptocurrencyService.getCurrenciesAll(page, size, sortBy, asc);
     }
 
     @GetMapping("/{id}")
@@ -49,10 +40,13 @@ public class CryptocurrencyController {
         return cryptocurrencyService.getCurrency(id);
     }
 
+    // TODO: History
+    /*
     @GetMapping("/{id}/history")
     public String getCurrencyHistory(@PathVariable String id, @RequestParam String timeframe) {
         return cryptocurrencyService.getCurrencyHistory(id, timeframe);
     }
+    */
 
     @GetMapping("/wallet")
     public ResponseEntity<WalletResponse> getWallet() {

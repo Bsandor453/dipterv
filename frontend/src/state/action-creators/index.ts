@@ -230,28 +230,12 @@ export const saveUserDataEdit = (edited: IUser) => {
 
 // Cryptocurrencies
 
-export const getCryptocurrencies = () => {
+export const getCryptocurrencies = (page: number, size: number, sortBy: string, asc: boolean) => {
   return (dispatch: Dispatch<CryptocurrencyAction>): void => {
-    CryptocurrencyService.getCryptocurrencies().then((response) => {
+    CryptocurrencyService.getCryptocurrencies(page, size, sortBy, asc).then((response) => {
       dispatch({
         type: ActionType.GET_CRYPTOCURRENCIES,
-        payload: response.data.data,
-      });
-    });
-  };
-};
-
-export const getCryptocurrenciesAll = (
-  page: number,
-  size: number,
-  sortBy: string,
-  asc: boolean
-) => {
-  return (dispatch: Dispatch<CryptocurrencyAction>): void => {
-    CryptocurrencyService.getCryptocurrenciesAll(page, size, sortBy, asc).then((response) => {
-      dispatch({
-        type: ActionType.GET_CRYPTOCURRENCIES_ALL,
-        payload: response.data.data,
+        payload: response.data,
       });
     });
   };
@@ -268,23 +252,14 @@ export const getCryptocurrency = (id: number) => {
   };
 };
 
-export const getCryptocurrencyHistory = (id: number, timeframe: string, backup: boolean) => {
+export const getCryptocurrencyHistory = (id: number, timeframe: string) => {
   return (dispatch: Dispatch<CryptocurrencyAction>): void => {
-    if (!backup) {
-      CryptocurrencyService.getCryptocurrencyHistory(id, timeframe).then((response) => {
-        dispatch({
-          type: ActionType.GET_CRYPTOCURRENCY_HISTORY,
-          payload: response.data.data,
-        });
+    CryptocurrencyService.getCryptocurrencyHistory(id, timeframe).then((response) => {
+      dispatch({
+        type: ActionType.GET_CRYPTOCURRENCY_HISTORY,
+        payload: response.data.data,
       });
-    } else {
-      CryptocurrencyService.getCryptocurrencyHistoryBackup(id, timeframe).then((response) => {
-        dispatch({
-          type: ActionType.GET_CRYPTOCURRENCY_HISTORY,
-          payload: response.data.data,
-        });
-      });
-    }
+    });
   };
 };
 

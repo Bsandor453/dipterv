@@ -14,17 +14,13 @@ const rapidApiUrlConfig = () => {
   return { headers: { 'Content-Type': 'application/json', ...rapidApiAuthHeader() } };
 };
 
-const getCryptocurrencies = (): Promise<AxiosResponse<any>> => {
-  return httpClient.get(config.urls.crypto.all, tokenAuthUrlConfig());
-};
-
-const getCryptocurrenciesAll = (
+const getCryptocurrencies = (
   page: number,
   size: number,
   sortBy: string,
   asc: boolean
 ): Promise<AxiosResponse<any>> => {
-  return httpClient.get(config.urls.crypto.global(page, size, sortBy, asc), tokenAuthUrlConfig());
+  return httpClient.get(config.urls.crypto.all(page, size, sortBy, asc), tokenAuthUrlConfig());
 };
 
 const getCryptocurrency = (id: number): Promise<AxiosResponse<any>> => {
@@ -33,13 +29,6 @@ const getCryptocurrency = (id: number): Promise<AxiosResponse<any>> => {
 
 const getCryptocurrencyHistory = (id: number, timeframe: string): Promise<AxiosResponse<any>> => {
   return httpClient.get(config.urls.crypto.history(id, timeframe), tokenAuthUrlConfig());
-};
-
-const getCryptocurrencyHistoryBackup = (
-  id: number,
-  timeframe: string
-): Promise<AxiosResponse<any>> => {
-  return httpClient.get(config.urls.crypto.historyBackup(id, timeframe), rapidApiUrlConfig());
 };
 
 const buyCryptocurrency = (
@@ -84,10 +73,8 @@ const getTransactions = (
 
 export default {
   getCryptocurrencies,
-  getCryptocurrenciesAll,
   getCryptocurrency,
   getCryptocurrencyHistory,
-  getCryptocurrencyHistoryBackup,
   buyCryptocurrency,
   sellCryptocurrency,
   depositMoney,

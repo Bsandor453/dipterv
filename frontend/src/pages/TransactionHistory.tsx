@@ -14,6 +14,9 @@ import Transaction from '../components/Transaction';
 import TransactionHeader from '../components/TransactionHeader';
 
 const TransactionHistory: React.FC<RouteComponentProps<any>> = () => {
+  //TODO
+
+  /*
   const dispatch = useDispatch();
   const { getCryptocurrencies, getTransactions } = bindActionCreators(actionCreators, dispatch);
 
@@ -24,7 +27,8 @@ const TransactionHistory: React.FC<RouteComponentProps<any>> = () => {
   const [sortDirection, setSortDirection] = useState('desc');
 
   useEffect(() => {
-    getCryptocurrencies();
+    // TODO: Why do we need this here?
+    // getCryptocurrencies();
   }, []);
 
   useEffect(() => {
@@ -89,8 +93,12 @@ const TransactionHistory: React.FC<RouteComponentProps<any>> = () => {
       )
     );
   };
+  */
 
   return (
+    <p>TODO</p>
+    //TODO
+    /*
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
       <Grid container spacing={3}>
         <Grid item xs={12}>
@@ -130,6 +138,7 @@ const TransactionHistory: React.FC<RouteComponentProps<any>> = () => {
       </Grid>
       <Copyright sx={{ pt: 4 }} />
     </Container>
+    */
   );
 };
 

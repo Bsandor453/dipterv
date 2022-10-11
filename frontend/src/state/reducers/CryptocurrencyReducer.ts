@@ -1,34 +1,26 @@
 import { ActionType } from '../action-types';
 import { CryptocurrencyAction } from '../actions';
-import ICryptoCoinHistory from '../../interfaces/cryptocurrency/ICryptoCoinHistory';
-import ICryptoCurrency from '../../interfaces/cryptocurrency/ICryptoCurrency';
-import ICryptoCurrencyDetails from '../../interfaces/cryptocurrency/ICryptoCurrencyDetails';
+//TODO: Use
+//import ICryptoCoinHistory from '../../interfaces/cryptocurrency/ICryptocurrencyHistory';
+import ICryptocurrency from '../../interfaces/cryptocurrency/ICryptocurrency';
+//TODO: Use
+//import ICryptoCurrencyDetails from '../../interfaces/cryptocurrency/ICryptoCurrencyDetails';
 import IPageable from '../../interfaces/IPageable';
 import ITransaction from '../../interfaces/ITransaction';
 import IWallet from '../../interfaces/IWallet';
 
 const initialState = {
-  all: {
-    stats: null,
-    base: { symbol: 'USD', sign: '$' },
-    coins: null,
-  },
-  global: {
-    stats: null,
-    base: { symbol: 'USD', sign: '$' },
-    coins: null,
-  },
-  cryptoCoin: null,
-  cryptoHistory: null,
+  coins: [],
+  coin: null,
+  history: null,
   wallet: null,
   transactions: null,
 };
 
 type cryptocurrencyState = {
-  all: ICryptoCurrency;
-  global: ICryptoCurrency;
-  cryptoCoin: ICryptoCurrencyDetails | null;
-  cryptoHistory: ICryptoCoinHistory | null;
+  coins: ICryptocurrency[] | [];
+  //coin: ICryptoCurrencyDetails | null;
+  //history: ICryptoCoinHistory | null;
   wallet: IWallet | null;
   transactions: IPageable<ITransaction> | null;
 };
@@ -39,13 +31,12 @@ const reducer = (
 ): cryptocurrencyState => {
   switch (action.type) {
     case ActionType.GET_CRYPTOCURRENCIES:
-      return { ...state, all: action.payload };
-    case ActionType.GET_CRYPTOCURRENCIES_ALL:
-      return { ...state, global: action.payload };
-    case ActionType.GET_CRYPTOCURRENCY:
-      return { ...state, cryptoCoin: action.payload };
-    case ActionType.GET_CRYPTOCURRENCY_HISTORY:
-      return { ...state, cryptoHistory: action.payload };
+      return { ...state, coins: action.payload };
+    //TODO
+    //case ActionType.GET_CRYPTOCURRENCY:
+    //return { ...state, coin: action.payload };
+    //case ActionType.GET_CRYPTOCURRENCY_HISTORY:
+    //return { ...state, history: action.payload };
     case ActionType.CLEAR_CRYPTOCURRENCIES:
       return initialState;
     case ActionType.DEPOSIT_MONEY:

@@ -17,46 +17,61 @@ import org.springframework.web.util.DefaultUriBuilderFactory;
 import reactor.core.publisher.Mono;
 import reactor.netty.http.client.HttpClient;
 
+import javax.inject.Named;
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
 @Configuration
 public class WebClientConfiguration {
 
-    // New API endpoints
+    // Coingecko API base endpoint
     @Value("${bsandor.app.cryptocurrencyBaseUrl}")
     String cryptocurrencyBaseUrl;
-    @Value("${bsandor.app.cryptocurrencyCoinsUrl}")
-    String cryptocurrencyCoinsUrl;
-    @Value("${bsandor.app.cryptocurrencyMarketsUrl}")
-    String cryptocurrencyMarketsUrl;
 
+    // *Deprecated* Old Coinranking API headers and base endpoint
     @Value("${bsandor.app.rapidApiHostHeaderName}")
     String apiHostHeaderName;
-
     @Value("${bsandor.app.rapidApiHostHeaderValue}")
     String apiHostHeaderValue;
-
     @Value("${bsandor.app.rapidApiKeyHeaderName}")
     String apiKeyHeaderName;
-
     @Value("${bsandor.app.rapidApiKeyHeaderValue}")
     String apiKeyHeaderValue;
+    @Value("${bsandor.app.coinrankingBaseUrl}")
+    String coinrankingBaseUrl;
 
-    @Value("${bsandor.app.cryptoCurrencyBaseUrl}")
-    String cryptoCurrencyBaseUrl;
+    // Logging
+    private static final Logger logger = LoggerFactory.getLogger(AuthEntryPointJwt.class);
+    private static final boolean enableLogging = true;
 
     private final int TIMEOUT = 5000;
 
     private final int MEMORY_LIMIT_IN_MEGABYTES = 16;
 
-    private static final Logger logger = LoggerFactory.getLogger(AuthEntryPointJwt.class);
-
-    private static final boolean enableLogging = true;
-
     @Bean
+    @Named("WebClient")
     public WebClient getWebClient() {
-        DefaultUriBuilderFactory factory = new DefaultUriBuilderFactory(cryptoCurrencyBaseUrl);
+        DefaultUriBuilderFactory factory = new DefaultUriBuilderFactory(cryptocurrencyBaseUrl);
+        factory.setEncodingMode(DefaultUriBuilderFactory.EncodingMode.NONE);
+
+        return WebClient.builder()
+                .exchangeStrategies(ExchangeStrategies.builder()
+                        .codecs(configurer -> configurer
+                                .defaultCodecs()
+                                .maxInMemorySize(MEMORY_LIMIT_IN_MEGABYTES * 1024 * 1024))
+                        .build())
+                .filter(logRequest())
+                .clientConnector(new ReactorClientHttpConnector(getHttpClient()))
+                .uriBuilderFactory(factory)
+                .baseUrl(cryptocurrencyBaseUrl)
+                .build();
+    }
+
+    // *Deprecated* This method creates the WebClient when using the Coinranking API
+    @Bean
+    @Named("WebClientCoinranking")
+    public WebClient getWebClientCoinranking() {
+        DefaultUriBuilderFactory factory = new DefaultUriBuilderFactory(coinrankingBaseUrl);
         factory.setEncodingMode(DefaultUriBuilderFactory.EncodingMode.NONE);
 
         return WebClient.builder()
@@ -72,7 +87,7 @@ public class WebClientConfiguration {
                     httpHeaders.add(apiKeyHeaderName, apiKeyHeaderValue);
                 })
                 .uriBuilderFactory(factory)
-                .baseUrl(cryptoCurrencyBaseUrl)
+                .baseUrl(coinrankingBaseUrl)
                 .build();
     }
 

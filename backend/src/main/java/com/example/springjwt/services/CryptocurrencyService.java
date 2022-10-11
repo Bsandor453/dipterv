@@ -16,23 +16,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import javax.inject.Named;
 import java.util.*;
 
 @Service
 @Slf4j
 public class CryptocurrencyService {
 
-    @Value("${bsandor.app.cryptoCurrencyStatsUrl}")
-    String statsUrl;
+    @Value("${bsandor.app.cryptocurrencyListUrl}")
+    String listUrl;
 
-    @Value("${bsandor.app.cryptoCurrencyCurrenciesUrl}")
-    String currenciesUrl;
-
-    @Value("${bsandor.app.cryptoCurrencyCurrencyUrl}")
-    String currencyUrl;
-
-    @Value("${bsandor.app.cryptoCurrencyHistoryUrl}")
-    String historyUrl;
+    @Value("${bsandor.app.cryptocurrencyCoinUrl}")
+    String coinUrl;
 
     private final WebClient webClient;
 
@@ -47,7 +42,7 @@ public class CryptocurrencyService {
     private final TransactionRepository transactionRepository;
 
     @Autowired
-    public CryptocurrencyService(WebClient webClient, UserService userService, UserRepository userRepository, WalletRepository walletRepository, TransactionRepository transactionRepository) {
+    public CryptocurrencyService(@Named("WebClient") WebClient webClient, UserService userService, UserRepository userRepository, WalletRepository walletRepository, TransactionRepository transactionRepository) {
         this.webClient = webClient;
         this.userService = userService;
         this.userRepository = userRepository;
@@ -55,37 +50,17 @@ public class CryptocurrencyService {
         this.transactionRepository = transactionRepository;
     }
 
-    public String getGlobalStats() {
-        return webClient.get()
-                .uri(statsUrl)
-                .retrieve()
-                .bodyToMono(String.class)
-                .block();
-    }
-
     public String getCurrencies() {
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
-                        .path(currenciesUrl)
-                        .queryParam("limit", LIMIT)
-                        .queryParam("ids", String.join(",", ECryptocurrency.idValues()))
-                        .queryParam("x-access-token", "i-have-to-migrate-to-v2")
-                        .build())
-                .retrieve()
-                .bodyToMono(String.class)
-                .block();
-    }
-
-    public String getCurrenciesAll(int currentPage, int pageSize, String sortByProperty, boolean ascending) {
-        final String order = ascending ? "asc" : "desc";
-        return webClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .path(currenciesUrl)
-                        .queryParam("offset", currentPage * pageSize)
-                        .queryParam("limit", pageSize)
-                        .queryParam("sort", sortByProperty)
-                        .queryParam("order", order)
-                        .queryParam("x-access-token", "i-have-to-migrate-to-v2")
+                        .path(listUrl)
+                        .queryParam("vs_currency", "usd")
+                        .queryParam("ids", /* String.join(",", ECryptocurrency.idValues()) */ "bitcoin")
+                        .queryParam("order", "market_cap_desc")
+                        .queryParam("per_page", LIMIT)
+                        .queryParam("page", 1)
+                        .queryParam("sparkline", true)
+                        .queryParam("price_change_percentage", "1h,24h,7d")
                         .build())
                 .retrieve()
                 .bodyToMono(String.class)
@@ -95,19 +70,8 @@ public class CryptocurrencyService {
     public String getCurrency(String id) {
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
-                        .path(currencyUrl + "/" + id)
-                        .queryParam("x-access-token", "i-have-to-migrate-to-v2")
-                        .build())
-                .retrieve()
-                .bodyToMono(String.class)
-                .block();
-    }
-
-    public String getCurrencyHistory(String id, String timeframe) {
-        return webClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .path(currencyUrl + "/" + id + historyUrl + "/" + timeframe)
-                        .queryParam("x-access-token", "i-have-to-migrate-to-v2")
+                        .path(coinUrl + "/" + id)
+                        .queryParam("localization", "false")
                         .build())
                 .retrieve()
                 .bodyToMono(String.class)

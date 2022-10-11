@@ -17,14 +17,17 @@ import { useInterval } from 'usehooks-ts';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import Copyright from '../components/Copyright';
-import Cryptocurrency from '../components/Cryptocurrency';
+import Cryptocurrency from '../components/CryptocurrencyCard';
 import IPage from '../interfaces/IPage';
 import IPageParams from '../interfaces/IPageParams';
 import React, { useEffect, useState } from 'react';
 
 const CryptocurrenciesAll: React.FC<IPage> = () => {
+  //TODO
+
+  /*
   const dispatch = useDispatch();
-  const { getCryptocurrenciesAll } = bindActionCreators(actionCreators, dispatch);
+  const { getCryptocurrencies } = bindActionCreators(actionCreators, dispatch);
 
   const location = useLocation();
   const history = useHistory();
@@ -59,12 +62,12 @@ const CryptocurrenciesAll: React.FC<IPage> = () => {
 
   useEffect(() => {
     1;
-    getCryptocurrenciesAll(page, pageSize, sortBy, asc);
+    getCryptocurrencies(page, pageSize, sortBy, asc);
     setParams({ page: searchParams.get('page') ?? '0', sortBy, sortDirection });
   }, []);
 
   useEffect(() => {
-    getCryptocurrenciesAll((allCoins?.stats?.offset ?? 0) / pageSize ?? 0, pageSize, sortBy, asc);
+    getCryptocurrencies((allCoins?.stats?.offset ?? 0) / pageSize ?? 0, pageSize, sortBy, asc);
   }, [sortBy, sortDirection]);
 
   useEffect(() => {
@@ -82,7 +85,7 @@ const CryptocurrenciesAll: React.FC<IPage> = () => {
   const interval = 20000;
 
   useInterval(() => {
-    getCryptocurrenciesAll((allCoins?.stats?.offset ?? 0) / pageSize ?? 0, pageSize, sortBy, asc);
+    getCryptocurrencies((allCoins?.stats?.offset ?? 0) / pageSize ?? 0, pageSize, sortBy, asc);
   }, interval);
 
   const PaginationController = () => {
@@ -98,7 +101,7 @@ const CryptocurrenciesAll: React.FC<IPage> = () => {
               count={Math.ceil(allCoins.stats?.total / pageSize)}
               page={allCoins.stats.offset / pageSize + 1}
               onChange={(_event, page) => {
-                getCryptocurrenciesAll(page - 1, pageSize, sortBy, asc);
+                getCryptocurrencies(page - 1, pageSize, sortBy, asc);
                 searchParams.set('page', (page - 1).toString());
                 pushHistory();
               }}
@@ -144,8 +147,11 @@ const CryptocurrenciesAll: React.FC<IPage> = () => {
       )
     );
   };
+  */
 
   return (
+    <p>TODO</p>
+    /*
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
       <Grid container spacing={3}>
         <Grid item xs={12}>
@@ -172,6 +178,7 @@ const CryptocurrenciesAll: React.FC<IPage> = () => {
       </Grid>
       <Copyright sx={{ pt: 4 }} />
     </Container>
+    */
   );
 };
 

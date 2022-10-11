@@ -4,7 +4,8 @@ import { Sparklines, SparklinesLine } from 'react-sparklines';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import Box from '@mui/material/Box';
-import ICryptoCoin from '../interfaces/cryptocurrency/ICryptoCoin';
+// TODO: Use
+//import ICryptocurrency from '../interfaces/cryptocurrency/ICryptocurrency';
 import React from 'react';
 import Typography from '@mui/material/Typography';
 
@@ -17,10 +18,14 @@ const priceChange = (history: string[]) => {
 const numberPrecision = 7;
 const locale = 'en-GB';
 
-const CryptocurrencyWallet: React.FC<
-  ICryptoCoin & { baseSymbol: string; baseSign: string; amount: number }
-> = (props) => {
+// TODO
+//const CryptocurrencyWallet: React.FC<
+//  ICryptoCoin & { baseSymbol: string; baseSign: string; amount: number }
+//> = (props) => {
+const CryptocurrencyWallet: React.FC = (props) => {
   return (
+    <p>TODO</p>
+    /*
     <Grid item xs={12} sx={{ mb: 2 }}>
       <CardActionArea
         component={Link}
@@ -123,6 +128,7 @@ const CryptocurrencyWallet: React.FC<
         </Grid>
       </CardActionArea>
     </Grid>
+    */
   );
 };
 

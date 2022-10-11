@@ -4,22 +4,25 @@ import { bindActionCreators } from 'redux';
 import { useDispatch, useSelector } from 'react-redux';
 import { useInterval } from 'usehooks-ts';
 import Copyright from '../components/Copyright';
-import Cryptocurrency from '../components/Cryptocurrency';
+import Cryptocurrency from '../components/CryptocurrencyCard';
 import IPage from '../interfaces/IPage';
 import React, { useEffect } from 'react';
+import config from '../config/Config';
 
 const Cryptocurrencies: React.FC<IPage> = () => {
   const dispatch = useDispatch();
   const { getCryptocurrencies } = bindActionCreators(actionCreators, dispatch);
 
+  // TODO: Merge pages -> Browse & Trade
+
   useEffect(() => {
-    getCryptocurrencies();
+    getCryptocurrencies(0, 0, 'test', false);
   }, []);
 
   const interval = 20000;
 
   useInterval(() => {
-    getCryptocurrencies();
+    getCryptocurrencies(0, 0, 'test', false);
   }, interval);
 
   const cryptocurrencies = useSelector((state: State) => state.CRYPTOCURRENCY);
@@ -33,22 +36,30 @@ const Cryptocurrencies: React.FC<IPage> = () => {
               <Typography variant="h2" sx={{ mt: 3, mb: 8 }}>
                 Trade cryptocurrencies
               </Typography>
-              <Grid container spacing={2}>
-                {cryptocurrencies.all.coins
-                  ?.sort((a, b) => {
-                    if (a.rank > b.rank) return 1;
-                    if (a.rank < b.rank) return -1;
-                    return 0;
-                  })
-                  .map((cryptocurrency) => (
-                    <Cryptocurrency
-                      key={cryptocurrency.id}
-                      baseSymbol={cryptocurrencies.all.base.symbol}
-                      baseSign={cryptocurrencies.all.base.sign}
-                      {...cryptocurrency}
-                    />
-                  ))}
-              </Grid>
+              {
+                // TODO: Merge pages -> Browse & Trade
+                <>
+                  <p>TODO: Merge pages</p>
+                  <p>TODO: Calculate sparkline color</p>
+                  <p>TODO: Calculate number of digits</p>
+                  <Grid container spacing={2}>
+                    {cryptocurrencies.coins
+                      ?.sort((a, b) => {
+                        if (a.market_cap_rank > b.market_cap_rank) return 1;
+                        if (a.market_cap_rank < b.market_cap_rank) return -1;
+                        return 0;
+                      })
+                      .map((cryptocurrency) => (
+                        <Cryptocurrency
+                          key={cryptocurrency.id}
+                          baseSymbol={config.defaults.baseCurrency.symbol}
+                          baseCode={config.defaults.baseCurrency.code}
+                          {...cryptocurrency}
+                        />
+                      ))}
+                  </Grid>
+                </>
+              }
             </Box>
           </Paper>
         </Grid>

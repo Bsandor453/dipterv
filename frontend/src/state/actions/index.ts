@@ -1,6 +1,4 @@
 import { ActionType } from '../action-types';
-import ICryptoCoinHistory from '../../interfaces/cryptocurrency/ICryptoCoinHistory';
-import ICryptoCurrencyDetails from '../../interfaces/cryptocurrency/ICryptoCurrencyDetails';
 import IMessage from '../../interfaces/IMessage';
 import IPageable from '../../interfaces/IPageable';
 import IPropertyUpdate from '../../interfaces/IPropertyUpdate';
@@ -90,19 +88,16 @@ interface IGetCryptocurrenciesAction {
   payload: any;
 }
 
-interface IGetCryptocurrenciesAllAction {
-  type: ActionType.GET_CRYPTOCURRENCIES_ALL;
+//TODO: Check
+interface IGetCryptocurrencyAction {
+  type: ActionType.GET_CRYPTOCURRENCY;
   payload: any;
 }
 
-interface IGetCryptocurrencyAction {
-  type: ActionType.GET_CRYPTOCURRENCY;
-  payload: ICryptoCurrencyDetails;
-}
-
+//TODO: Check
 interface IGetCryptocurrencyHistoryAction {
   type: ActionType.GET_CRYPTOCURRENCY_HISTORY;
-  payload: ICryptoCoinHistory;
+  payload: any;
 }
 
 interface IClearCryptocurrenciesAction {
@@ -138,7 +133,6 @@ interface IGetTransactionsAction {
 
 export type CryptocurrencyAction =
   | IGetCryptocurrenciesAction
-  | IGetCryptocurrenciesAllAction
   | IGetCryptocurrencyAction
   | IGetCryptocurrencyHistoryAction
   | IClearCryptocurrenciesAction

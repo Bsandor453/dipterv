@@ -1,6 +1,7 @@
 import { Divider, Grid } from '@mui/material';
 import { default as dayjs } from 'dayjs';
-import ICryptoCoin from '../interfaces/cryptocurrency/ICryptoCoin';
+// TODO: Use
+//import ICryptocurrency from '../interfaces/cryptocurrency/ICryptocurrency';
 import React from 'react';
 import Typography from '@mui/material/Typography';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
@@ -10,13 +11,19 @@ const locale = 'en-GB';
 
 const dateFormat = 'YYYY.MM.DD. HH:mm:ss';
 
-const CryptocurrencyDetail: React.FC<ICryptoCoin & { baseSymbol: string; baseSign: string }> = (
-  props
-) => {
+//TODO
+//const CryptocurrencyDetail: React.FC<ICryptoCoin & { baseSymbol: string; baseSign: string }> = (
+//  props
+//) => {
+const CryptocurrencyDetail: React.FC = (props) => {
+  /*
   dayjs.extend(customParseFormat);
   const firstSeenDate = dayjs(props.firstSeen).format(dateFormat);
+  */
 
   return (
+    <p>TODO</p>
+    /*
     <Grid item xs={12} sx={{ mt: 5, p: 3 }}>
       <Grid container alignItems="center">
         <Grid item xs={3}>
@@ -210,6 +217,7 @@ const CryptocurrencyDetail: React.FC<ICryptoCoin & { baseSymbol: string; baseSig
         </Grid>
       </Grid>
     </Grid>
+    */
   );
 };
 

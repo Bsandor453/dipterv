@@ -13,6 +13,9 @@ import Paper from '@mui/material/Paper';
 import React, { useEffect, useState } from 'react';
 
 const Wallet: React.FC<RouteComponentProps<any>> = () => {
+  //TODO
+
+  /*
   const dispatch = useDispatch();
   const { getWallet, getCryptocurrencies, depositMoney, resetMoney } = bindActionCreators(
     actionCreators,
@@ -30,16 +33,22 @@ const Wallet: React.FC<RouteComponentProps<any>> = () => {
 
   useEffect(() => {
     getWallet();
-    getCryptocurrencies();
+    // TODO
+    // getCryptocurrencies();
   }, []);
 
   const interval = 20000;
 
   useInterval(() => {
-    getCryptocurrencies();
+    // TODO
+    // getCryptocurrencies();
   }, interval);
+  */
 
   return (
+    //TODO
+    <p>TODO</p>
+    /*
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
       <Grid container spacing={3}>
         <Grid item xs={12}>
@@ -152,6 +161,7 @@ const Wallet: React.FC<RouteComponentProps<any>> = () => {
       </Grid>
       <Copyright sx={{ pt: 4 }} />
     </Container>
+    */
   );
 };
 

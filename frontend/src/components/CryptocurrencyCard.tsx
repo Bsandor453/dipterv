@@ -4,24 +4,24 @@ import { Sparklines, SparklinesLine } from 'react-sparklines';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import Box from '@mui/material/Box';
-import ICryptoCoin from '../interfaces/cryptocurrency/ICryptoCoin';
+import ICryptocurrency from '../interfaces/cryptocurrency/ICryptocurrency';
 import React from 'react';
 import Typography from '@mui/material/Typography';
 
-const priceChange = (history: string[]) => {
+const priceChange = (history: number[]) => {
   const lastElement = history[history.length - 1];
   const lastButOneElement = history[history.length - 2];
-  return parseFloat(lastElement) - parseFloat(lastButOneElement);
+  return lastElement - lastButOneElement;
 };
 
 const numberPrecision = 7;
 const locale = 'en-GB';
 
-const Cryptocurrency: React.FC<ICryptoCoin & { baseSymbol: string; baseSign: string }> = (
+const CryptocurrencyCard: React.FC<ICryptocurrency & { baseSymbol: string; baseCode: string }> = (
   props
 ) => {
   const priceChangeIcon = () => {
-    return priceChange(props.history) > 0 ? (
+    return priceChange(props.sparkline_in_7d.price) > 0 ? (
       <ArrowUpwardIcon sx={{ fontSize: 40, color: 'green' }} />
     ) : (
       <ArrowDownwardIcon color="error" sx={{ fontSize: 40, color: 'red' }} />
@@ -29,7 +29,7 @@ const Cryptocurrency: React.FC<ICryptoCoin & { baseSymbol: string; baseSign: str
   };
 
   const priceChangeText = () => {
-    return priceChange(props.history) > 0 ? (
+    return priceChange(props.sparkline_in_7d.price) > 0 ? (
       <Typography
         sx={{
           fontWeight: '500',
@@ -40,10 +40,10 @@ const Cryptocurrency: React.FC<ICryptoCoin & { baseSymbol: string; baseSign: str
         }}
       >
         {'+ '}
-        {Number(priceChange(props.history)).toLocaleString(locale, {
+        {Number(priceChange(props.sparkline_in_7d.price)).toLocaleString(locale, {
           minimumFractionDigits: numberPrecision,
         })}
-        {' ' + props.baseSign}
+        {' ' + props.baseSymbol}
       </Typography>
     ) : (
       <Typography
@@ -56,10 +56,10 @@ const Cryptocurrency: React.FC<ICryptoCoin & { baseSymbol: string; baseSign: str
         }}
       >
         {'- '}
-        {Number(Math.abs(priceChange(props.history))).toLocaleString(locale, {
+        {Number(Math.abs(priceChange(props.sparkline_in_7d.price))).toLocaleString(locale, {
           minimumFractionDigits: numberPrecision,
         })}
-        {' ' + props.baseSign}
+        {' ' + props.baseSymbol}
       </Typography>
     );
   };
@@ -81,7 +81,7 @@ const Cryptocurrency: React.FC<ICryptoCoin & { baseSymbol: string; baseSign: str
             <Box
               component="img"
               alt="Not found image"
-              src={props.iconUrl}
+              src={props.image}
               sx={{ width: 140, height: 'auto', maxHeight: 140, maxWidth: 140 }}
             />
           </Grid>
@@ -89,31 +89,31 @@ const Cryptocurrency: React.FC<ICryptoCoin & { baseSymbol: string; baseSign: str
             <Grid container>
               <Grid item xs={12}>
                 <Typography sx={{ fontWeight: '550', lineHeight: 1.2, fontSize: 18 }}>
-                  {props.name + ' (' + props.symbol + ')'}
+                  {props.name + ' (' + props.symbol.toUpperCase() + ')'}
                 </Typography>
               </Grid>
               <Grid item xs={12}>
                 <Typography sx={{ mt: 1, color: '#696969', fontWeight: '200' }}>
-                  {'Rank' + ' #' + props.rank}
+                  {'Rank' + ' #' + props.market_cap_rank}
                 </Typography>
               </Grid>
               <Grid item xs={12}>
                 <Typography sx={{ fontWeight: '450', mt: 1, fontSize: 18, color: '#242424' }}>
-                  {Number(parseFloat(props.price)).toLocaleString(locale, {
+                  {props.current_price.toLocaleString(locale, {
                     minimumFractionDigits: numberPrecision,
                   }) +
                     ' ' +
-                    props.baseSign}
+                    props.baseSymbol}
                 </Typography>
               </Grid>
               <Grid item xs={12}>
                 <Typography sx={{ fontWeight: '300', mt: 0.5, fontSize: 13, color: '#a3a3a3' }}>
                   {'(MAX: ' +
-                    Number(parseFloat(props.allTimeHigh.price)).toLocaleString(locale, {
+                    props.ath.toLocaleString(locale, {
                       minimumFractionDigits: numberPrecision,
                     }) +
                     ' ' +
-                    props.baseSign +
+                    props.baseSymbol +
                     ')'}
                 </Typography>
               </Grid>
@@ -122,11 +122,11 @@ const Cryptocurrency: React.FC<ICryptoCoin & { baseSymbol: string; baseSign: str
           <Grid item xs={6} sx={{ mt: 2 }}>
             <Grid container>
               <Grid item xs={12}>
-                {props.history[props.history.length - 1] &&
-                  props.history[props.history.length - 2] &&
+                {props.sparkline_in_7d.price[props.sparkline_in_7d.price.length - 1] &&
+                  props.sparkline_in_7d.price[props.sparkline_in_7d.price.length - 2] &&
                   priceChangeIcon()}
-                {props.history[props.history.length - 1] &&
-                props.history[props.history.length - 2] ? (
+                {props.sparkline_in_7d.price[props.sparkline_in_7d.price.length - 1] &&
+                props.sparkline_in_7d.price[props.sparkline_in_7d.price.length - 2] ? (
                   priceChangeText()
                 ) : (
                   <Typography
@@ -145,8 +145,12 @@ const Cryptocurrency: React.FC<ICryptoCoin & { baseSymbol: string; baseSign: str
             </Grid>
           </Grid>
           <Grid item xs={6} sx={{ mt: 2 }}>
-            <Sparklines data={props.history.map((v) => (v ? parseFloat(v) : Number(0.0)))}>
-              <SparklinesLine style={{ stroke: props.color, fill: props.color, strokeWidth: 5 }} />
+            <Sparklines
+              data={props.sparkline_in_7d.price.map((v) =>
+                typeof v === 'number' ? v : Number(0.0)
+              )}
+            >
+              <SparklinesLine style={{ stroke: 'red', fill: 'red', strokeWidth: 3 }} />
             </Sparklines>
           </Grid>
         </Grid>
@@ -155,4 +159,4 @@ const Cryptocurrency: React.FC<ICryptoCoin & { baseSymbol: string; baseSign: str
   );
 };
 
-export default Cryptocurrency;
+export default CryptocurrencyCard;
