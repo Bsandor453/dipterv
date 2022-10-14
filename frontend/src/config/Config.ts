@@ -6,6 +6,10 @@ const BACKEND_BASE_PATH = '/api';
 const BACKEND_BASE_URL =
   BACKEND_PROTOCOL + '://' + BACKEND_HOST + ':' + BACKEND_PORT + BACKEND_BASE_PATH;
 
+// Proxy URL
+const PROXY =
+  'https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&refresh=2592000&url=';
+
 // Testing
 const TEST_URL = BACKEND_BASE_URL + '/test';
 const TEST_PUBLIC_URL = TEST_URL + '/all';
@@ -90,6 +94,7 @@ const config = {
       wallet: CRYPTOCURRENCY_GET_WALLET,
       transactions: CRYPTOCURRENCY_GET_TRANSACTIONS,
     },
+    proxy: PROXY,
   },
 };
 

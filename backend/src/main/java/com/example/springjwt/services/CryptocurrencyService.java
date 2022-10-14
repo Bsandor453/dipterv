@@ -55,7 +55,7 @@ public class CryptocurrencyService {
                 .uri(uriBuilder -> uriBuilder
                         .path(listUrl)
                         .queryParam("vs_currency", "usd")
-                        .queryParam("ids", /* String.join(",", ECryptocurrency.idValues()) */ "bitcoin")
+                        .queryParam("ids", String.join(",", ECryptocurrency.getIdList()))
                         .queryParam("order", "market_cap_desc")
                         .queryParam("per_page", LIMIT)
                         .queryParam("page", 1)

@@ -1036,7 +1036,7 @@ public enum ECryptocurrency {
     }
 
     public static List<String> getIdList() {
-        return ID_LIST;
+        return ID_LIST.subList(0, 99);
     }
 
 }

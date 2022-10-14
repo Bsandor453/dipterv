@@ -1,12 +1,14 @@
 import { CardActionArea, Grid } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { Sparklines, SparklinesLine } from 'react-sparklines';
+import { useColor } from 'color-thief-react';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import Box from '@mui/material/Box';
 import ICryptocurrency from '../interfaces/cryptocurrency/ICryptocurrency';
 import React from 'react';
 import Typography from '@mui/material/Typography';
+import config from '../config/Config';
 
 const priceChange = (history: number[]) => {
   const lastElement = history[history.length - 1];
@@ -14,12 +16,57 @@ const priceChange = (history: number[]) => {
   return lastElement - lastButOneElement;
 };
 
+const calculateBrightness = (hexColor: string) => {
+  const c = hexColor.substring(1); // strip #
+  const rgb = parseInt(c, 16); // convert rrggbb to decimal
+  const r = (rgb >> 16) & 0xff; // extract red
+  const g = (rgb >> 8) & 0xff; // extract green
+  const b = (rgb >> 0) & 0xff; // extract blue
+
+  const luma = 0.2126 * r + 0.7152 * g + 0.0722 * b; // per ITU-R BT.709
+
+  return luma;
+};
+
+function LightenDarkenColor(hexColor: string, amount: number) {
+  let usePound = false;
+  if (hexColor[0] == '#') {
+    hexColor = hexColor.slice(1);
+    usePound = true;
+  }
+
+  const num = parseInt(hexColor, 16);
+
+  let r = (num >> 16) + amount;
+  if (r > 255) r = 255;
+  else if (r < 0) r = 0;
+
+  let b = ((num >> 8) & 0x00ff) + amount;
+  if (b > 255) b = 255;
+  else if (b < 0) b = 0;
+
+  let g = (num & 0x0000ff) + amount;
+  if (g > 255) g = 255;
+  else if (g < 0) g = 0;
+
+  return (usePound ? '#' : '') + (g | (b << 8) | (r << 16)).toString(16);
+}
+
 const numberPrecision = 7;
 const locale = 'en-GB';
 
 const CryptocurrencyCard: React.FC<ICryptocurrency & { baseSymbol: string; baseCode: string }> = (
   props
 ) => {
+  // Calculate dominant color from image
+  const color = useColor(config.urls.proxy + props.image, 'hex', {
+    crossOrigin: 'anonymous',
+  }).data;
+
+  const brightness = calculateBrightness(color ?? '#000000');
+  const darkerColor =
+    brightness > 160 ? LightenDarkenColor(color ?? '#000000', 160 - brightness) : color;
+
   const priceChangeIcon = () => {
     return priceChange(props.sparkline_in_7d.price) > 0 ? (
       <ArrowUpwardIcon sx={{ fontSize: 40, color: 'green' }} />
@@ -150,7 +197,7 @@ const CryptocurrencyCard: React.FC<ICryptocurrency & { baseSymbol: string; baseC
                 typeof v === 'number' ? v : Number(0.0)
               )}
             >
-              <SparklinesLine style={{ stroke: 'red', fill: 'red', strokeWidth: 3 }} />
+              <SparklinesLine style={{ stroke: darkerColor, fill: darkerColor, strokeWidth: 2 }} />
             </Sparklines>
           </Grid>
         </Grid>

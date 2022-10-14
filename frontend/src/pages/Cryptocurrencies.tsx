@@ -13,8 +13,6 @@ const Cryptocurrencies: React.FC<IPage> = () => {
   const dispatch = useDispatch();
   const { getCryptocurrencies } = bindActionCreators(actionCreators, dispatch);
 
-  // TODO: Merge pages -> Browse & Trade
-
   useEffect(() => {
     getCryptocurrencies(0, 0, 'test', false);
   }, []);
@@ -37,10 +35,8 @@ const Cryptocurrencies: React.FC<IPage> = () => {
                 Trade cryptocurrencies
               </Typography>
               {
-                // TODO: Merge pages -> Browse & Trade
                 <>
                   <p>TODO: Merge pages</p>
-                  <p>TODO: Calculate sparkline color</p>
                   <p>TODO: Calculate number of digits</p>
                   <Grid container spacing={2}>
                     {cryptocurrencies.coins
