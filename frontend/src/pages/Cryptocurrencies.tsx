@@ -38,6 +38,8 @@ const Cryptocurrencies: React.FC<IPage> = () => {
                 <>
                   <p>TODO: Merge pages</p>
                   <p>TODO: Calculate number of digits</p>
+                  <p>TODO: Filter and search</p>
+                  <p>TODO: Sort</p>
                   <Grid container spacing={2}>
                     {cryptocurrencies.coins
                       ?.sort((a, b) => {

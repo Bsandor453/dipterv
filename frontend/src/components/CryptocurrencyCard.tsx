@@ -1,6 +1,7 @@
 import { CardActionArea, Grid } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { Sparklines, SparklinesLine } from 'react-sparklines';
+import { default as dayjs } from 'dayjs';
 import { useColor } from 'color-thief-react';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
@@ -9,6 +10,7 @@ import ICryptocurrency from '../interfaces/cryptocurrency/ICryptocurrency';
 import React from 'react';
 import Typography from '@mui/material/Typography';
 import config from '../config/Config';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
 
 const priceChange = (history: number[]) => {
   const lastElement = history[history.length - 1];
@@ -54,6 +56,7 @@ function LightenDarkenColor(hexColor: string, amount: number) {
 
 const numberPrecision = 7;
 const locale = 'en-GB';
+const dateFormat = 'DD MMMM, YYYY';
 
 const CryptocurrencyCard: React.FC<ICryptocurrency & { baseSymbol: string; baseCode: string }> = (
   props
@@ -66,6 +69,9 @@ const CryptocurrencyCard: React.FC<ICryptocurrency & { baseSymbol: string; baseC
   const brightness = calculateBrightness(color ?? '#000000');
   const darkerColor =
     brightness > 160 ? LightenDarkenColor(color ?? '#000000', 160 - brightness) : color;
+
+  dayjs.extend(customParseFormat);
+  const allTimeHighDate = dayjs(props.ath_date).format(dateFormat);
 
   const priceChangeIcon = () => {
     return priceChange(props.sparkline_in_7d.price) > 0 ? (
@@ -155,12 +161,18 @@ const CryptocurrencyCard: React.FC<ICryptocurrency & { baseSymbol: string; baseC
               </Grid>
               <Grid item xs={12}>
                 <Typography sx={{ fontWeight: '300', mt: 0.5, fontSize: 13, color: '#a3a3a3' }}>
-                  {'(MAX: ' +
+                  {'MAX: ' +
                     props.ath.toLocaleString(locale, {
                       minimumFractionDigits: numberPrecision,
                     }) +
                     ' ' +
-                    props.baseSymbol +
+                    props.baseSymbol}
+                </Typography>
+                <Typography sx={{ fontWeight: '300', mt: 0.5, fontSize: 13, color: '#a3a3a3' }}>
+                  {'(On ' +
+                    (allTimeHighDate.toString() !== 'Invalid Date'
+                      ? allTimeHighDate.toString()
+                      : '-') +
                     ')'}
                 </Typography>
               </Grid>
