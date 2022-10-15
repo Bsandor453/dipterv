@@ -3,11 +3,11 @@ import { Link } from 'react-router-dom';
 import { Sparklines, SparklinesLine } from 'react-sparklines';
 import { default as dayjs } from 'dayjs';
 import { useColor } from 'color-thief-react';
-import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import Box from '@mui/material/Box';
 import ICryptocurrency from '../interfaces/cryptocurrency/ICryptocurrency';
 import React from 'react';
+import TrendingDownIcon from '@mui/icons-material/TrendingDown';
+import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import Typography from '@mui/material/Typography';
 import config from '../config/Config';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
@@ -77,9 +77,9 @@ const CryptocurrencyCard: React.FC<ICryptocurrency & { baseSymbol: string; baseC
 
   const priceChangeIcon = () => {
     return priceChange(props.sparkline_in_7d.price) > 0 ? (
-      <ArrowUpwardIcon sx={{ fontSize: 40, color: 'green' }} />
+      <TrendingUpIcon sx={{ fontSize: 40, color: 'green' }} />
     ) : (
-      <ArrowDownwardIcon color="error" sx={{ fontSize: 40, color: 'red' }} />
+      <TrendingDownIcon color="error" sx={{ fontSize: 40, color: 'red' }} />
     );
   };
 
