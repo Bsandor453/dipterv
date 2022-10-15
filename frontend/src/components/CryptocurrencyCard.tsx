@@ -70,6 +70,8 @@ const CryptocurrencyCard: React.FC<ICryptocurrency & { baseSymbol: string; baseC
   const darkerColor =
     brightness > 160 ? LightenDarkenColor(color ?? '#000000', 160 - brightness) : color;
 
+  const nameFontSize = props.name.length + props.symbol.length > 30 ? 16 : 18;
+
   dayjs.extend(customParseFormat);
   const allTimeHighDate = dayjs(props.ath_date).format(dateFormat);
 
@@ -129,7 +131,7 @@ const CryptocurrencyCard: React.FC<ICryptocurrency & { baseSymbol: string; baseC
           boxShadow: '3px 3px 3px 1px rgba(0,0,0,0.1)',
         }}
       >
-        <Grid container>
+        <Grid container sx={{ height: 220 }}>
           <Grid item xs={6} sx={{ height: 140 }}>
             <Box
               component="img"
@@ -141,7 +143,7 @@ const CryptocurrencyCard: React.FC<ICryptocurrency & { baseSymbol: string; baseC
           <Grid item xs={6}>
             <Grid container>
               <Grid item xs={12}>
-                <Typography sx={{ fontWeight: '550', lineHeight: 1.2, fontSize: 18 }}>
+                <Typography sx={{ fontWeight: '550', lineHeight: 1.2, fontSize: nameFontSize }}>
                   {props.name + ' (' + props.symbol.toUpperCase() + ')'}
                 </Typography>
               </Grid>

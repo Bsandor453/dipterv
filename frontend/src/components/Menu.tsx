@@ -118,14 +118,8 @@ const Menu: React.FC = () => {
 
   const menuElementsCryptocurrency = [
     {
-      path: '/cryptocurrencies/all',
-      name: 'Browse',
-      icon: <PublicIcon />,
-      show: user,
-    },
-    {
       path: '/cryptocurrencies',
-      name: 'Trade',
+      name: 'Browse & Trade',
       icon: <CurrencyExchangeIcon />,
       show: user,
     },

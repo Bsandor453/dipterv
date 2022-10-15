@@ -1,5 +1,4 @@
 import AdminBoard from '../pages/AdminBoard';
-import CryptocurrenciesAllPage from '../pages/CryptocurrenciesAll';
 import CryptocurrenciesPage from '../pages/Cryptocurrencies';
 import CryptocurrencyDetailsPage from '../pages/CryptocurrencyDetails';
 import HomePage from '../pages/Home';
@@ -66,12 +65,6 @@ const routes: IRoute[] = [
     path: '/cryptocurrencies',
     name: 'Cryptocurrencies',
     component: CryptocurrenciesPage,
-    exact: true,
-  },
-  {
-    path: '/cryptocurrencies/all',
-    name: 'CryptocurrenciesAll',
-    component: CryptocurrenciesAllPage,
     exact: true,
   },
   {

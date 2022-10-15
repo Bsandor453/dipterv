@@ -31,8 +31,8 @@ public class CryptocurrencyController {
 
     @GetMapping("/all")
     public String getCurrencies(@RequestParam Integer page, @RequestParam Integer size, @RequestParam String sortBy, @RequestParam Boolean asc) {
-        // TODO: Implement [page, size, sortBy, asc]
-        return cryptocurrencyService.getCurrencies();
+        // TODO: Implement [sortBy, asc]
+        return cryptocurrencyService.getCurrencies(page, size);
     }
 
     @GetMapping("/{id}")

@@ -65,6 +65,7 @@ const config = {
       symbol: '$',
       code: 'USD',
     },
+    currencyCount: 1000,
   },
   interceptorDebug: true,
   urls: {

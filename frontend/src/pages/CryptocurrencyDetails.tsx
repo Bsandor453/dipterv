@@ -233,7 +233,7 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
   */
 
   return (
-    <p>TODO</p>
+    <p>TODO (Crypto details page)</p>
     /*
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
       <Grid container spacing={3}>

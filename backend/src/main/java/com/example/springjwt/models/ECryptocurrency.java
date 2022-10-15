@@ -1035,8 +1035,14 @@ public enum ECryptocurrency {
         return null;
     }
 
-    public static List<String> getIdList() {
-        return ID_LIST.subList(0, 99);
+    // The API can only provide 50 coins per page
+    public static List<String> getIdList(int page, int perPage) {
+        int startIndex = (page - 1) * perPage;
+        int endIndex = startIndex + perPage;
+        if (endIndex > 1000) {
+            endIndex = 1000;
+        }
+        return ID_LIST.subList(startIndex, endIndex);
     }
 
 }

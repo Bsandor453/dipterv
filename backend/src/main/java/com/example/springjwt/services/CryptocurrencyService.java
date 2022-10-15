@@ -31,7 +31,7 @@ public class CryptocurrencyService {
 
     private final WebClient webClient;
 
-    private final int LIMIT = 100;
+    private final int LIMIT = 30;
 
     private final UserService userService;
 
@@ -50,12 +50,12 @@ public class CryptocurrencyService {
         this.transactionRepository = transactionRepository;
     }
 
-    public String getCurrencies() {
+    public String getCurrencies(Integer page, Integer size) {
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path(listUrl)
                         .queryParam("vs_currency", "usd")
-                        .queryParam("ids", String.join(",", ECryptocurrency.getIdList()))
+                        .queryParam("ids", String.join(",", ECryptocurrency.getIdList(page, size)))
                         .queryParam("order", "market_cap_desc")
                         .queryParam("per_page", LIMIT)
                         .queryParam("page", 1)
