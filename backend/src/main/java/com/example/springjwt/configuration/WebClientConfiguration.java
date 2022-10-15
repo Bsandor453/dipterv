@@ -17,7 +17,6 @@ import org.springframework.web.util.DefaultUriBuilderFactory;
 import reactor.core.publisher.Mono;
 import reactor.netty.http.client.HttpClient;
 
-import javax.inject.Named;
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
@@ -48,65 +47,38 @@ public class WebClientConfiguration {
 
     private final int MEMORY_LIMIT_IN_MEGABYTES = 16;
 
-    @Bean
-    @Named("WebClient")
+    @Bean(name = "WebClient")
     public WebClient getWebClient() {
         DefaultUriBuilderFactory factory = new DefaultUriBuilderFactory(cryptocurrencyBaseUrl);
         factory.setEncodingMode(DefaultUriBuilderFactory.EncodingMode.NONE);
 
-        return WebClient.builder()
-                .exchangeStrategies(ExchangeStrategies.builder()
-                        .codecs(configurer -> configurer
-                                .defaultCodecs()
-                                .maxInMemorySize(MEMORY_LIMIT_IN_MEGABYTES * 1024 * 1024))
-                        .build())
-                .filter(logRequest())
-                .clientConnector(new ReactorClientHttpConnector(getHttpClient()))
-                .uriBuilderFactory(factory)
-                .baseUrl(cryptocurrencyBaseUrl)
-                .build();
+        return WebClient.builder().exchangeStrategies(ExchangeStrategies.builder().codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(MEMORY_LIMIT_IN_MEGABYTES * 1024 * 1024)).build()).filter(logRequest()).clientConnector(new ReactorClientHttpConnector(getHttpClient())).uriBuilderFactory(factory).baseUrl(cryptocurrencyBaseUrl).build();
     }
 
     // *Deprecated* This method creates the WebClient when using the Coinranking API
-    @Bean
-    @Named("WebClientCoinranking")
+    @Bean(name = "WebClientCoinranking")
     public WebClient getWebClientCoinranking() {
         DefaultUriBuilderFactory factory = new DefaultUriBuilderFactory(coinrankingBaseUrl);
         factory.setEncodingMode(DefaultUriBuilderFactory.EncodingMode.NONE);
 
-        return WebClient.builder()
-                .exchangeStrategies(ExchangeStrategies.builder()
-                        .codecs(configurer -> configurer
-                                .defaultCodecs()
-                                .maxInMemorySize(MEMORY_LIMIT_IN_MEGABYTES * 1024 * 1024))
-                        .build())
-                .filter(logRequest())
-                .clientConnector(new ReactorClientHttpConnector(getHttpClient()))
-                .defaultHeaders(httpHeaders -> {
-                    httpHeaders.add(apiHostHeaderName, apiHostHeaderValue);
-                    httpHeaders.add(apiKeyHeaderName, apiKeyHeaderValue);
-                })
-                .uriBuilderFactory(factory)
-                .baseUrl(coinrankingBaseUrl)
-                .build();
+        return WebClient.builder().exchangeStrategies(ExchangeStrategies.builder().codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(MEMORY_LIMIT_IN_MEGABYTES * 1024 * 1024)).build()).filter(logRequest()).clientConnector(new ReactorClientHttpConnector(getHttpClient())).defaultHeaders(httpHeaders -> {
+            httpHeaders.add(apiHostHeaderName, apiHostHeaderValue);
+            httpHeaders.add(apiKeyHeaderName, apiKeyHeaderValue);
+        }).uriBuilderFactory(factory).baseUrl(coinrankingBaseUrl).build();
     }
 
     // This method returns filter function which will log request data
     private static ExchangeFilterFunction logRequest() {
         return ExchangeFilterFunction.ofRequestProcessor(clientRequest -> {
             logger.info("Request: {} {}", clientRequest.method(), clientRequest.url());
-            clientRequest.headers().forEach((name, values) -> values.forEach(value -> logger.info("{}={}", name, value)));
+            clientRequest.headers().forEach((name, values) -> values.forEach(value -> logger.info("{}={}", name,
+                    value)));
             return Mono.just(clientRequest);
         });
     }
 
     @Bean
     public HttpClient getHttpClient() {
-        return HttpClient.create()
-                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, TIMEOUT)
-                .responseTimeout(Duration.ofMillis(TIMEOUT))
-                .doOnConnected(conn ->
-                        conn.addHandlerLast(new ReadTimeoutHandler(TIMEOUT, TimeUnit.MILLISECONDS))
-                                .addHandlerLast(new WriteTimeoutHandler(TIMEOUT, TimeUnit.MILLISECONDS)));
+        return HttpClient.create().option(ChannelOption.CONNECT_TIMEOUT_MILLIS, TIMEOUT).responseTimeout(Duration.ofMillis(TIMEOUT)).doOnConnected(conn -> conn.addHandlerLast(new ReadTimeoutHandler(TIMEOUT, TimeUnit.MILLISECONDS)).addHandlerLast(new WriteTimeoutHandler(TIMEOUT, TimeUnit.MILLISECONDS)));
     }
 }

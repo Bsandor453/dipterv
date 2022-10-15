@@ -12,7 +12,7 @@ public class JwtResponse {
     private String type = "Bearer";
 
     private String refreshToken;
-
+    
     private Integer expiresInSeconds;
 
     public JwtResponse(String username, String accessToken, String refreshToken, Integer expiresInSeconds) {
