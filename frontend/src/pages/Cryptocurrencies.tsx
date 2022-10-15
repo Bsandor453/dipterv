@@ -14,12 +14,12 @@ import { bindActionCreators } from 'redux';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
 import { useInterval } from 'usehooks-ts';
-import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import Copyright from '../components/Copyright';
 import Cryptocurrency from '../components/CryptocurrencyCard';
 import IPage from '../interfaces/IPage';
 import IPageParams from '../interfaces/IPageParams';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import React, { useEffect, useState } from 'react';
 import config from '../config/Config';
 
@@ -129,13 +129,26 @@ const Cryptocurrencies: React.FC<IPage> = () => {
               </Select>
               <Button
                 variant="outlined"
-                color="info"
-                sx={{ height: 40, mb: 1 }}
+                sx={{
+                  height: 40,
+                  mb: 1,
+                  color: 'rgba(0, 0, 0, 0.87)',
+                  borderColor: 'rgba(0, 0, 0, 0.23)',
+                  ':hover': {
+                    color: 'initial',
+                    backgroundColor: 'initial',
+                    borderColor: 'initial',
+                  },
+                }}
                 onClick={() => {
                   sortDirection === 'asc' ? setSortDirection('desc') : setSortDirection('asc');
                 }}
               >
-                {sortDirection === 'asc' ? <ArrowUpwardIcon /> : <ArrowDownwardIcon />}
+                {sortDirection === 'asc' ? (
+                  <KeyboardArrowUpIcon fontSize="large" />
+                ) : (
+                  <KeyboardArrowDownIcon fontSize="large" />
+                )}
               </Button>
             </Box>
           </Grid>
@@ -155,8 +168,6 @@ const Cryptocurrencies: React.FC<IPage> = () => {
               </Typography>
               {
                 <>
-                  <p>TODO: No data - use change insted of calculating!</p>
-                  <p>TODO: Blue to grey</p>
                   <p>TODO: Backend DB</p>
                   <p>TODO: Search feature</p>
                   <p>TODO: Sort feature</p>
