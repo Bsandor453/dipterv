@@ -4,6 +4,7 @@ import com.example.springjwt.dto.response.MappedTransaction;
 import com.example.springjwt.exception.NotEnoughCryptocurrencyException;
 import com.example.springjwt.exception.NotEnoughMoneyException;
 import com.example.springjwt.models.*;
+import com.example.springjwt.repository.CryptocurrencyRepository;
 import com.example.springjwt.repository.TransactionRepository;
 import com.example.springjwt.repository.UserRepository;
 import com.example.springjwt.repository.WalletRepository;
@@ -13,6 +14,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.support.MutableSortDefinition;
 import org.springframework.beans.support.PagedListHolder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -24,9 +28,9 @@ import java.util.*;
 public class CryptocurrencyService {
 
     private final WebClient webClient;
-    private final int LIMIT = 30;
     private final UserService userService;
     private final UserRepository userRepository;
+    private final CryptocurrencyRepository cryptocurrencyRepository;
     private final WalletRepository walletRepository;
     private final TransactionRepository transactionRepository;
     @Value("${bsandor.app.cryptocurrencyListUrl}")
@@ -36,21 +40,21 @@ public class CryptocurrencyService {
 
     @Autowired
     public CryptocurrencyService(@Qualifier("WebClient") WebClient webClient, UserService userService,
-                                 UserRepository userRepository, WalletRepository walletRepository,
-                                 TransactionRepository transactionRepository) {
+                                 UserRepository userRepository, CryptocurrencyRepository cryptocurrencyRepository,
+                                 WalletRepository walletRepository, TransactionRepository transactionRepository) {
         this.webClient = webClient;
         this.userService = userService;
+        this.cryptocurrencyRepository = cryptocurrencyRepository;
         this.userRepository = userRepository;
         this.walletRepository = walletRepository;
         this.transactionRepository = transactionRepository;
     }
-
-    public String getCurrencies(Integer page, Integer size) {
-        return webClient.get().uri(uriBuilder -> uriBuilder.path(listUrl).queryParam("vs_currency", "usd")
-                        .queryParam("ids", String.join(",", ECryptocurrency.getIdList(page, size)))
-                        .queryParam("order", "market_cap_desc").queryParam("per_page", LIMIT).queryParam("page", 1)
-                        .queryParam("sparkline", true).queryParam("price_change_percentage", "1h,24h,7d").build()).retrieve()
-                .bodyToMono(String.class).block();
+    
+    public Page<Cryptocurrency> getCurrencies(int currentPage, int pageSize, String sortByProperty, boolean ascending) {
+        Sort sort = Sort.by(ascending ? Sort.Direction.ASC : Sort.Direction.DESC, sortByProperty);
+        // The backend counts pages from index 0, the frontend from index 1
+        // We have to subtract 1 from the current page number
+        return cryptocurrencyRepository.findAll(PageRequest.of(currentPage - 1, pageSize, sort));
     }
 
     public String getCurrency(String id) {

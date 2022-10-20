@@ -1,5 +1,5 @@
 export default interface IPageable<T> {
-  transactions: T[];
+  content: T[];
   currentPage: number;
   pageCount: number;
   elementCount: number;

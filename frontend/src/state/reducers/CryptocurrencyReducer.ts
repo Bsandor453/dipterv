@@ -10,7 +10,7 @@ import ITransaction from '../../interfaces/ITransaction';
 import IWallet from '../../interfaces/IWallet';
 
 const initialState = {
-  coins: [],
+  coins: null,
   coin: null,
   history: null,
   wallet: null,
@@ -18,7 +18,7 @@ const initialState = {
 };
 
 type cryptocurrencyState = {
-  coins: ICryptocurrency[] | [];
+  coins: IPageable<ICryptocurrency> | null;
   //coin: ICryptoCurrencyDetails | null;
   //history: ICryptoCoinHistory | null;
   wallet: IWallet | null;

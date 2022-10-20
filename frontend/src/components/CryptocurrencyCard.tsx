@@ -148,8 +148,8 @@ const CryptocurrencyCard: React.FC<ICryptocurrency & { baseSymbol: string; baseC
                 </Typography>
               </Grid>
               <Grid item xs={12}>
-                <Typography sx={{ mt: 1, color: '#696969', fontWeight: '200' }}>
-                  {'Rank' + ' #' + props.market_cap_rank}
+                <Typography sx={{ mt: 1, color: '#696969', fontWeight: '200', fontSize: 15 }}>
+                  {'CoinGecko Rank' + ' #' + props.market_cap_rank}
                 </Typography>
               </Grid>
               <Grid item xs={12}>

@@ -17,13 +17,28 @@ import { useInterval } from 'usehooks-ts';
 import Copyright from '../components/Copyright';
 import Cryptocurrency from '../components/CryptocurrencyCard';
 import IPage from '../interfaces/IPage';
-import IPageParams from '../interfaces/IPageParams';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import React, { useEffect, useState } from 'react';
 import config from '../config/Config';
+import useEffectOnlyOnUpdate from '../hooks/useEffectOnlyOnUpdate';
 
 const Cryptocurrencies: React.FC<IPage> = () => {
+  const sortByProperties = [
+    {
+      id: 'marketCap',
+      name: 'Market capitalization',
+    },
+    {
+      id: 'currentPrice',
+      name: 'Current price',
+    },
+    {
+      id: 'priceChange24h',
+      name: 'Price change in 24 hours',
+    },
+  ];
+
   const dispatch = useDispatch();
   const location = useLocation();
   const history = useHistory();
@@ -32,74 +47,64 @@ const Cryptocurrencies: React.FC<IPage> = () => {
 
   const searchParams = new URLSearchParams(location.search);
 
-  const pushHistory = () => {
+  const pushCurrentLocationToHistory = () => {
     history.push({
       pathname: location.pathname,
       search: '?' + searchParams.toString(),
     });
   };
 
-  const setParams = (p: IPageParams) => {
-    searchParams.set('page', p.page ?? '1');
-    searchParams.set('sortBy', p.sortBy ?? 'market_cap');
-    searchParams.set('sortDirection', p.sortDirection ?? 'desc');
+  // The URL is always the source of pagination data
+  // This is why the state is calculated from the query parameters and not the other way around
+  const [page, setPage] = useState(parseInt(searchParams.get('page') ?? '1'));
+  const [sortBy, setSortBy] = useState(searchParams.get('sortBy') ?? sortByProperties[0].id);
+  const [sortDirection, setSortDirection] = useState(searchParams.get('sortDirection') ?? 'desc');
+  const asc = sortDirection === 'asc';
+  const pageSize = 30;
+
+  const setParamAndReplaceHistory = (name: string, value: string) => {
+    searchParams.set(name, value);
     history.replace({
       pathname: location.pathname,
       search: '?' + searchParams.toString(),
     });
   };
 
-  const [sortBy, setSortBy] = useState(searchParams.get('sortBy') ?? 'ranking');
-  const [sortDirection, setSortDirection] = useState(searchParams.get('sortDirection') ?? 'desc');
-  const asc = sortDirection === 'asc';
-  const page = parseInt(searchParams.get('page') || '1');
-
-  const pageSize = 30;
-
   useEffect(() => {
     getCryptocurrencies(page, pageSize, sortBy, asc);
-    setParams({ page: searchParams.get('page') ?? '1', sortBy, sortDirection });
   }, []);
 
-  useEffect(() => {
+  useEffectOnlyOnUpdate(() => {
     getCryptocurrencies(page, pageSize, sortBy, asc);
-  }, [sortBy, sortDirection]);
+  }, [page, sortBy, sortDirection]);
 
-  useEffect(() => {
-    searchParams.set('sortBy', sortBy);
-    pushHistory();
-  }, [sortBy]);
-
-  useEffect(() => {
-    sortDirection === 'asc'
-      ? searchParams.set('sortDirection', 'asc')
-      : searchParams.set('sortDirection', 'desc');
-    pushHistory();
-  }, [sortDirection]);
+  useEffectOnlyOnUpdate(() => {
+    setPage(parseInt(searchParams.get('page') ?? '1'));
+    setSortBy(searchParams.get('sortBy') ?? sortByProperties[0].id);
+    setSortDirection(searchParams.get('sortDirection') ?? 'desc');
+  }, [searchParams]);
 
   const interval = 20000;
-
   useInterval(() => {
     getCryptocurrencies(page, pageSize, sortBy, asc);
   }, interval);
 
   const coins = useSelector((state: State) => state.CRYPTOCURRENCY).coins;
 
-  const PaginationController = () => {
+  const PaginationController = (page: number, count: number) => {
     return (
       coins &&
-      coins?.length !== 0 && (
+      coins.pageCount > 1 && (
         <Grid container sx={{ mb: 3, mt: 5 }}>
           <Grid item xs={6}>
             <Pagination
               variant="outlined"
               shape="rounded"
-              count={Math.ceil(config.defaults.currencyCount / pageSize)}
               page={page}
+              count={count}
               onChange={(_event, page) => {
-                getCryptocurrencies(page, pageSize, sortBy, asc);
-                searchParams.set('page', page.toString());
-                pushHistory();
+                pushCurrentLocationToHistory();
+                setParamAndReplaceHistory('page', page.toString());
               }}
             />
           </Grid>
@@ -119,13 +124,15 @@ const Cryptocurrencies: React.FC<IPage> = () => {
                 value={sortBy}
                 sx={{ height: 35, mr: 2 }}
                 onChange={(e) => {
-                  setSortBy(e.target.value);
+                  pushCurrentLocationToHistory();
+                  setParamAndReplaceHistory('sortBy', e.target.value);
                 }}
               >
-                <MenuItem value="ranking">{'Ranking'}</MenuItem>
-                <MenuItem value="price">{'Price'}</MenuItem>
-                <MenuItem value="marketCap">{'Market cap'}</MenuItem>
-                <MenuItem value="change">{'Change'}</MenuItem>
+                {sortByProperties.map((property) => (
+                  <MenuItem key={property.id} value={property.id}>
+                    {property.name}
+                  </MenuItem>
+                ))}
               </Select>
               <Button
                 variant="outlined"
@@ -141,10 +148,11 @@ const Cryptocurrencies: React.FC<IPage> = () => {
                   },
                 }}
                 onClick={() => {
-                  sortDirection === 'asc' ? setSortDirection('desc') : setSortDirection('asc');
+                  pushCurrentLocationToHistory();
+                  setParamAndReplaceHistory('sortDirection', asc ? 'desc' : 'asc');
                 }}
               >
-                {sortDirection === 'asc' ? (
+                {asc ? (
                   <KeyboardArrowUpIcon fontSize="large" />
                 ) : (
                   <KeyboardArrowDownIcon fontSize="large" />
@@ -163,36 +171,23 @@ const Cryptocurrencies: React.FC<IPage> = () => {
         <Grid item xs={12}>
           <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
             <Box sx={{ m: 2 }}>
+              <p>TODO: Search by name feature</p>
+              <p>TODO: Test navigation with search feature</p>
               <Typography variant="h2" sx={{ mt: 3, mb: 8 }}>
                 Trade cryptocurrencies
               </Typography>
-              {
-                <>
-                  <p>TODO: Backend DB</p>
-                  <p>TODO: Search feature</p>
-                  <p>TODO: Sort feature</p>
-                  <p>TODO: Test navigation with filter and sort (navigation sets the sort!)</p>
-                  <p>TODO: Rank to my rank</p>
-                  {PaginationController()}
-                  <Grid container spacing={2}>
-                    {coins
-                      ?.sort((a, b) => {
-                        if (a.market_cap_rank > b.market_cap_rank) return 1;
-                        if (a.market_cap_rank < b.market_cap_rank) return -1;
-                        return 0;
-                      })
-                      .map((cryptocurrency) => (
-                        <Cryptocurrency
-                          key={cryptocurrency.id}
-                          baseSymbol={config.defaults.baseCurrency.symbol}
-                          baseCode={config.defaults.baseCurrency.code}
-                          {...cryptocurrency}
-                        />
-                      ))}
-                  </Grid>
-                  {PaginationController()}
-                </>
-              }
+              {coins && PaginationController(page, coins.pageCount)}
+              <Grid container spacing={2}>
+                {coins?.content.map((cryptocurrency) => (
+                  <Cryptocurrency
+                    key={cryptocurrency.id}
+                    baseSymbol={config.defaults.baseCurrency.symbol}
+                    baseCode={config.defaults.baseCurrency.code}
+                    {...cryptocurrency}
+                  />
+                ))}
+              </Grid>
+              {coins && PaginationController(page, coins.pageCount)}
             </Box>
           </Paper>
         </Grid>
