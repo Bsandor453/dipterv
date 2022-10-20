@@ -230,9 +230,15 @@ export const saveUserDataEdit = (edited: IUser) => {
 
 // Cryptocurrencies
 
-export const getCryptocurrencies = (page: number, size: number, sortBy: string, asc: boolean) => {
+export const getCryptocurrencies = (
+  page: number,
+  size: number,
+  sortBy: string,
+  asc: boolean,
+  search: string
+) => {
   return (dispatch: Dispatch<CryptocurrencyAction>): void => {
-    CryptocurrencyService.getCryptocurrencies(page, size, sortBy, asc).then((response) => {
+    CryptocurrencyService.getCryptocurrencies(page, size, sortBy, asc, search).then((response) => {
       dispatch({
         type: ActionType.GET_CRYPTOCURRENCIES,
         payload: response.data,

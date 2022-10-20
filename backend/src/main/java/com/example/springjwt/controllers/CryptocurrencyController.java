@@ -36,9 +36,10 @@ public class CryptocurrencyController {
     public ResponseEntity<CryptocurrencyPageResponse> getCurrencies(@RequestParam Integer page,
                                                                     @RequestParam Integer size,
                                                                     @RequestParam String sortBy,
-                                                                    @RequestParam Boolean asc) {
-        
-        Page<Cryptocurrency> cryptocurrencyPage = cryptocurrencyService.getCurrencies(page, size, sortBy, asc);
+                                                                    @RequestParam Boolean asc,
+                                                                    @RequestParam String search) {
+
+        Page<Cryptocurrency> cryptocurrencyPage = cryptocurrencyService.getCurrencies(page, size, sortBy, asc, search);
 
         // The backend counts pages from index 0, the frontend from index 1
         // We have to add 1 to the current page number

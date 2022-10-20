@@ -30,8 +30,24 @@ const UPDATE_USER_DATA = USER_URL + '/profile/update';
 
 // Cryptocurrencies
 const CRYPTOCURRENCY_URL = BACKEND_BASE_URL + '/cryptocurrency';
-const CRYPTOCURRENCY_GET_ALL = (page: number, size: number, sortBy: string, asc: boolean): string =>
-  CRYPTOCURRENCY_URL + '/all?page=' + page + '&size=' + size + '&sortBy=' + sortBy + '&asc=' + asc;
+const CRYPTOCURRENCY_GET_ALL = (
+  page: number,
+  size: number,
+  sortBy: string,
+  asc: boolean,
+  search: string
+): string =>
+  CRYPTOCURRENCY_URL +
+  '/all?page=' +
+  page +
+  '&size=' +
+  size +
+  '&sortBy=' +
+  sortBy +
+  '&asc=' +
+  asc +
+  '&search=' +
+  search;
 const CRYPTOCURRENCY_GET_COIN = (id: number): string => CRYPTOCURRENCY_URL + id;
 const CRYPTOCURRENCY_GET_HISTORY = (id: number, timeframe: string): string =>
   CRYPTOCURRENCY_GET_COIN(id) + '/history?timeframe=' + timeframe;

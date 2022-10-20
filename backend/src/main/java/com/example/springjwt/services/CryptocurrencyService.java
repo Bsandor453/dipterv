@@ -49,12 +49,14 @@ public class CryptocurrencyService {
         this.walletRepository = walletRepository;
         this.transactionRepository = transactionRepository;
     }
-    
-    public Page<Cryptocurrency> getCurrencies(int currentPage, int pageSize, String sortByProperty, boolean ascending) {
+
+    public Page<Cryptocurrency> getCurrencies(int currentPage, int pageSize, String sortByProperty, boolean ascending,
+                                              String namePart) {
         Sort sort = Sort.by(ascending ? Sort.Direction.ASC : Sort.Direction.DESC, sortByProperty);
         // The backend counts pages from index 0, the frontend from index 1
         // We have to subtract 1 from the current page number
-        return cryptocurrencyRepository.findAll(PageRequest.of(currentPage - 1, pageSize, sort));
+        return cryptocurrencyRepository.findAllByNameContainsIgnoreCase(namePart,
+                PageRequest.of(currentPage - 1, pageSize, sort));
     }
 
     public String getCurrency(String id) {

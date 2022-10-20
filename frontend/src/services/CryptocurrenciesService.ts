@@ -1,7 +1,6 @@
 import { AxiosResponse } from 'axios';
 import authHeader from './AuthHeader';
 import config from '../config/Config';
-import rapidApiAuthHeader from './RapidApiAuthHeader';
 import useAxios from './useAxios';
 
 const httpClient = useAxios();
@@ -10,17 +9,17 @@ const tokenAuthUrlConfig = () => {
   return { headers: { 'Content-Type': 'application/json', ...authHeader() } };
 };
 
-const rapidApiUrlConfig = () => {
-  return { headers: { 'Content-Type': 'application/json', ...rapidApiAuthHeader() } };
-};
-
 const getCryptocurrencies = (
   page: number,
   size: number,
   sortBy: string,
-  asc: boolean
+  asc: boolean,
+  search: string
 ): Promise<AxiosResponse<any>> => {
-  return httpClient.get(config.urls.crypto.all(page, size, sortBy, asc), tokenAuthUrlConfig());
+  return httpClient.get(
+    config.urls.crypto.all(page, size, sortBy, asc, search),
+    tokenAuthUrlConfig()
+  );
 };
 
 const getCryptocurrency = (id: number): Promise<AxiosResponse<any>> => {

@@ -57,7 +57,6 @@ function LightenDarkenColor(hexColor: string, amount: number) {
 const numberPrecision = 7;
 const locale = 'en-GB';
 const dateFormat = 'DD MMMM, YYYY';
-
 const CryptocurrencyCard: React.FC<ICryptocurrency & { baseSymbol: string; baseCode: string }> = (
   props
 ) => {
@@ -220,4 +219,4 @@ const CryptocurrencyCard: React.FC<ICryptocurrency & { baseSymbol: string; baseC
   );
 };
 
-export default CryptocurrencyCard;
+export default React.memo(CryptocurrencyCard);
