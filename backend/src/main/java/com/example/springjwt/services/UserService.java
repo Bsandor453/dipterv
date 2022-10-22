@@ -3,7 +3,7 @@ package com.example.springjwt.services;
 import com.example.springjwt.dto.request.UserProfileUpdateRequest;
 import com.example.springjwt.exception.UserNotFoundException;
 import com.example.springjwt.exception.UsernameAlreadyInUseException;
-import com.example.springjwt.models.User;
+import com.example.springjwt.models.user.User;
 import com.example.springjwt.repository.UserRepository;
 import com.example.springjwt.security.services.UserDetailsImpl;
 import org.slf4j.Logger;
@@ -26,14 +26,17 @@ public class UserService {
     }
 
     @Transactional
-    public boolean updateUser(UserProfileUpdateRequest updatedUserData) throws UserNotFoundException, UsernameAlreadyInUseException {
+    public boolean updateUser(UserProfileUpdateRequest updatedUserData)
+            throws UserNotFoundException, UsernameAlreadyInUseException {
         String username = getCurrentUser().getUsername();
         logger.info(String.format("Updating user with username '%s'...", username));
 
         User updatedUser = getCurrentUserEntity();
 
-        // Check if the username already exists or not (except when the username is the same, meaning updating other data)
-        if (userRepository.findByUsername(updatedUserData.getUserName()).isPresent() && !username.equals(updatedUserData.getUserName())) {
+        // Check if the username already exists or not (except when the username is the same, meaning updating other
+        // data)
+        if (userRepository.findByUsername(updatedUserData.getUserName()).isPresent() &&
+                !username.equals(updatedUserData.getUserName())) {
             throw new UsernameAlreadyInUseException(updatedUserData.getUserName());
         }
 
@@ -42,7 +45,8 @@ public class UserService {
         updatedUser.setEmail(updatedUserData.getEmail());
         userRepository.save(updatedUser);
 
-        logger.info(String.format("Successfully updated user with username '%s' (new name: '%s')", username, updatedUser.getUsername()));
+        logger.info(String.format("Successfully updated user with username '%s' (new name: '%s')", username,
+                updatedUser.getUsername()));
 
         return !username.equals(updatedUserData.getUserName());
     }

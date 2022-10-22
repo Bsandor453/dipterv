@@ -1,5 +1,6 @@
-package com.example.springjwt.models;
+package com.example.springjwt.models.cryptocurrency.details;
 
+import com.example.springjwt.models.cryptocurrency.SparklineData;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
@@ -10,8 +11,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Data
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-@Document(collection = "coins")
-public class Cryptocurrency {
+@Document(collection = "coins_details")
+public class CryptocurrencyDetails {
 
     @JsonProperty("id")
     private String id;

@@ -1,5 +1,6 @@
-package com.example.springjwt.models;
+package com.example.springjwt.models.wallet;
 
+import com.example.springjwt.models.cryptocurrency.ECryptocurrency;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

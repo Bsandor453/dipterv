@@ -1,5 +1,7 @@
-package com.example.springjwt.models;
+package com.example.springjwt.models.user;
 
+import com.example.springjwt.models.transaction.TransactionHistory;
+import com.example.springjwt.models.wallet.Wallet;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

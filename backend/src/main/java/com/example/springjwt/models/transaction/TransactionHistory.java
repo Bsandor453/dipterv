@@ -1,4 +1,4 @@
-package com.example.springjwt.models;
+package com.example.springjwt.models.transaction;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

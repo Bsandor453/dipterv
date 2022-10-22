@@ -7,7 +7,12 @@ import com.example.springjwt.dto.response.JwtResponse;
 import com.example.springjwt.dto.response.MessageResponse;
 import com.example.springjwt.dto.response.TokenRefreshResponse;
 import com.example.springjwt.exception.TokenRefreshException;
-import com.example.springjwt.models.*;
+import com.example.springjwt.models.transaction.TransactionHistory;
+import com.example.springjwt.models.user.ERole;
+import com.example.springjwt.models.user.RefreshToken;
+import com.example.springjwt.models.user.Role;
+import com.example.springjwt.models.user.User;
+import com.example.springjwt.models.wallet.Wallet;
 import com.example.springjwt.repository.RoleRepository;
 import com.example.springjwt.repository.TransactionRepository;
 import com.example.springjwt.repository.UserRepository;
@@ -36,29 +41,23 @@ import java.util.Set;
 @RequestMapping("/api/auth")
 public class AuthController {
 
+    private final AuthenticationManager authenticationManager;
+    private final UserRepository userRepository;
+    private final WalletRepository walletRepository;
+    private final TransactionRepository transactionRepository;
+    private final UserService userService;
+    private final RoleRepository roleRepository;
+    private final PasswordEncoder encoder;
+    private final JwtUtils jwtUtils;
+    private final RefreshTokenService refreshTokenService;
     @Value("${bsandor.app.jwtExpirationMs}")
     private int jwtExpirationMs;
 
-    private final AuthenticationManager authenticationManager;
-
-    private final UserRepository userRepository;
-
-    private final WalletRepository walletRepository;
-
-    private final TransactionRepository transactionRepository;
-
-    private final UserService userService;
-
-    private final RoleRepository roleRepository;
-
-    private final PasswordEncoder encoder;
-
-    private final JwtUtils jwtUtils;
-
-    private final RefreshTokenService refreshTokenService;
-
     @Autowired
-    public AuthController(AuthenticationManager authenticationManager, UserRepository userRepository, WalletRepository walletRepository, TransactionRepository transactionRepository, UserService userService, RoleRepository roleRepository, PasswordEncoder encoder, JwtUtils jwtUtils, RefreshTokenService refreshTokenService) {
+    public AuthController(AuthenticationManager authenticationManager, UserRepository userRepository,
+                          WalletRepository walletRepository, TransactionRepository transactionRepository,
+                          UserService userService, RoleRepository roleRepository, PasswordEncoder encoder,
+                          JwtUtils jwtUtils, RefreshTokenService refreshTokenService) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.walletRepository = walletRepository;
@@ -80,33 +79,22 @@ public class AuthController {
         String accessToken = jwtUtils.generateJwtToken(user);
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getId());
 
-        return ResponseEntity.ok(new JwtResponse(
-                        user.getUsername(),
-                        accessToken,
-                        refreshToken.getToken(),
-                        jwtExpirationMs / 1000
-                )
-        );
+        return ResponseEntity.ok(
+                new JwtResponse(user.getUsername(), accessToken, refreshToken.getToken(), jwtExpirationMs / 1000));
     }
 
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
         if (userRepository.existsByUsername(signUpRequest.getUserName())) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(new MessageResponse("Username is already taken!"));
+            return ResponseEntity.badRequest().body(new MessageResponse("Username is already taken!"));
         }
 
         if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(new MessageResponse("Email is already in use!"));
+            return ResponseEntity.badRequest().body(new MessageResponse("Email is already in use!"));
         }
 
         // Create new user account
-        User user = new User(signUpRequest.getUserName(),
-                signUpRequest.getFullName(),
-                signUpRequest.getEmail(),
+        User user = new User(signUpRequest.getUserName(), signUpRequest.getFullName(), signUpRequest.getEmail(),
                 encoder.encode(signUpRequest.getPassword()));
 
         Set<String> strRoles = signUpRequest.getRoles();
@@ -157,15 +145,13 @@ public class AuthController {
     public ResponseEntity<?> refreshtoken(@Valid @RequestBody TokenRefreshRequest request) {
         String requestRefreshToken = request.getRefreshToken();
 
-        return refreshTokenService.findByToken(requestRefreshToken)
-                .map(refreshTokenService::verifyExpiration)
-                .map(RefreshToken::getUser)
-                .map(user -> {
+        return refreshTokenService.findByToken(requestRefreshToken).map(refreshTokenService::verifyExpiration)
+                .map(RefreshToken::getUser).map(user -> {
                     String token = jwtUtils.generateTokenFromUsername(user.getUsername());
-                    return ResponseEntity.ok(new TokenRefreshResponse(user.getUsername(), token, requestRefreshToken, jwtExpirationMs / 1000));
+                    return ResponseEntity.ok(new TokenRefreshResponse(user.getUsername(), token, requestRefreshToken,
+                            jwtExpirationMs / 1000));
                 })
-                .orElseThrow(() -> new TokenRefreshException(requestRefreshToken,
-                        "Refresh token is not in database!"));
+                .orElseThrow(() -> new TokenRefreshException(requestRefreshToken, "Refresh token is not in database!"));
     }
 
 }

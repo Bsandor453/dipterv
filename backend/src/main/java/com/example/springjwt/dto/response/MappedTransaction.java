@@ -1,6 +1,6 @@
 package com.example.springjwt.dto.response;
 
-import com.example.springjwt.models.ETransaction;
+import com.example.springjwt.models.transaction.ETransaction;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 

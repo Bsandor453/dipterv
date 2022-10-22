@@ -1,6 +1,6 @@
 package com.example.springjwt.repository;
 
-import com.example.springjwt.models.User;
+import com.example.springjwt.models.user.User;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 

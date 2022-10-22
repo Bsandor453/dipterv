@@ -1,7 +1,7 @@
 package com.example.springjwt.services;
 
-import com.example.springjwt.models.Cryptocurrency;
-import com.example.springjwt.models.ECryptocurrency;
+import com.example.springjwt.models.cryptocurrency.Cryptocurrency;
+import com.example.springjwt.models.cryptocurrency.ECryptocurrency;
 import com.example.springjwt.repository.CryptocurrencyRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

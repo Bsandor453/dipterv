@@ -1,4 +1,4 @@
-package com.example.springjwt.models;
+package com.example.springjwt.models.user;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

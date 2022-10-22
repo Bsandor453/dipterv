@@ -1,6 +1,6 @@
 package com.example.springjwt.repository;
 
-import com.example.springjwt.models.Cryptocurrency;
+import com.example.springjwt.models.cryptocurrency.Cryptocurrency;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;

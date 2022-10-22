@@ -1,6 +1,6 @@
 package com.example.springjwt.dto.response;
 
-import com.example.springjwt.models.Cryptocurrency;
+import com.example.springjwt.models.cryptocurrency.Cryptocurrency;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;

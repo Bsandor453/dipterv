@@ -1,6 +1,6 @@
 package com.example.springjwt.repository;
 
-import com.example.springjwt.models.TransactionHistory;
+import com.example.springjwt.models.transaction.TransactionHistory;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 

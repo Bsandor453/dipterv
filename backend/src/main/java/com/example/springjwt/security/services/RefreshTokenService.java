@@ -1,7 +1,7 @@
 package com.example.springjwt.security.services;
 
 import com.example.springjwt.exception.TokenRefreshException;
-import com.example.springjwt.models.RefreshToken;
+import com.example.springjwt.models.user.RefreshToken;
 import com.example.springjwt.repository.RefreshTokenRepository;
 import com.example.springjwt.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +20,10 @@ import java.util.UUID;
 @Service
 public class RefreshTokenService {
 
+    private final RefreshTokenRepository refreshTokenRepository;
+    private final UserRepository userRepository;
     @Value("${bsandor.app.jwtRefreshExpirationMs}")
     private Long refreshTokenDurationMs;
-
-    private final RefreshTokenRepository refreshTokenRepository;
-
-    private final UserRepository userRepository;
 
     @Autowired
     public RefreshTokenService(RefreshTokenRepository refreshTokenRepository, UserRepository userRepository) {
@@ -52,10 +50,8 @@ public class RefreshTokenService {
     public RefreshToken verifyExpiration(RefreshToken token) {
         if (token.getExpiryDate().compareTo(Instant.now()) < 0) {
             refreshTokenRepository.delete(token);
-            throw new TokenRefreshException(
-                    token.getToken(),
-                    "The refresh token has expired. Please make a new sign in request."
-            );
+            throw new TokenRefreshException(token.getToken(),
+                    "The refresh token has expired. Please make a new sign in request.");
         }
 
         return token;
@@ -67,11 +63,11 @@ public class RefreshTokenService {
         query.addCriteria(Criteria.where("user.$id").is(userId));
         List<RefreshToken> refreshTokens = mongoTemplate.find(query, RefreshToken.class);
 
-        if(refreshTokens.size() > 1) {
+        if (refreshTokens.size() > 1) {
             throw new IllegalStateException("Found more refresh tokens with the same id" + " (" + userId + ") !");
         }
 
-        if(refreshTokens.isEmpty()) {
+        if (refreshTokens.isEmpty()) {
             throw new IllegalStateException("There is no refresh token with the given id" + " (" + userId + ") !");
         }
 

@@ -1,7 +1,7 @@
 package com.example.springjwt.procedure;
 
-import com.example.springjwt.models.ERole;
-import com.example.springjwt.models.Role;
+import com.example.springjwt.models.user.ERole;
+import com.example.springjwt.models.user.Role;
 import com.example.springjwt.repository.RoleRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
