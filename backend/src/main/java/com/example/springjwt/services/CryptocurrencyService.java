@@ -5,15 +5,14 @@ import com.example.springjwt.exception.NotEnoughCryptocurrencyException;
 import com.example.springjwt.exception.NotEnoughMoneyException;
 import com.example.springjwt.models.cryptocurrency.Cryptocurrency;
 import com.example.springjwt.models.cryptocurrency.ECryptocurrency;
+import com.example.springjwt.models.cryptocurrency.details.CryptocurrencyDetails;
+import com.example.springjwt.models.cryptocurrency.details.CryptocurrencyLinks;
 import com.example.springjwt.models.transaction.ETransaction;
 import com.example.springjwt.models.transaction.Transaction;
 import com.example.springjwt.models.transaction.TransactionHistory;
 import com.example.springjwt.models.user.User;
 import com.example.springjwt.models.wallet.Wallet;
-import com.example.springjwt.repository.CryptocurrencyRepository;
-import com.example.springjwt.repository.TransactionRepository;
-import com.example.springjwt.repository.UserRepository;
-import com.example.springjwt.repository.WalletRepository;
+import com.example.springjwt.repository.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -26,6 +25,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import java.util.*;
 
@@ -37,6 +37,7 @@ public class CryptocurrencyService {
     private final UserService userService;
     private final UserRepository userRepository;
     private final CryptocurrencyRepository cryptocurrencyRepository;
+    private final CryptocurrencyDetailsRepository cryptocurrencyDetailsRepository;
     private final WalletRepository walletRepository;
     private final TransactionRepository transactionRepository;
     @Value("${bsandor.app.cryptocurrencyListUrl}")
@@ -47,10 +48,12 @@ public class CryptocurrencyService {
     @Autowired
     public CryptocurrencyService(@Qualifier("WebClient") WebClient webClient, UserService userService,
                                  UserRepository userRepository, CryptocurrencyRepository cryptocurrencyRepository,
+                                 CryptocurrencyDetailsRepository cryptocurrencyDetailsRepository,
                                  WalletRepository walletRepository, TransactionRepository transactionRepository) {
         this.webClient = webClient;
         this.userService = userService;
         this.cryptocurrencyRepository = cryptocurrencyRepository;
+        this.cryptocurrencyDetailsRepository = cryptocurrencyDetailsRepository;
         this.userRepository = userRepository;
         this.walletRepository = walletRepository;
         this.transactionRepository = transactionRepository;
@@ -65,10 +68,29 @@ public class CryptocurrencyService {
                 PageRequest.of(currentPage - 1, pageSize, sort));
     }
 
-    public String getCurrency(String id) {
-        return webClient.get()
+    public CryptocurrencyDetails getCryptocurrencyDetails(String id) {
+        updateCurrencyDetailsFromApi(id);
+        Optional<CryptocurrencyDetails> cryptocurrencyDetails = cryptocurrencyDetailsRepository.findById(id);
+
+        return cryptocurrencyDetails.orElseThrow(
+                () -> new RuntimeException("Cryptocurrency not found with id: \"" + id + "\""));
+    }
+
+    public void updateCurrencyDetailsFromApi(String id) {
+
+        Mono<CryptocurrencyDetails> response = webClient.get()
                 .uri(uriBuilder -> uriBuilder.path(coinUrl + "/" + id).queryParam("localization", "false").build())
-                .retrieve().bodyToMono(String.class).block();
+                .retrieve().bodyToMono(CryptocurrencyDetails.class);
+
+        Optional<CryptocurrencyDetails> cryptocurrencyDetailsOptional = response.blockOptional();
+
+        if (cryptocurrencyDetailsOptional.isPresent()) {
+            CryptocurrencyDetails cryptocurrencyDetails =
+                    filterEmptyStringsFromLinks(cryptocurrencyDetailsOptional.get());
+            cryptocurrencyDetailsRepository.save(cryptocurrencyDetails);
+        } else {
+            throw new RuntimeException("Error updating cryptocurrency with id: \"" + id + "\"");
+        }
     }
 
     public Wallet getWallet() {
@@ -218,4 +240,18 @@ public class CryptocurrencyService {
         userRepository.save(currentUser);
     }
 
+    CryptocurrencyDetails filterEmptyStringsFromLinks(CryptocurrencyDetails cryptocurrencyDetails) {
+        CryptocurrencyLinks links = cryptocurrencyDetails.getLinks();
+        links.setHomepage(filterEmptyStrings(links.getHomepage()));
+        links.setBlockchainSite(filterEmptyStrings(links.getBlockchainSite()));
+        links.setOfficialForumUrl(filterEmptyStrings(links.getOfficialForumUrl()));
+        links.setChatUrl(filterEmptyStrings(links.getChatUrl()));
+        links.setAnnouncementUrl(filterEmptyStrings(links.getAnnouncementUrl()));
+        return cryptocurrencyDetails;
+    }
+
+    List<String> filterEmptyStrings(List<String> list) {
+        list.removeIf(item -> item.equals(""));
+        return list;
+    }
 }

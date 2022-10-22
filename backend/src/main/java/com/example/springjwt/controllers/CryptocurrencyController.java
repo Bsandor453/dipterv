@@ -8,6 +8,7 @@ import com.example.springjwt.dto.response.TransactionPageResponse;
 import com.example.springjwt.dto.response.WalletResponse;
 import com.example.springjwt.models.cryptocurrency.Cryptocurrency;
 import com.example.springjwt.models.cryptocurrency.ECryptocurrency;
+import com.example.springjwt.models.cryptocurrency.details.CryptocurrencyDetails;
 import com.example.springjwt.models.wallet.Wallet;
 import com.example.springjwt.services.CryptocurrencyService;
 import lombok.extern.slf4j.Slf4j;
@@ -49,8 +50,8 @@ public class CryptocurrencyController {
     }
 
     @GetMapping("/{id}")
-    public String getCurrencies(@PathVariable String id) {
-        return cryptocurrencyService.getCurrency(id);
+    public CryptocurrencyDetails getCurrency(@PathVariable String id) {
+        return cryptocurrencyService.getCryptocurrencyDetails(id);
     }
 
     // TODO: History

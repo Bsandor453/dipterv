@@ -1,10 +1,12 @@
 package com.example.springjwt.models.cryptocurrency.details;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+@Data
 @NoArgsConstructor
 public class CryptocurrencyLinks {
 
@@ -24,10 +26,10 @@ public class CryptocurrencyLinks {
     private List<String> announcementUrl;
 
     @JsonProperty("twitter_screen_name")
-    private List<String> twitterUsername;
+    private String twitterUsername;
 
     @JsonProperty("subreddit_url")
-    private List<String> subredditUrl;
+    private String subredditUrl;
 
     @JsonProperty("repos_url")
     private CryptocurrencyReposUrl repos;
