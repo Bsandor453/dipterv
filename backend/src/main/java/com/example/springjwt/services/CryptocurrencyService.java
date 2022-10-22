@@ -1,5 +1,7 @@
 package com.example.springjwt.services;
 
+import com.example.springjwt.dto.response.CryptocurrencyDetailsResponse;
+import com.example.springjwt.dto.response.CryptocurrencyLinksResponse;
 import com.example.springjwt.dto.response.MappedTransaction;
 import com.example.springjwt.exception.NotEnoughCryptocurrencyException;
 import com.example.springjwt.exception.NotEnoughMoneyException;
@@ -68,12 +70,15 @@ public class CryptocurrencyService {
                 PageRequest.of(currentPage - 1, pageSize, sort));
     }
 
-    public CryptocurrencyDetails getCryptocurrencyDetails(String id) {
+    public CryptocurrencyDetailsResponse getCryptocurrencyDetails(String id) {
         updateCurrencyDetailsFromApi(id);
         Optional<CryptocurrencyDetails> cryptocurrencyDetails = cryptocurrencyDetailsRepository.findById(id);
 
-        return cryptocurrencyDetails.orElseThrow(
-                () -> new RuntimeException("Cryptocurrency not found with id: \"" + id + "\""));
+        if (cryptocurrencyDetails.isPresent()) {
+            return mapCryptocurrencyDetailsToResponseObject(cryptocurrencyDetails.get());
+        } else {
+            throw new RuntimeException("Cryptocurrency not found with id: \"" + id + "\"");
+        }
     }
 
     public void updateCurrencyDetailsFromApi(String id) {
@@ -238,6 +243,39 @@ public class CryptocurrencyService {
         currentUser.setWallet(currentUserWallet);
         currentUser.setTransactionHistory(currentUserTransactionHistory);
         userRepository.save(currentUser);
+    }
+
+    CryptocurrencyDetailsResponse mapCryptocurrencyDetailsToResponseObject(
+            CryptocurrencyDetails cryptocurrencyDetails) {
+        CryptocurrencyDetailsResponse response = new CryptocurrencyDetailsResponse();
+
+        response.setId(cryptocurrencyDetails.getId());
+        response.setDescription(cryptocurrencyDetails.getDescription().getDescription());
+        response.setGenesisDate(cryptocurrencyDetails.getGenesisDate());
+        response.setVotesUpPercentage(cryptocurrencyDetails.getVotesUpPercentage());
+        response.setVotesDownPercentage(cryptocurrencyDetails.getVotesDownPercentage());
+        response.setCoingeckoScore(cryptocurrencyDetails.getCoingeckoScore());
+        response.setDeveloperScore(cryptocurrencyDetails.getDeveloperScore());
+        response.setCommunityScore(cryptocurrencyDetails.getCommunityScore());
+        response.setLiquidityScore(cryptocurrencyDetails.getLiquidityScore());
+        response.setPublicInterestScore(cryptocurrencyDetails.getPublicInterestScore());
+        response.setCommunityData(cryptocurrencyDetails.getCommunityData());
+        response.setDeveloperData(cryptocurrencyDetails.getDeveloperData());
+
+        CryptocurrencyLinksResponse linksResponse = new CryptocurrencyLinksResponse();
+
+        linksResponse.setHomepage(cryptocurrencyDetails.getLinks().getHomepage());
+        linksResponse.setBlockchainSite(cryptocurrencyDetails.getLinks().getBlockchainSite());
+        linksResponse.setOfficialForumUrl(cryptocurrencyDetails.getLinks().getOfficialForumUrl());
+        linksResponse.setChatUrl(cryptocurrencyDetails.getLinks().getChatUrl());
+        linksResponse.setAnnouncementUrl(cryptocurrencyDetails.getLinks().getAnnouncementUrl());
+        linksResponse.setTwitterUsername(cryptocurrencyDetails.getLinks().getTwitterUsername());
+        linksResponse.setSubredditUrl(cryptocurrencyDetails.getLinks().getSubredditUrl());
+        linksResponse.setGithubRepos(cryptocurrencyDetails.getLinks().getRepos().getGithubRepos());
+
+        response.setLinks(linksResponse);
+
+        return response;
     }
 
     CryptocurrencyDetails filterEmptyStringsFromLinks(CryptocurrencyDetails cryptocurrencyDetails) {
