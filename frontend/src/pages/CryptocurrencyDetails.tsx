@@ -26,6 +26,7 @@ import { MomentInput } from 'moment';
 import { State, actionCreators } from '../state';
 import { TransitionProps } from '@mui/material/transitions';
 import { bindActionCreators } from 'redux';
+import { useColor } from 'color-thief-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useInterval } from 'usehooks-ts';
 import Container from '@mui/material/Container';
@@ -40,10 +41,10 @@ import Slide from '@mui/material/Slide';
 import config from '../config/Config';
 import moment from 'moment';
 
-const priceChange = (history: string[]) => {
+const priceChange = (history: number[]) => {
   const lastElement = history[history.length - 1];
   const lastButOneElement = history[history.length - 2];
-  return parseFloat(lastElement) - parseFloat(lastButOneElement);
+  return lastElement - lastButOneElement;
 };
 
 const Transition = React.forwardRef(function Transition(
@@ -97,9 +98,14 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
   const locale = 'en-GB';
 
   const cryptocurrencies = useSelector((state: State) => state.CRYPTOCURRENCY);
-  const baseCurency = config.defaults.baseCurrency;
+  const baseCurrency = config.defaults.baseCurrency;
   const coin = cryptocurrencies.coin;
   const wallet = cryptocurrencies.wallet;
+
+  // Calculate dominant color from image
+  const color = useColor(config.urls.proxy + coin?.image, 'hex', {
+    crossOrigin: 'anonymous',
+  }).data;
 
   const infoMessage = useSelector((state: State) => state.MESSAGE.info);
 
@@ -122,7 +128,7 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
     getCryptocurrencyHistory(coinId, timeframe);
   }, [coinId]);
 
-  const interval = 5000;
+  const interval = 20000;
   useInterval(() => {
     getCryptocurrency(coinId);
     (timeframe === '24h' || timeframe === '7d') && getCryptocurrencyHistory(coinId, timeframe);
@@ -238,8 +244,6 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
   */
 
   return (
-    <p>TODO</p>
-    /*
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
       <Grid container spacing={3}>
         <Grid item xs={12}>
@@ -250,7 +254,7 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
                   <Box
                     component="img"
                     alt="Not found image"
-                    src={coin?.iconUrl}
+                    src={coin?.image}
                     sx={{ width: 350, height: 'auto', maxHeight: 350, maxWidth: 350 }}
                   />
                 </Grid>
@@ -262,7 +266,7 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
                       </Typography>
                     </Grid>
                     <Grid item xs={7}>
-                      <Typography variant="h4" sx={{ fontWeight: '500', color: coin?.color }}>
+                      <Typography variant="h4" sx={{ fontWeight: '500', color: color }}>
                         {coin?.name}
                       </Typography>
                     </Grid>
@@ -272,10 +276,7 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
                       </Typography>
                     </Grid>
                     <Grid item xs={7}>
-                      <Typography
-                        variant="h4"
-                        sx={{ fontWeight: '400', mt: 3, color: coin?.color }}
-                      >
+                      <Typography variant="h4" sx={{ fontWeight: '400', mt: 3, color: color }}>
                         {coin?.symbol}
                       </Typography>
                     </Grid>
@@ -289,7 +290,7 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
                         variant="h4"
                         sx={{ fontWeight: '350', lineHeight: 1.2, mt: 3, color: '#a3a3a3' }}
                       >
-                        {'#' + coin?.rank}
+                        {'#' + coin?.market_cap_rank}
                       </Typography>
                     </Grid>
                     <Grid item xs={5}>
@@ -300,12 +301,11 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
                     <Grid item xs={7}>
                       <Typography variant="h4" sx={{ fontWeight: '450', lineHeight: 1.2, mt: 3 }}>
                         {coin &&
-                          coinBase &&
-                          Number(parseFloat(coin.price)).toLocaleString(locale, {
+                          coin.current_price.toLocaleString(locale, {
                             minimumFractionDigits: numberPrecision,
                           }) +
                             ' ' +
-                            coinBase.sign}
+                            baseCurrency.symbol}
                       </Typography>
                     </Grid>
                     <Grid item xs={5}>
@@ -316,9 +316,9 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
                     <Grid item xs={7}>
                       <Box sx={{ mt: 3 }}>
                         {coin &&
-                          coin.history[coin.history.length - 1] &&
-                          coin.history[coin.history.length - 2] &&
-                          (priceChange(coin.history) > 0 ? (
+                          coin.sparkline_in_7d.price[coin.sparkline_in_7d.price.length - 1] &&
+                          coin.sparkline_in_7d.price[coin.sparkline_in_7d.price.length - 2] &&
+                          (priceChange(coin.sparkline_in_7d.price) > 0 ? (
                             <Typography
                               variant="h4"
                               sx={{
@@ -328,10 +328,13 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
                               }}
                             >
                               {'+ '}
-                              {Number(priceChange(coin.history)).toLocaleString(locale, {
-                                minimumFractionDigits: numberPrecision,
-                              })}
-                              {coinBase && ' ' + coinBase.sign}
+                              {Number(priceChange(coin.sparkline_in_7d.price)).toLocaleString(
+                                locale,
+                                {
+                                  minimumFractionDigits: numberPrecision,
+                                }
+                              )}
+                              {' ' + baseCurrency.symbol}
                             </Typography>
                           ) : (
                             <Typography
@@ -344,16 +347,18 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
                             >
                               {'- '}
                               {coin &&
-                                Number(Math.abs(priceChange(coin.history))).toLocaleString(locale, {
+                                Number(
+                                  Math.abs(priceChange(coin.sparkline_in_7d.price))
+                                ).toLocaleString(locale, {
                                   minimumFractionDigits: numberPrecision,
                                 })}
-                              {coinBase && ' ' + coinBase.sign}
+                              {' ' + baseCurrency.symbol}
                             </Typography>
                           ))}
                         {coin &&
-                          coin.history &&
-                          (!coin.history[coin.history.length - 1] ||
-                            !coin.history[coin.history.length - 2]) && (
+                          coin.sparkline_in_7d.price &&
+                          (!coin.sparkline_in_7d.price[coin.sparkline_in_7d.price.length - 1] ||
+                            !coin.sparkline_in_7d.price[coin.sparkline_in_7d.price.length - 2]) && (
                             <Typography
                               variant="h4"
                               sx={{
@@ -378,23 +383,23 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
                         sx={{ fontWeight: '350', lineHeight: 1.2, mt: 3, color: '#a3a3a3' }}
                       >
                         {coin &&
-                          coinBase &&
-                          Number(parseFloat(coin.allTimeHigh.price)).toLocaleString(locale, {
+                          coin.ath.toLocaleString(locale, {
                             minimumFractionDigits: numberPrecision,
                           }) +
                             ' ' +
-                            coinBase.sign}
+                            baseCurrency.symbol}
                       </Typography>
                       <Typography
                         variant="body1"
                         sx={{ fontWeight: '350', lineHeight: 1.2, color: '#a3a3a3', mt: 1 }}
                       >
-                        {'(' + moment(coin?.allTimeHigh?.timestamp).format('MMM Do YYYY') + ')'}
+                        {'(' + moment(coin?.ath_date).format('MMM Do YYYY') + ')'}
                       </Typography>
                     </Grid>
                   </Grid>
                 </Grid>
               </Grid>
+              {/*
               {cryptocurrencies.cryptoHistory?.history.length !== 0 && (
                 <Box>
                   <Typography variant="h3" sx={{ mb: 3, mt: 3 }}>
@@ -823,13 +828,13 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
                     </div>
                   </Box>
                 )}
+                              */}
             </Box>
           </Paper>
         </Grid>
       </Grid>
       <Copyright sx={{ pt: 4 }} />
     </Container>
-    */
   );
 };
 
