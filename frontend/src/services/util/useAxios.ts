@@ -1,9 +1,9 @@
 import { default as dayjs } from 'dayjs';
-import TokenService from '../services/RefreshTokenService';
+import TokenService from '../RefreshTokenService';
 import axios, { AxiosInstance } from 'axios';
-import config from '../config/Config';
+import config from '../../config/Config';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
-import logging from '../config/Logging';
+import logging from '../../config/Logging';
 
 const interceptorDebug = config.interceptorDebug;
 const dateFormat = 'YYYY.MM.DD. HH:mm:ss';
@@ -27,7 +27,7 @@ axiosInstance.interceptors.request.use((request) => {
       'services/useAxios'
     );
   }
-  if (isExpired && token !== {} && token.refreshToken) {
+  if (isExpired && Object.keys(token).length && token.refreshToken) {
     TokenService.getRefreshToken(token.refreshToken);
   }
 

@@ -1,7 +1,7 @@
 import { AxiosResponse } from 'axios';
 import authHeader from './AuthHeader';
 import config from '../config/Config';
-import useAxios from './useAxios';
+import useAxios from './util/useAxios';
 
 const httpClient = useAxios();
 

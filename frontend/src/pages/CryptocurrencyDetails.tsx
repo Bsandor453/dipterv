@@ -21,11 +21,13 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
+import { LightenDarkenColor } from '../services/util/colorUtils';
 import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
 import { MomentInput } from 'moment';
 import { State, actionCreators } from '../state';
 import { TransitionProps } from '@mui/material/transitions';
 import { bindActionCreators } from 'redux';
+import { calculateBrightness } from '../services/util/colorUtils';
 import { useColor } from 'color-thief-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useInterval } from 'usehooks-ts';
@@ -106,6 +108,9 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
   const color = useColor(config.urls.proxy + coin?.image, 'hex', {
     crossOrigin: 'anonymous',
   }).data;
+  const brightness = calculateBrightness(color ?? '#000000');
+  const darkerColor =
+    brightness > 160 ? LightenDarkenColor(color ?? '#000000', 160 - brightness) : color;
 
   const infoMessage = useSelector((state: State) => state.MESSAGE.info);
 
@@ -266,7 +271,7 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
                       </Typography>
                     </Grid>
                     <Grid item xs={7}>
-                      <Typography variant="h4" sx={{ fontWeight: '500', color: color }}>
+                      <Typography variant="h4" sx={{ fontWeight: '500', color: darkerColor }}>
                         {coin?.name}
                       </Typography>
                     </Grid>
@@ -276,8 +281,11 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
                       </Typography>
                     </Grid>
                     <Grid item xs={7}>
-                      <Typography variant="h4" sx={{ fontWeight: '400', mt: 3, color: color }}>
-                        {coin?.symbol}
+                      <Typography
+                        variant="h4"
+                        sx={{ fontWeight: '400', mt: 3, color: darkerColor }}
+                      >
+                        {coin?.symbol.toLocaleUpperCase()}
                       </Typography>
                     </Grid>
                     <Grid item xs={5}>
