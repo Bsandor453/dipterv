@@ -6,8 +6,9 @@ import java.util.List;
 public enum ECryptocurrency {
 
     // These are all the cryptocurrencies that are supported by the application
-    // This list contains the top 1000 cryptocurrencies ranked by market capitalization data from Coingecko on
-    // October 13th, 2022
+    // This list contains:
+    // The top 1000 cryptocurrencies ranked by market capitalization data from Coingecko on October 13th, 2022
+    // Actual count may vary a bit (the API sometimes removes some coins)
     BITCOIN("bitcoin", "btc", "Bitcoin"), ETHEREUM("ethereum", "eth", "Ethereum"), TETHER("tether", "usdt", "Tether"),
     USD_COIN("usd-coin", "usdc", "USD Coin"), BNB("binancecoin", "bnb", "BNB"), XRP("ripple", "xrp", "XRP"),
     BINANCE_USD("binance-usd", "busd", "Binance USD"), CARDANO("cardano", "ada", "Cardano"),

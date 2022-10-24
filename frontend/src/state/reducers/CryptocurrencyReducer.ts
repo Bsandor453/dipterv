@@ -2,9 +2,8 @@ import { ActionType } from '../action-types';
 import { CryptocurrencyAction } from '../actions';
 //TODO: Use
 //import ICryptoCoinHistory from '../../interfaces/cryptocurrency/ICryptocurrencyHistory';
+import ICryptoCurrencyDetails from '../../interfaces/cryptocurrency/ICryptocurrencyDetails';
 import ICryptocurrency from '../../interfaces/cryptocurrency/ICryptocurrency';
-//TODO: Use
-//import ICryptoCurrencyDetails from '../../interfaces/cryptocurrency/ICryptoCurrencyDetails';
 import IPageable from '../../interfaces/IPageable';
 import ITransaction from '../../interfaces/ITransaction';
 import IWallet from '../../interfaces/IWallet';
@@ -19,7 +18,7 @@ const initialState = {
 
 type cryptocurrencyState = {
   coins: IPageable<ICryptocurrency> | null;
-  //coin: ICryptoCurrencyDetails | null;
+  coin: ICryptoCurrencyDetails | null;
   //history: ICryptoCoinHistory | null;
   wallet: IWallet | null;
   transactions: IPageable<ITransaction> | null;
@@ -32,9 +31,8 @@ const reducer = (
   switch (action.type) {
     case ActionType.GET_CRYPTOCURRENCIES:
       return { ...state, coins: action.payload };
-    //TODO
-    //case ActionType.GET_CRYPTOCURRENCY:
-    //return { ...state, coin: action.payload };
+    case ActionType.GET_CRYPTOCURRENCY:
+      return { ...state, coin: action.payload };
     //case ActionType.GET_CRYPTOCURRENCY_HISTORY:
     //return { ...state, history: action.payload };
     case ActionType.CLEAR_CRYPTOCURRENCIES:

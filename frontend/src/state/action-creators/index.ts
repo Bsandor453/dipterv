@@ -252,7 +252,7 @@ export const getCryptocurrency = (id: number) => {
     CryptocurrencyService.getCryptocurrency(id).then((response) => {
       dispatch({
         type: ActionType.GET_CRYPTOCURRENCY,
-        payload: response.data.data,
+        payload: response.data,
       });
     });
   };

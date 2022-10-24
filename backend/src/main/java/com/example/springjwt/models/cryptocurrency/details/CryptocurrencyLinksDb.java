@@ -1,4 +1,4 @@
-package com.example.springjwt.dto.response;
+package com.example.springjwt.models.cryptocurrency.details;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
@@ -8,7 +8,7 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
-public class CryptocurrencyLinksResponse {
+public class CryptocurrencyLinksDb {
 
     @JsonProperty("homepage")
     private List<String> homepage;

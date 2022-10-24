@@ -9,24 +9,24 @@ import lombok.NoArgsConstructor;
 public class CryptocurrencyDeveloperData {
 
     @JsonProperty("forks")
-    private Double forks;
+    private int forks;
 
     @JsonProperty("stars")
-    private Double stars;
+    private int stars;
 
     @JsonProperty("subscribers")
-    private Double subscribers;
+    private int subscribers;
 
     @JsonProperty("total_issues")
-    private Double totalIssues;
+    private int totalIssues;
 
     @JsonProperty("closed_issues")
-    private Double closedIssues;
+    private int closedIssues;
 
     @JsonProperty("pull_requests_merged")
-    private Double pullRequestsMerged;
+    private int pullRequestsMerged;
 
     @JsonProperty("pull_request_contributors")
-    private Double pullRequestContributors;
+    private int pullRequestContributors;
 
 }

@@ -1,23 +1,24 @@
 package com.example.springjwt.models.cryptocurrency.details;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
 @NoArgsConstructor
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class CryptocurrencyDetails {
+@Document(collection = "coins_details")
+public class CryptocurrencyDetailsDb {
 
-    @JsonProperty("id")
+    @JsonIgnore
     private String id;
 
     @JsonProperty("description")
-    private CryptocurrencyDescription description;
+    private String description;
 
     @JsonProperty("links")
-    private CryptocurrencyLinks links;
+    private CryptocurrencyLinksDb links;
 
     @JsonProperty("genesis_date")
     private String genesisDate;
@@ -50,3 +51,5 @@ public class CryptocurrencyDetails {
     private CryptocurrencyDeveloperData developerData;
 
 }
+
+

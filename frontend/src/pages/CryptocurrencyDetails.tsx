@@ -37,6 +37,7 @@ import PeopleIcon from '@mui/icons-material/People';
 import PublicIcon from '@mui/icons-material/Public';
 import React, { useEffect, useLayoutEffect, useState } from 'react';
 import Slide from '@mui/material/Slide';
+import config from '../config/Config';
 import moment from 'moment';
 
 const priceChange = (history: string[]) => {
@@ -55,9 +56,6 @@ const Transition = React.forwardRef(function Transition(
 });
 
 const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
-  //TODO
-
-  /*
   const coinId = props.match.params.number;
 
   const [openBuyDialog, setOpenBuyDialog] = useState(false);
@@ -99,8 +97,8 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
   const locale = 'en-GB';
 
   const cryptocurrencies = useSelector((state: State) => state.CRYPTOCURRENCY);
-  const coinBase = cryptocurrencies.cryptoCoin?.base;
-  const coin = cryptocurrencies.cryptoCoin?.coin;
+  const baseCurency = config.defaults.baseCurrency;
+  const coin = cryptocurrencies.coin;
   const wallet = cryptocurrencies.wallet;
 
   const infoMessage = useSelector((state: State) => state.MESSAGE.info);
@@ -138,6 +136,7 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
     return Math.floor(Math.log10(n) + 1);
   };
 
+  /*
   const getMaxNumber = (maxGapPercent: number): number => {
     const data = cryptocurrencies.cryptoHistory?.history;
     if (data) {
@@ -153,7 +152,9 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
       return 0;
     }
   };
+  */
 
+  /*
   function formatYAxis(tickItem: number) {
     const coinHistory = coin?.history;
     const averageValue =
@@ -170,7 +171,9 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
       minimumFractionDigits: precision + 2,
     });
   }
+  */
 
+  /*
   const walletEntry =
     wallet?.cryptocurrencies &&
     Object.entries(wallet?.cryptocurrencies).find(([key]) => {
@@ -196,7 +199,9 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
       coinBase?.sign
     );
   };
+  */
 
+  /*
   const tooltipFormatter = (value: string) => [formatTooltipNumber(value), 'Price'];
 
   const handleBuyDialogOpen = () => {
@@ -233,7 +238,7 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
   */
 
   return (
-    <p>TODO (Crypto details page)</p>
+    <p>TODO</p>
     /*
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
       <Grid container spacing={3}>

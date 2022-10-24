@@ -48,7 +48,7 @@ const CRYPTOCURRENCY_GET_ALL = (
   asc +
   '&search=' +
   search;
-const CRYPTOCURRENCY_GET_COIN = (id: number): string => CRYPTOCURRENCY_URL + id;
+const CRYPTOCURRENCY_GET_COIN = (id: number): string => CRYPTOCURRENCY_URL + '/' + id;
 const CRYPTOCURRENCY_GET_HISTORY = (id: number, timeframe: string): string =>
   CRYPTOCURRENCY_GET_COIN(id) + '/history?timeframe=' + timeframe;
 const CRYPTOCURRENCY_BUY = CRYPTOCURRENCY_URL + 'buy';

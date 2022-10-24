@@ -1,14 +1,19 @@
 package com.example.springjwt.services;
 
 import com.example.springjwt.dto.response.CryptocurrencyDetailsResponse;
-import com.example.springjwt.dto.response.CryptocurrencyLinksResponse;
 import com.example.springjwt.dto.response.MappedTransaction;
 import com.example.springjwt.exception.NotEnoughCryptocurrencyException;
 import com.example.springjwt.exception.NotEnoughMoneyException;
 import com.example.springjwt.models.cryptocurrency.Cryptocurrency;
 import com.example.springjwt.models.cryptocurrency.ECryptocurrency;
 import com.example.springjwt.models.cryptocurrency.details.CryptocurrencyDetails;
+import com.example.springjwt.models.cryptocurrency.details.CryptocurrencyDetailsDb;
 import com.example.springjwt.models.cryptocurrency.details.CryptocurrencyLinks;
+import com.example.springjwt.models.cryptocurrency.details.CryptocurrencyLinksDb;
+import com.example.springjwt.models.cryptocurrency.history.CryptocurrencyHistoryData;
+import com.example.springjwt.models.cryptocurrency.history.CryptocurrencyHistoryDataDb;
+import com.example.springjwt.models.cryptocurrency.history.CryptocurrencyHistoryDb;
+import com.example.springjwt.models.cryptocurrency.history.ETimeframe;
 import com.example.springjwt.models.transaction.ETransaction;
 import com.example.springjwt.models.transaction.Transaction;
 import com.example.springjwt.models.transaction.TransactionHistory;
@@ -16,6 +21,7 @@ import com.example.springjwt.models.user.User;
 import com.example.springjwt.models.wallet.Wallet;
 import com.example.springjwt.repository.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -40,6 +46,7 @@ public class CryptocurrencyService {
     private final UserRepository userRepository;
     private final CryptocurrencyRepository cryptocurrencyRepository;
     private final CryptocurrencyDetailsRepository cryptocurrencyDetailsRepository;
+    private final CryptocurrencyHistoryRepository cryptocurrencyHistoryRepository;
     private final WalletRepository walletRepository;
     private final TransactionRepository transactionRepository;
     @Value("${bsandor.app.cryptocurrencyListUrl}")
@@ -51,11 +58,13 @@ public class CryptocurrencyService {
     public CryptocurrencyService(@Qualifier("WebClient") WebClient webClient, UserService userService,
                                  UserRepository userRepository, CryptocurrencyRepository cryptocurrencyRepository,
                                  CryptocurrencyDetailsRepository cryptocurrencyDetailsRepository,
+                                 CryptocurrencyHistoryRepository cryptocurrencyHistoryRepository,
                                  WalletRepository walletRepository, TransactionRepository transactionRepository) {
         this.webClient = webClient;
         this.userService = userService;
         this.cryptocurrencyRepository = cryptocurrencyRepository;
         this.cryptocurrencyDetailsRepository = cryptocurrencyDetailsRepository;
+        this.cryptocurrencyHistoryRepository = cryptocurrencyHistoryRepository;
         this.userRepository = userRepository;
         this.walletRepository = walletRepository;
         this.transactionRepository = transactionRepository;
@@ -72,17 +81,23 @@ public class CryptocurrencyService {
 
     public CryptocurrencyDetailsResponse getCryptocurrencyDetails(String id) {
         updateCurrencyDetailsFromApi(id);
-        Optional<CryptocurrencyDetails> cryptocurrencyDetails = cryptocurrencyDetailsRepository.findById(id);
 
-        if (cryptocurrencyDetails.isPresent()) {
-            return mapCryptocurrencyDetailsToResponseObject(cryptocurrencyDetails.get());
-        } else {
+        CryptocurrencyDetailsResponse cryptocurrencyDetailsResponse = new CryptocurrencyDetailsResponse();
+
+        Optional<Cryptocurrency> cryptocurrency = cryptocurrencyRepository.findById(id);
+        Optional<CryptocurrencyDetailsDb> cryptocurrencyDetails = cryptocurrencyDetailsRepository.findById(id);
+
+        cryptocurrency.ifPresent(value -> BeanUtils.copyProperties(value, cryptocurrencyDetailsResponse));
+        cryptocurrencyDetails.ifPresent(value -> BeanUtils.copyProperties(value, cryptocurrencyDetailsResponse));
+
+        if (cryptocurrency.isEmpty() || cryptocurrencyDetails.isEmpty()) {
             throw new RuntimeException("Cryptocurrency not found with id: \"" + id + "\"");
         }
+
+        return cryptocurrencyDetailsResponse;
     }
 
     public void updateCurrencyDetailsFromApi(String id) {
-
         Mono<CryptocurrencyDetails> response = webClient.get()
                 .uri(uriBuilder -> uriBuilder.path(coinUrl + "/" + id).queryParam("localization", "false").build())
                 .retrieve().bodyToMono(CryptocurrencyDetails.class);
@@ -92,9 +107,52 @@ public class CryptocurrencyService {
         if (cryptocurrencyDetailsOptional.isPresent()) {
             CryptocurrencyDetails cryptocurrencyDetails =
                     filterEmptyStringsFromLinks(cryptocurrencyDetailsOptional.get());
-            cryptocurrencyDetailsRepository.save(cryptocurrencyDetails);
+            cryptocurrencyDetailsRepository.save(mapCryptocurrencyDetailsToDatabaseObject(cryptocurrencyDetails));
         } else {
             throw new RuntimeException("Error updating cryptocurrency with id: \"" + id + "\"");
+        }
+    }
+
+    public CryptocurrencyHistoryDb getCryptocurrencyHistory(String id, ETimeframe timeframe) {
+        updateCurrencyHistoryFromApi(id, timeframe);
+        Optional<CryptocurrencyHistoryDb> cryptocurrencyHistory = cryptocurrencyHistoryRepository.findById(id);
+
+        if (cryptocurrencyHistory.isPresent()) {
+            return cryptocurrencyHistory.get();
+        } else {
+            throw new RuntimeException("Cryptocurrency history not found with id: \"" + id + "\"");
+        }
+    }
+
+    @Transactional
+    public void updateCurrencyHistoryFromApi(String id, ETimeframe timeframe) {
+        Mono<CryptocurrencyHistoryData> response = webClient.get()
+                .uri(uriBuilder -> uriBuilder.path(coinUrl + "/" + id + "/market_chart")
+                        .queryParam("vs_currency", "usd").queryParam("days", convertDaysAgoFromTimeframe(timeframe))
+                        .build()).retrieve().bodyToMono(CryptocurrencyHistoryData.class);
+
+        Optional<CryptocurrencyHistoryData> CryptocurrencyHistoryDataOptional = response.blockOptional();
+
+        if (CryptocurrencyHistoryDataOptional.isPresent()) {
+            CryptocurrencyHistoryData cryptocurrencyHistoryData = CryptocurrencyHistoryDataOptional.get();
+            // Convert to DB format
+            List<CryptocurrencyHistoryDataDb> historyDataDbList =
+                    convertHistoryDataToDbFormat(cryptocurrencyHistoryData);
+
+            Optional<CryptocurrencyHistoryDb> historyOptional = cryptocurrencyHistoryRepository.findById(id);
+
+            if (historyOptional.isEmpty()) {
+                CryptocurrencyHistoryDb newHistory = new CryptocurrencyHistoryDb();
+                newHistory.setId(id);
+                setHistoryByTimeframe(newHistory, historyDataDbList, timeframe);
+                cryptocurrencyHistoryRepository.save(newHistory);
+            } else {
+                CryptocurrencyHistoryDb history = historyOptional.get();
+                setHistoryByTimeframe(history, historyDataDbList, timeframe);
+                cryptocurrencyHistoryRepository.save(history);
+            }
+        } else {
+            throw new RuntimeException("Error updating cryptocurrency history with id: \"" + id + "\"");
         }
     }
 
@@ -245,9 +303,9 @@ public class CryptocurrencyService {
         userRepository.save(currentUser);
     }
 
-    CryptocurrencyDetailsResponse mapCryptocurrencyDetailsToResponseObject(
+    private CryptocurrencyDetailsDb mapCryptocurrencyDetailsToDatabaseObject(
             CryptocurrencyDetails cryptocurrencyDetails) {
-        CryptocurrencyDetailsResponse response = new CryptocurrencyDetailsResponse();
+        CryptocurrencyDetailsDb response = new CryptocurrencyDetailsDb();
 
         response.setId(cryptocurrencyDetails.getId());
         response.setDescription(cryptocurrencyDetails.getDescription().getDescription());
@@ -262,7 +320,7 @@ public class CryptocurrencyService {
         response.setCommunityData(cryptocurrencyDetails.getCommunityData());
         response.setDeveloperData(cryptocurrencyDetails.getDeveloperData());
 
-        CryptocurrencyLinksResponse linksResponse = new CryptocurrencyLinksResponse();
+        CryptocurrencyLinksDb linksResponse = new CryptocurrencyLinksDb();
 
         linksResponse.setHomepage(cryptocurrencyDetails.getLinks().getHomepage());
         linksResponse.setBlockchainSite(cryptocurrencyDetails.getLinks().getBlockchainSite());
@@ -278,7 +336,17 @@ public class CryptocurrencyService {
         return response;
     }
 
-    CryptocurrencyDetails filterEmptyStringsFromLinks(CryptocurrencyDetails cryptocurrencyDetails) {
+    private String convertDaysAgoFromTimeframe(ETimeframe timeframe) {
+        return switch (timeframe) {
+            case HISTORY_24H -> "1";
+            case HISTORY_30D -> "30";
+            case HISTORY_1Y -> "365";
+            case HISTORY_MAX -> "max";
+            default -> "7";
+        };
+    }
+
+    private CryptocurrencyDetails filterEmptyStringsFromLinks(CryptocurrencyDetails cryptocurrencyDetails) {
         CryptocurrencyLinks links = cryptocurrencyDetails.getLinks();
         links.setHomepage(filterEmptyStrings(links.getHomepage()));
         links.setBlockchainSite(filterEmptyStrings(links.getBlockchainSite()));
@@ -288,8 +356,33 @@ public class CryptocurrencyService {
         return cryptocurrencyDetails;
     }
 
-    List<String> filterEmptyStrings(List<String> list) {
+    private List<String> filterEmptyStrings(List<String> list) {
         list.removeIf(item -> item.equals(""));
         return list;
     }
+
+    private List<CryptocurrencyHistoryDataDb> convertHistoryDataToDbFormat(CryptocurrencyHistoryData data) {
+        List<List<Double>> historyData = data.getHistoryData();
+        List<CryptocurrencyHistoryDataDb> historyDataDbList = new ArrayList<>();
+
+        for (List<Double> dataUnit : historyData) {
+            historyDataDbList.add(
+                    new CryptocurrencyHistoryDataDb((long) dataUnit.get(0).doubleValue(), dataUnit.get(1)));
+        }
+
+        return historyDataDbList;
+    }
+
+    private void setHistoryByTimeframe(CryptocurrencyHistoryDb history,
+                                       List<CryptocurrencyHistoryDataDb> historyDataDbList, ETimeframe timeframe) {
+        switch (timeframe) {
+            case HISTORY_24H -> history.setHistory24h(historyDataDbList);
+            case HISTORY_7D -> history.setHistory7d(historyDataDbList);
+            case HISTORY_30D -> history.setHistory30d(historyDataDbList);
+            case HISTORY_1Y -> history.setHistory1y(historyDataDbList);
+            case HISTORY_MAX -> history.setHistoryMax(historyDataDbList);
+        }
+        cryptocurrencyHistoryRepository.save(history);
+    }
+
 }

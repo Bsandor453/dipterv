@@ -9,9 +9,9 @@ import lombok.NoArgsConstructor;
 public class CryptocurrencyCommunityData {
 
     @JsonProperty("twitter_followers")
-    private Double twitterFollowers;
+    private int twitterFollowers;
 
     @JsonProperty("reddit_subscribers")
-    private Double redditSubscribers;
+    private int redditSubscribers;
 
 }

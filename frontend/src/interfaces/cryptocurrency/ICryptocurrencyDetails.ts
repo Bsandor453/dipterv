@@ -1,0 +1,62 @@
+export default interface ICryptocurrencyDetails {
+  id: string;
+  symbol: string;
+  name: string;
+  image: string;
+  current_price: number;
+  market_cap: number;
+  market_cap_rank: number;
+  fully_diluted_valuation: number;
+  total_volume: number;
+  high_24h: number;
+  low_24h: number;
+  price_change_24h: number;
+  price_change_percentage_24h: number;
+  market_cap_change_24h: number;
+  market_cap_change_percentage_24h: number;
+  circulating_supply: number;
+  total_supply: number;
+  max_supply: number;
+  ath: number;
+  ath_change_percentage: number;
+  ath_date: string;
+  atl: number;
+  atl_change_percentage: number;
+  atl_date: string;
+  sparkline_in_7d: { price: [number] };
+  price_change_percentage_1h_in_currency: number;
+  price_change_percentage_24h_in_currency: number;
+  price_change_percentage_7d_in_currency: number;
+  description: string;
+  links: {
+    homepage: string[];
+    blockchain_site: string[];
+    official_forum_url: string[];
+    chat_url: string[];
+    announcement_url: string[];
+    twitter_username: string;
+    subreddit_url: string;
+    github_repos: string[];
+  };
+  genesis_date: string;
+  votes_up_percentage: number;
+  votes_down_percentage: number;
+  coingecko_score: number;
+  developer_score: number;
+  community_score: number;
+  liquidity_score: number;
+  public_interest_score: number;
+  community_data: {
+    twitter_followers: number;
+    reddit_subscribers: number;
+  };
+  developer_data: {
+    forks: number;
+    stars: number;
+    subscribers: number;
+    total_issues: number;
+    closed_issues: number;
+    pull_requests_merged: number;
+    pull_request_contributors: number;
+  };
+}

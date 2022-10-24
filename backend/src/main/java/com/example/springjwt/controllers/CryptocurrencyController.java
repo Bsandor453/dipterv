@@ -5,6 +5,8 @@ import com.example.springjwt.dto.request.CurrencySellRequest;
 import com.example.springjwt.dto.response.*;
 import com.example.springjwt.models.cryptocurrency.Cryptocurrency;
 import com.example.springjwt.models.cryptocurrency.ECryptocurrency;
+import com.example.springjwt.models.cryptocurrency.history.CryptocurrencyHistoryDb;
+import com.example.springjwt.models.cryptocurrency.history.ETimeframe;
 import com.example.springjwt.models.wallet.Wallet;
 import com.example.springjwt.services.CryptocurrencyService;
 import lombok.extern.slf4j.Slf4j;
@@ -50,13 +52,10 @@ public class CryptocurrencyController {
         return cryptocurrencyService.getCryptocurrencyDetails(id);
     }
 
-    // TODO: History
-    /*
     @GetMapping("/{id}/history")
-    public String getCurrencyHistory(@PathVariable String id, @RequestParam String timeframe) {
-        return cryptocurrencyService.getCurrencyHistory(id, timeframe);
+    public CryptocurrencyHistoryDb getCurrencyHistory(@PathVariable String id, @RequestParam String timeframe) {
+        return cryptocurrencyService.getCryptocurrencyHistory(id, ETimeframe.getEnumValueFromDaysAgoString(timeframe));
     }
-    */
 
     @GetMapping("/wallet")
     public ResponseEntity<WalletResponse> getWallet() {

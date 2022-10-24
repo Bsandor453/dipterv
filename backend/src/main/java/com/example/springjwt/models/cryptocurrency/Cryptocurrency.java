@@ -33,7 +33,7 @@ public class Cryptocurrency {
     private double marketCap;
 
     @JsonProperty("market_cap_rank")
-    private double marketCapRank;
+    private int marketCapRank;
 
     @JsonProperty("fully_diluted_valuation")
     private double fullyDilutedValuation;
@@ -90,12 +90,12 @@ public class Cryptocurrency {
     private SparklineData sparklineIn7d;
 
     @JsonProperty("price_change_percentage_1h_in_currency")
-    private Double priceChangePercentage1hInCurrency;
+    private double priceChangePercentage1hInCurrency;
 
     @JsonProperty("price_change_percentage_24h_in_currency")
-    private Double priceChangePercentage24hInCurrency;
+    private double priceChangePercentage24hInCurrency;
 
     @JsonProperty("price_change_percentage_7d_in_currency")
-    private Double priceChangePercentage7dInCurrency;
+    private double priceChangePercentage7dInCurrency;
 
 }
