@@ -51,12 +51,12 @@ const CRYPTOCURRENCY_GET_ALL = (
 const CRYPTOCURRENCY_GET_COIN = (id: number): string => CRYPTOCURRENCY_URL + '/' + id;
 const CRYPTOCURRENCY_GET_HISTORY = (id: number, timeframe: string): string =>
   CRYPTOCURRENCY_GET_COIN(id) + '/history?timeframe=' + timeframe;
-const CRYPTOCURRENCY_BUY = CRYPTOCURRENCY_URL + 'buy';
-const CRYPTOCURRENCY_SELL = CRYPTOCURRENCY_URL + 'sell';
+const CRYPTOCURRENCY_BUY = CRYPTOCURRENCY_URL + '/buy';
+const CRYPTOCURRENCY_SELL = CRYPTOCURRENCY_URL + '/sell';
 const CRYPTOCURRENCY_DEPOSIT_MONEY = (amount: number): string =>
-  CRYPTOCURRENCY_URL + 'depositmoney?amount=' + amount;
-const CRYPTOCURRENCY_RESET_MONEY = CRYPTOCURRENCY_URL + 'resetmoney';
-const CRYPTOCURRENCY_GET_WALLET = CRYPTOCURRENCY_URL + 'wallet';
+  CRYPTOCURRENCY_URL + '/depositmoney?amount=' + amount;
+const CRYPTOCURRENCY_RESET_MONEY = CRYPTOCURRENCY_URL + '/resetmoney';
+const CRYPTOCURRENCY_GET_WALLET = CRYPTOCURRENCY_URL + '/wallet';
 const CRYPTOCURRENCY_GET_TRANSACTIONS = (
   page: number,
   size: number,

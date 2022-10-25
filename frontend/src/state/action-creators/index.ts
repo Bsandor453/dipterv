@@ -263,13 +263,13 @@ export const getCryptocurrencyHistory = (id: number, timeframe: string) => {
     CryptocurrencyService.getCryptocurrencyHistory(id, timeframe).then((response) => {
       dispatch({
         type: ActionType.GET_CRYPTOCURRENCY_HISTORY,
-        payload: response.data.data,
+        payload: response.data,
       });
     });
   };
 };
 
-export const buyCryptocurrency = (id: number, amount: number, price: number, name: string) => {
+export const buyCryptocurrency = (id: string, amount: number, price: number, name: string) => {
   return (dispatch: Dispatch<CryptocurrencyAction | MessageAction>): void => {
     CryptocurrencyService.buyCryptocurrency(id, amount, price).then(
       () => {
@@ -301,7 +301,7 @@ export const buyCryptocurrency = (id: number, amount: number, price: number, nam
   };
 };
 
-export const sellCryptocurrency = (id: number, amount: number, price: number, name: string) => {
+export const sellCryptocurrency = (id: string, amount: number, price: number, name: string) => {
   return (dispatch: Dispatch<CryptocurrencyAction | MessageAction>): void => {
     CryptocurrencyService.sellCryptocurrency(id, amount, price).then(
       () => {

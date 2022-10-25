@@ -67,7 +67,6 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
   const dispatch = useDispatch();
   const {
     getCryptocurrency,
-    getCryptocurrencies,
     getCryptocurrencyHistory,
     buyCryptocurrency,
     sellCryptocurrency,
@@ -102,6 +101,7 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
   const cryptocurrencies = useSelector((state: State) => state.CRYPTOCURRENCY);
   const baseCurrency = config.defaults.baseCurrency;
   const coin = cryptocurrencies.coin;
+  const history = cryptocurrencies.history;
   const wallet = cryptocurrencies.wallet;
 
   // Calculate dominant color from image
@@ -123,8 +123,6 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
   }, [infoMessage]);
 
   useEffect(() => {
-    // TODO: Why do we need this here?
-    //getCryptocurrencies();
     getWallet();
   }, []);
 
@@ -147,9 +145,8 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
     return Math.floor(Math.log10(n) + 1);
   };
 
-  /*
   const getMaxNumber = (maxGapPercent: number): number => {
-    const data = cryptocurrencies.cryptoHistory?.history;
+    const data = history?.history_7d;
     if (data) {
       return (
         Math.max(
@@ -163,16 +160,14 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
       return 0;
     }
   };
-  */
 
-  /*
   function formatYAxis(tickItem: number) {
-    const coinHistory = coin?.history;
+    const coinHistory = history?.history_7d;
     const averageValue =
       coinHistory && coinHistory[coinHistory.length - 1] && coinHistory[coinHistory.length - 2]
-        ? coinHistory[coinHistory.length - 1]
-        : '1';
-    const lastElement = parseFloat(averageValue);
+        ? coinHistory[coinHistory.length - 1].price
+        : 1;
+    const lastElement = averageValue;
     let precision = 0;
     if (getNumberMagnitude(lastElement) < 0) {
       precision = Math.abs(getNumberMagnitude(lastElement));
@@ -182,7 +177,6 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
       minimumFractionDigits: precision + 2,
     });
   }
-  */
 
   /*
   const walletEntry =
@@ -190,12 +184,14 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
     Object.entries(wallet?.cryptocurrencies).find(([key]) => {
       return parseInt(key) === coin?.id;
     });
+    
 
   const walletAmount = walletEntry ? walletEntry[1] : 0.0;
 
   const walletAmountFormatted = walletAmount.toLocaleString(locale, {
     minimumFractionDigits: numberPrecision,
   });
+  */
 
   const tooltipLabelFormatter = (value: number) => {
     return 'Date : ' + moment(value).format('MMM Do YYYY');
@@ -207,12 +203,10 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
         minimumFractionDigits: numberPrecision,
       }) +
       ' ' +
-      coinBase?.sign
+      baseCurrency.symbol
     );
   };
-  */
 
-  /*
   const tooltipFormatter = (value: string) => [formatTooltipNumber(value), 'Price'];
 
   const handleBuyDialogOpen = () => {
@@ -227,8 +221,8 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
     setOpenBuyDialog(false);
 
     coin &&
-      coin.price &&
-      buyCryptocurrency(coin.id, buyAmount, buyAmount * parseFloat(coin.price), coin.name);
+      coin.current_price &&
+      buyCryptocurrency(coin.id, buyAmount, buyAmount * coin.current_price, coin.name);
   };
 
   const handleSellDialogOpen = () => {
@@ -243,17 +237,27 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
     setOpenSellDialog(false);
 
     coin &&
-      coin.price &&
-      sellCryptocurrency(coin.id, sellAmount, sellAmount * parseFloat(coin.price), coin.name);
+      coin.current_price &&
+      sellCryptocurrency(coin.id, sellAmount, sellAmount * coin.current_price, coin.name);
   };
-  */
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
       <Grid container spacing={3}>
         <Grid item xs={12}>
           <Paper sx={{ p: 5, display: 'flex', flexDirection: 'column' }}>
+            <p>TODO: Better graph domain</p>
+            <p>TODO: HTTP Requests only in needed quantity</p>
+            <p>TODO: Enter search</p>
+            <p>TODO: Max date to proper format</p>
+            <p>TODO: Make calendar work for other timeframes (Search in code for: history_7d)</p>
+            <p>TODO: Undefinded error in console</p>
             <Box sx={{ ml: 2, mt: 2, pb: '2em' }}>
+              {/*
+               *
+               * * * * Heading * * * *
+               *
+               */}
               <Grid container>
                 <Grid item xs={5} sx={{ height: 350 }}>
                   <Box
@@ -408,7 +412,11 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
                 </Grid>
               </Grid>
               {/*
-              {cryptocurrencies.cryptoHistory?.history.length !== 0 && (
+               *
+               * * * * Price Graph * * * *
+               *
+               */}
+              {history?.history_7d?.length !== 0 && (
                 <Box>
                   <Typography variant="h3" sx={{ mb: 3, mt: 3 }}>
                     Price history
@@ -422,13 +430,13 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
                           sx={{
                             mr: '1em',
                             mb: 2,
-                            color: timeframe === tf ? 'white' : coin?.color,
-                            backgroundColor: timeframe === tf ? coin?.color : 'white',
-                            borderColor: coin?.color,
+                            color: timeframe === tf ? 'white' : darkerColor,
+                            backgroundColor: timeframe === tf ? darkerColor : 'white',
+                            borderColor: darkerColor,
                             ':hover': {
-                              color: timeframe === tf ? 'white' : coin?.color,
-                              backgroundColor: timeframe === tf ? coin?.color : 'white',
-                              borderColor: coin?.color,
+                              color: timeframe === tf ? 'white' : darkerColor,
+                              backgroundColor: timeframe === tf ? darkerColor : 'white',
+                              borderColor: darkerColor,
                             },
                           }}
                           onClick={() => {
@@ -445,7 +453,7 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
                       <LineChart
                         width={1070}
                         height={400}
-                        data={cryptocurrencies.cryptoHistory?.history}
+                        data={history?.history_7d}
                         margin={{ top: 10, right: 80, left: 50, bottom: 10 }}
                       >
                         <XAxis
@@ -459,14 +467,14 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
                           dataKey="price"
                           domain={[0, getMaxNumber(10)]}
                           tickFormatter={formatYAxis}
-                          unit={coinBase?.sign}
+                          unit={baseCurrency.symbol}
                           allowDataOverflow={true}
                         />
                         <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
                         <Line
                           type="monotone"
                           dataKey="price"
-                          stroke={coin?.color}
+                          stroke={darkerColor}
                           strokeWidth={3}
                         />
                         <Tooltip
@@ -478,6 +486,8 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
                   </Box>
                 </Box>
               )}
+
+              {/*
               {coin?.description && (
                 <Typography variant="h3" sx={{ mb: 3, mt: 3 }}>
                   Description

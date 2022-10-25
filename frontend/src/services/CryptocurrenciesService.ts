@@ -31,7 +31,7 @@ const getCryptocurrencyHistory = (id: number, timeframe: string): Promise<AxiosR
 };
 
 const buyCryptocurrency = (
-  id: number,
+  id: string,
   amount: number,
   price: number
 ): Promise<AxiosResponse<any>> => {
@@ -39,7 +39,7 @@ const buyCryptocurrency = (
 };
 
 const sellCryptocurrency = (
-  id: number,
+  id: string,
   amount: number,
   price: number
 ): Promise<AxiosResponse<any>> => {
