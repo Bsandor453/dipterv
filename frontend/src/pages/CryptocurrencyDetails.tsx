@@ -35,6 +35,8 @@ import Container from '@mui/material/Container';
 import Copyright from '../components/Copyright';
 import CryptocurrencyDetail from '../components/CryptocurrencyDetail';
 import Grid from '@mui/material/Grid';
+import ICryptocurrencyHistory from '../interfaces/cryptocurrency/ICryptocurrencyHistory';
+import ICryptocurrencyHistoryData from '../interfaces/cryptocurrency/ICryptocurrencyHistoryData';
 import Paper from '@mui/material/Paper';
 import PeopleIcon from '@mui/icons-material/People';
 import PublicIcon from '@mui/icons-material/Public';
@@ -90,8 +92,23 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
         return '30 days';
       case '1y':
         return '1 year';
-      case '5y':
-        return '5 years';
+      case 'max':
+        return 'Max';
+    }
+  };
+
+  const getDataByTimeframe = (tf: string) => {
+    switch (tf) {
+      case '24h':
+        return history?.history_24h;
+      case '7d':
+        return history?.history_7d;
+      case '30d':
+        return history?.history_30d;
+      case '1y':
+        return history?.history_1y;
+      case 'max':
+        return history?.history_max;
     }
   };
 
@@ -145,8 +162,10 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
     return Math.floor(Math.log10(n) + 1);
   };
 
-  const getMaxNumber = (maxGapPercent: number): number => {
-    const data = history?.history_7d;
+  const getMaxNumber = (
+    maxGapPercent: number,
+    data: ICryptocurrencyHistoryData[] | undefined
+  ): number => {
     if (data) {
       return (
         Math.max(
@@ -162,11 +181,9 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
   };
 
   function formatYAxis(tickItem: number) {
-    const coinHistory = history?.history_7d;
+    const data = getDataByTimeframe(timeframe);
     const averageValue =
-      coinHistory && coinHistory[coinHistory.length - 1] && coinHistory[coinHistory.length - 2]
-        ? coinHistory[coinHistory.length - 1].price
-        : 1;
+      data && data[data.length - 1] && data[data.length - 2] ? data[data.length - 1].price : 1;
     const lastElement = averageValue;
     let precision = 0;
     if (getNumberMagnitude(lastElement) < 0) {
@@ -249,8 +266,6 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
             <p>TODO: Better graph domain</p>
             <p>TODO: HTTP Requests only in needed quantity</p>
             <p>TODO: Enter search</p>
-            <p>TODO: Max date to proper format</p>
-            <p>TODO: Make calendar work for other timeframes (Search in code for: history_7d)</p>
             <p>TODO: Undefinded error in console</p>
             <Box sx={{ ml: 2, mt: 2, pb: '2em' }}>
               {/*
@@ -422,7 +437,7 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
                     Price history
                   </Typography>
                   <Box sx={{ textAlign: 'right', mr: 6 }}>
-                    {['24h', '7d', '30d', '1y', '5y'].map((tf) => {
+                    {['24h', '7d', '30d', '1y', 'max'].map((tf) => {
                       return (
                         <Button
                           key={tf}
@@ -453,7 +468,7 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
                       <LineChart
                         width={1070}
                         height={400}
-                        data={history?.history_7d}
+                        data={getDataByTimeframe(timeframe)}
                         margin={{ top: 10, right: 80, left: 50, bottom: 10 }}
                       >
                         <XAxis
@@ -465,7 +480,7 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
                         />
                         <YAxis
                           dataKey="price"
-                          domain={[0, getMaxNumber(10)]}
+                          domain={[0, getMaxNumber(10, getDataByTimeframe(timeframe))]}
                           tickFormatter={formatYAxis}
                           unit={baseCurrency.symbol}
                           allowDataOverflow={true}
