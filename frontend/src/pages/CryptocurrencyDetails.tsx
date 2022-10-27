@@ -195,20 +195,17 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
     });
   }
 
-  /*
   const walletEntry =
     wallet?.cryptocurrencies &&
     Object.entries(wallet?.cryptocurrencies).find(([key]) => {
-      return parseInt(key) === coin?.id;
+      return key === coin?.id;
     });
-    
 
   const walletAmount = walletEntry ? walletEntry[1] : 0.0;
 
   const walletAmountFormatted = walletAmount.toLocaleString(locale, {
     minimumFractionDigits: numberPrecision,
   });
-  */
 
   const tooltipLabelFormatter = (value: number) => {
     return 'Date : ' + moment(value).format('MMM Do YYYY');
@@ -267,6 +264,8 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
             <p>TODO: HTTP Requests only in needed quantity</p>
             <p>TODO: Enter search</p>
             <p>TODO: Undefinded error in console</p>
+            <p>TODO: Better usability for buy/sell currency input</p>
+            <p>TODO: Separate components</p>
             <Box sx={{ ml: 2, mt: 2, pb: '2em' }}>
               {/*
                *
@@ -428,6 +427,252 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
               </Grid>
               {/*
                *
+               * * * * Trading * * * *
+               *
+               */}
+              <Box id="trade">
+                <Typography variant="h3" sx={{ mt: 3, mb: 3 }}>
+                  {'Buy or sell ' + coin?.name}
+                </Typography>
+                <Box>
+                  <Typography variant="h5" gutterBottom sx={{ mr: 2, mt: 5, display: 'inline' }}>
+                    Your current wealth:
+                  </Typography>
+                  <Typography
+                    variant="h4"
+                    sx={{
+                      fontWeight: '600',
+                      color: 'green',
+                      display: 'inline',
+                    }}
+                  >
+                    {Number(wallet?.referenceCurrency).toLocaleString(locale, {
+                      minimumFractionDigits: numberPrecision,
+                    }) +
+                      ' ' +
+                      baseCurrency.symbol}
+                  </Typography>
+                </Box>
+                <Box sx={{ mt: 3 }}>
+                  <Typography variant="h5" gutterBottom sx={{ mr: 2, mt: 5, display: 'inline' }}>
+                    Your current <strong>{coin?.name}</strong> stock:
+                  </Typography>
+                  <Typography
+                    variant="h4"
+                    sx={{
+                      fontWeight: '600',
+                      color: darkerColor,
+                      display: 'inline',
+                    }}
+                  >
+                    {walletAmountFormatted}
+                  </Typography>
+                </Box>
+                <Box sx={{ mt: 5, mb: 3 }}>
+                  <Typography variant="h5" gutterBottom sx={{ mt: 3, mr: 2, display: 'inline' }}>
+                    Buy:
+                  </Typography>
+                  <Button
+                    variant="contained"
+                    disabled={!buyAmount}
+                    sx={{
+                      mr: '1em',
+                      display: 'inline',
+                      width: 200,
+                      color: 'white',
+                      backgroundColor: darkerColor,
+                      borderColor: darkerColor,
+                      ':hover': {
+                        color: 'white',
+                        backgroundColor: darkerColor,
+                        borderColor: darkerColor,
+                      },
+                    }}
+                    onClick={handleBuyDialogOpen}
+                  >
+                    {'Buy ' + coin?.name}
+                  </Button>
+                  <TextField
+                    value={buyAmount}
+                    type="number"
+                    variant="standard"
+                    sx={{ ml: 2, display: 'inline' }}
+                    InputProps={{ inputProps: { step: 0.000001, min: 0.0 } }}
+                    onChange={(e) => {
+                      e.target.value === ''
+                        ? setBuyAmount(0)
+                        : setBuyAmount(parseFloat(e.target.value));
+                    }}
+                  />
+                  {!!buyAmount && (
+                    <Box sx={{ display: 'inline' }}>
+                      <Typography
+                        sx={{ ml: 1, display: 'inline', fontWeight: '450', fontSize: 20 }}
+                      >
+                        for
+                      </Typography>
+                      <Typography
+                        sx={{
+                          ml: 1,
+                          display: 'inline',
+                          fontWeight: '450',
+                          fontSize: 20,
+                          color: 'red',
+                        }}
+                      >
+                        {'- '}
+                        {coin?.current_price &&
+                          (coin?.current_price * buyAmount).toLocaleString(locale, {
+                            minimumFractionDigits: numberPrecision,
+                          }) +
+                            ' ' +
+                            baseCurrency.symbol}
+                      </Typography>
+                    </Box>
+                  )}
+                </Box>
+                <Box sx={{ mt: 3, mb: 3 }}>
+                  <Typography variant="h5" gutterBottom sx={{ mt: 3, mr: 2, display: 'inline' }}>
+                    Sell:
+                  </Typography>
+                  <Button
+                    variant="contained"
+                    disabled={!sellAmount}
+                    sx={{
+                      mr: '1em',
+                      display: 'inline',
+                      width: 200,
+                      color: 'white',
+                      backgroundColor: darkerColor,
+                      borderColor: darkerColor,
+                      ':hover': {
+                        color: 'white',
+                        backgroundColor: darkerColor,
+                        borderColor: darkerColor,
+                      },
+                    }}
+                    onClick={handleSellDialogOpen}
+                  >
+                    {'Sell ' + coin?.name}
+                  </Button>
+                  <TextField
+                    value={sellAmount}
+                    type="number"
+                    variant="standard"
+                    sx={{ ml: 2, display: 'inline' }}
+                    InputProps={{ inputProps: { step: 0.000001, min: 0.0 } }}
+                    onChange={(e) => {
+                      e.target.value === ''
+                        ? setSellAmount(0)
+                        : setSellAmount(parseFloat(e.target.value));
+                    }}
+                  />
+                  {!!sellAmount && (
+                    <Box sx={{ display: 'inline' }}>
+                      <Typography
+                        sx={{ ml: 1, display: 'inline', fontWeight: '450', fontSize: 20 }}
+                      >
+                        for
+                      </Typography>
+                      <Typography
+                        sx={{
+                          ml: 1,
+                          display: 'inline',
+                          fontWeight: '450',
+                          fontSize: 20,
+                          color: 'green',
+                        }}
+                      >
+                        {'+ '}
+                        {coin?.current_price &&
+                          (coin?.current_price * sellAmount).toLocaleString(locale, {
+                            minimumFractionDigits: numberPrecision,
+                          }) +
+                            ' ' +
+                            baseCurrency.symbol}
+                      </Typography>
+                    </Box>
+                  )}
+                </Box>
+                <div id="buy-dialog">
+                  <Dialog
+                    open={openBuyDialog}
+                    TransitionComponent={Transition}
+                    onClose={handleBuyDialogClose}
+                    aria-describedby="alert-dialog-buy-cryptocurrency"
+                  >
+                    <DialogTitle>{'Please confirm cryptocurrency purchase'}</DialogTitle>
+                    <DialogContent>
+                      <DialogContentText id="alert-dialog-buy-cryptocurrency">
+                        Are you sure that you want to buy{' '}
+                        <strong>
+                          {buyAmount} {coin?.name}
+                        </strong>{' '}
+                        {'for '}
+                        <strong>
+                          {coin?.current_price &&
+                            (coin?.current_price * buyAmount).toLocaleString(locale, {
+                              minimumFractionDigits: numberPrecision,
+                            }) +
+                              ' ' +
+                              baseCurrency.symbol}
+                        </strong>
+                        {' ?'}
+                      </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                      <Button variant="contained" color="success" onClick={handleBuyDialogCloseYes}>
+                        Yes
+                      </Button>
+                      <Button variant="contained" color="error" onClick={handleBuyDialogClose}>
+                        No
+                      </Button>
+                    </DialogActions>
+                  </Dialog>
+                </div>
+                <div id="sell-dialog">
+                  <Dialog
+                    open={openSellDialog}
+                    TransitionComponent={Transition}
+                    onClose={handleSellDialogClose}
+                    aria-describedby="alert-dialog-sell-cryptocurrency"
+                  >
+                    <DialogTitle>{'Please confirm cryptocurrency sale'}</DialogTitle>
+                    <DialogContent>
+                      <DialogContentText id="alert-dialog-sale-cryptocurrency">
+                        Are you sure that you want to sell{' '}
+                        <strong>
+                          {sellAmount} {coin?.name}
+                        </strong>{' '}
+                        {'for '}
+                        <strong>
+                          {coin?.current_price &&
+                            (coin?.current_price * sellAmount).toLocaleString(locale, {
+                              minimumFractionDigits: numberPrecision,
+                            }) +
+                              ' ' +
+                              baseCurrency.symbol}
+                        </strong>
+                        {' ?'}
+                      </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                      <Button
+                        variant="contained"
+                        color="success"
+                        onClick={handleSellDialogCloseYes}
+                      >
+                        Yes
+                      </Button>
+                      <Button variant="contained" color="error" onClick={handleSellDialogClose}>
+                        No
+                      </Button>
+                    </DialogActions>
+                  </Dialog>
+                </div>
+              </Box>
+              {/*
+               *
                * * * * Price Graph * * * *
                *
                */}
@@ -501,7 +746,11 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
                   </Box>
                 </Box>
               )}
-
+              {/*
+               *
+               * * * * Description * * * *
+               *
+               */}
               {coin?.description && (
                 <Typography variant="h3" sx={{ mb: 3, mt: 3 }}>
                   Description
@@ -596,272 +845,7 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
                   {...coin}
                 />
               )}
-              {cryptocurrencies.all &&
-                cryptocurrencies.all.coins &&
-                cryptocurrencies.all.coins.filter((c) => c.id === coin?.id).length !== 0 && (
-                  <Box id="trade">
-                    <Typography variant="h3" sx={{ mt: 3, mb: 3 }}>
-                      {'Buy or sell ' + coin?.name}
-                    </Typography>
-                    <Box>
-                      <Typography
-                        variant="h5"
-                        gutterBottom
-                        sx={{ mr: 2, mt: 5, display: 'inline' }}
-                      >
-                        Your current wealth:
-                      </Typography>
-                      <Typography
-                        variant="h4"
-                        sx={{
-                          fontWeight: '600',
-                          color: 'green',
-                          display: 'inline',
-                        }}
-                      >
-                        {Number(wallet?.referenceCurrency).toLocaleString(locale, {
-                          minimumFractionDigits: numberPrecision,
-                        }) +
-                          ' ' +
-                          coinBase?.sign}
-                      </Typography>
-                    </Box>
-                    <Box sx={{ mt: 3 }}>
-                      <Typography
-                        variant="h5"
-                        gutterBottom
-                        sx={{ mr: 2, mt: 5, display: 'inline' }}
-                      >
-                        Your current <strong>{coin?.name}</strong> stock:
-                      </Typography>
-                      <Typography
-                        variant="h4"
-                        sx={{
-                          fontWeight: '600',
-                          color: coin?.color,
-                          display: 'inline',
-                        }}
-                      >
-                        {walletAmountFormatted}
-                      </Typography>
-                    </Box>
-                    <Box sx={{ mt: 5, mb: 3 }}>
-                      <Typography
-                        variant="h5"
-                        gutterBottom
-                        sx={{ mt: 3, mr: 2, display: 'inline' }}
-                      >
-                        Buy:
-                      </Typography>
-                      <Button
-                        variant="contained"
-                        disabled={!buyAmount}
-                        sx={{
-                          mr: '1em',
-                          display: 'inline',
-                          width: 200,
-                          color: 'white',
-                          backgroundColor: coin?.color,
-                          borderColor: coin?.color,
-                          ':hover': {
-                            color: 'white',
-                            backgroundColor: coin?.color,
-                            borderColor: coin?.color,
-                          },
-                        }}
-                        onClick={handleBuyDialogOpen}
-                      >
-                        {'Buy ' + coin?.name}
-                      </Button>
-                      <TextField
-                        value={buyAmount}
-                        type="number"
-                        variant="standard"
-                        sx={{ ml: 2, display: 'inline' }}
-                        InputProps={{ inputProps: { step: 0.000001, min: 0.0 } }}
-                        onChange={(e) => {
-                          e.target.value === ''
-                            ? setBuyAmount(0)
-                            : setBuyAmount(parseFloat(e.target.value));
-                        }}
-                      />
-                      {!!buyAmount && (
-                        <Box sx={{ display: 'inline' }}>
-                          <Typography
-                            sx={{ ml: 1, display: 'inline', fontWeight: '450', fontSize: 20 }}
-                          >
-                            for
-                          </Typography>
-                          <Typography
-                            sx={{
-                              ml: 1,
-                              display: 'inline',
-                              fontWeight: '450',
-                              fontSize: 20,
-                              color: 'red',
-                            }}
-                          >
-                            {'- '}
-                            {coin?.price &&
-                              (parseFloat(coin?.price) * buyAmount).toLocaleString(locale, {
-                                minimumFractionDigits: numberPrecision,
-                              }) +
-                                ' ' +
-                                coinBase?.sign}
-                          </Typography>
-                        </Box>
-                      )}
-                    </Box>
-                    <Box sx={{ mt: 3, mb: 3 }}>
-                      <Typography
-                        variant="h5"
-                        gutterBottom
-                        sx={{ mt: 3, mr: 2, display: 'inline' }}
-                      >
-                        Sell:
-                      </Typography>
-                      <Button
-                        variant="contained"
-                        disabled={!sellAmount}
-                        sx={{
-                          mr: '1em',
-                          display: 'inline',
-                          width: 200,
-                          color: 'white',
-                          backgroundColor: coin?.color,
-                          borderColor: coin?.color,
-                          ':hover': {
-                            color: 'white',
-                            backgroundColor: coin?.color,
-                            borderColor: coin?.color,
-                          },
-                        }}
-                        onClick={handleSellDialogOpen}
-                      >
-                        {'Sell ' + coin?.name}
-                      </Button>
-                      <TextField
-                        value={sellAmount}
-                        type="number"
-                        variant="standard"
-                        sx={{ ml: 2, display: 'inline' }}
-                        InputProps={{ inputProps: { step: 0.000001, min: 0.0 } }}
-                        onChange={(e) => {
-                          e.target.value === ''
-                            ? setSellAmount(0)
-                            : setSellAmount(parseFloat(e.target.value));
-                        }}
-                      />
-                      {!!sellAmount && (
-                        <Box sx={{ display: 'inline' }}>
-                          <Typography
-                            sx={{ ml: 1, display: 'inline', fontWeight: '450', fontSize: 20 }}
-                          >
-                            for
-                          </Typography>
-                          <Typography
-                            sx={{
-                              ml: 1,
-                              display: 'inline',
-                              fontWeight: '450',
-                              fontSize: 20,
-                              color: 'green',
-                            }}
-                          >
-                            {'+ '}
-                            {coin?.price &&
-                              (parseFloat(coin?.price) * sellAmount).toLocaleString(locale, {
-                                minimumFractionDigits: numberPrecision,
-                              }) +
-                                ' ' +
-                                coinBase?.sign}
-                          </Typography>
-                        </Box>
-                      )}
-                    </Box>
-
-                    <div id="buy-dialog">
-                      <Dialog
-                        open={openBuyDialog}
-                        TransitionComponent={Transition}
-                        onClose={handleBuyDialogClose}
-                        aria-describedby="alert-dialog-buy-cryptocurrency"
-                      >
-                        <DialogTitle>{'Please confirm cryptocurrency purchase'}</DialogTitle>
-                        <DialogContent>
-                          <DialogContentText id="alert-dialog-buy-cryptocurrency">
-                            Are you sure that you want to buy{' '}
-                            <strong>
-                              {buyAmount} {coin?.name}
-                            </strong>{' '}
-                            {'for '}
-                            <strong>
-                              {coin?.price &&
-                                (parseFloat(coin?.price) * buyAmount).toLocaleString(locale, {
-                                  minimumFractionDigits: numberPrecision,
-                                }) +
-                                  ' ' +
-                                  coinBase?.sign}
-                            </strong>
-                            {' ?'}
-                          </DialogContentText>
-                        </DialogContent>
-                        <DialogActions>
-                          <Button
-                            variant="contained"
-                            color="success"
-                            onClick={handleBuyDialogCloseYes}
-                          >
-                            Yes
-                          </Button>
-                          <Button variant="contained" color="error" onClick={handleBuyDialogClose}>
-                            No
-                          </Button>
-                        </DialogActions>
-                      </Dialog>
-                    </div>
-                    <div id="sell-dialog">
-                      <Dialog
-                        open={openSellDialog}
-                        TransitionComponent={Transition}
-                        onClose={handleSellDialogClose}
-                        aria-describedby="alert-dialog-sell-cryptocurrency"
-                      >
-                        <DialogTitle>{'Please confirm cryptocurrency sale'}</DialogTitle>
-                        <DialogContent>
-                          <DialogContentText id="alert-dialog-sale-cryptocurrency">
-                            Are you sure that you want to sell{' '}
-                            <strong>
-                              {sellAmount} {coin?.name}
-                            </strong>{' '}
-                            {'for '}
-                            <strong>
-                              {coin?.price &&
-                                (parseFloat(coin?.price) * sellAmount).toLocaleString(locale, {
-                                  minimumFractionDigits: numberPrecision,
-                                }) +
-                                  ' ' +
-                                  coinBase?.sign}
-                            </strong>
-                            {' ?'}
-                          </DialogContentText>
-                        </DialogContent>
-                        <DialogActions>
-                          <Button
-                            variant="contained"
-                            color="success"
-                            onClick={handleSellDialogCloseYes}
-                          >
-                            Yes
-                          </Button>
-                          <Button variant="contained" color="error" onClick={handleSellDialogClose}>
-                            No
-                          </Button>
-                        </DialogActions>
-                      </Dialog>
-                    </div>
-                  </Box>
-                )}
+              
                               */}
             </Box>
           </Paper>
