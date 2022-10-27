@@ -1,31 +1,39 @@
 import { CardActionArea, Grid } from '@mui/material';
+import { LightenDarkenColor, calculateBrightness } from '../services/util/colorUtils';
 import { Link } from 'react-router-dom';
 import { Sparklines, SparklinesLine } from 'react-sparklines';
-import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import { useColor } from 'color-thief-react';
 import Box from '@mui/material/Box';
-// TODO: Use
-//import ICryptocurrency from '../interfaces/cryptocurrency/ICryptocurrency';
+import ICryptocurrency from '../interfaces/cryptocurrency/ICryptocurrency';
 import React from 'react';
+import TrendingDownIcon from '@mui/icons-material/TrendingDown';
+import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import Typography from '@mui/material/Typography';
+import config from '../config/Config';
 
-const priceChange = (history: string[]) => {
+const priceChange = (history: number[]) => {
   const lastElement = history[history.length - 1];
   const lastButOneElement = history[history.length - 2];
-  return parseFloat(lastElement) - parseFloat(lastButOneElement);
+  return lastElement - lastButOneElement;
 };
 
 const numberPrecision = 7;
 const locale = 'en-GB';
 
-// TODO
-//const CryptocurrencyWallet: React.FC<
-//  ICryptoCoin & { baseSymbol: string; baseSign: string; amount: number }
-//> = (props) => {
-const CryptocurrencyWallet: React.FC = (props) => {
+const CryptocurrencyWallet: React.FC<
+  ICryptocurrency & { baseSymbol: string; baseCode: string; amount: number }
+> = (props) => {
+  // Calculate dominant color from image
+  const originalColor = useColor(config.urls.proxy + props.image, 'hex', {
+    crossOrigin: 'anonymous',
+  }).data;
+  const brightness = calculateBrightness(originalColor ?? '#000000');
+  const color =
+    brightness > 160
+      ? LightenDarkenColor(originalColor ?? '#000000', 160 - brightness)
+      : originalColor;
+
   return (
-    <p>TODO</p>
-    /*
     <Grid item xs={12} sx={{ mb: 2 }}>
       <CardActionArea
         component={Link}
@@ -42,13 +50,13 @@ const CryptocurrencyWallet: React.FC = (props) => {
             <Box
               component="img"
               alt="Not found image"
-              src={props.iconUrl}
+              src={props.image}
               sx={{ width: 60, height: 'auto', maxHeight: 60, maxWidth: 60 }}
             />
           </Grid>
           <Grid item xs={2}>
             <Typography sx={{ fontWeight: '450', lineHeight: 1.2, fontSize: 16 }}>
-              {props.name + ' (' + props.symbol + ')'}
+              {props.name + ' (' + props.symbol.toLocaleUpperCase() + ')'}
             </Typography>
           </Grid>
           <Grid item xs={2}>
@@ -60,31 +68,31 @@ const CryptocurrencyWallet: React.FC = (props) => {
           </Grid>
           <Grid item xs={2}>
             <Typography sx={{ fontWeight: '450', fontSize: 20, color: 'green' }}>
-              {Number(parseFloat(props.price) * props.amount).toLocaleString(locale, {
+              {Number(props.current_price * props.amount).toLocaleString(locale, {
                 minimumFractionDigits: numberPrecision,
               }) +
                 ' ' +
-                props.baseSign}
+                props.baseSymbol}
             </Typography>
           </Grid>
           <Grid item xs={2}>
             <Typography sx={{ fontWeight: '350', fontSize: 18, color: '#242424' }}>
-              {Number(parseFloat(props.price)).toLocaleString(locale, {
+              {Number(props.current_price).toLocaleString(locale, {
                 minimumFractionDigits: numberPrecision,
               }) +
                 ' ' +
-                props.baseSign}
+                props.baseSymbol}
             </Typography>
           </Grid>
           <Grid item xs={2}>
             <Grid container>
               <Grid item xs={12}>
-                {priceChange(props.history) > 0 ? (
-                  <ArrowUpwardIcon sx={{ fontSize: 40, color: 'green' }} />
+                {priceChange(props.sparkline_in_7d.price) > 0 ? (
+                  <TrendingUpIcon sx={{ fontSize: 40, color: 'green' }} />
                 ) : (
-                  <ArrowDownwardIcon color="error" sx={{ fontSize: 40, color: 'red' }} />
+                  <TrendingDownIcon color="error" sx={{ fontSize: 40, color: 'red' }} />
                 )}
-                {priceChange(props.history) > 0 ? (
+                {priceChange(props.sparkline_in_7d.price) > 0 ? (
                   <Typography
                     sx={{
                       fontWeight: '400',
@@ -95,10 +103,10 @@ const CryptocurrencyWallet: React.FC = (props) => {
                     }}
                   >
                     {'+ '}
-                    {Number(priceChange(props.history)).toLocaleString(locale, {
+                    {Number(priceChange(props.sparkline_in_7d.price)).toLocaleString(locale, {
                       minimumFractionDigits: numberPrecision,
                     })}
-                    {' ' + props.baseSign}
+                    {' ' + props.baseSymbol}
                   </Typography>
                 ) : (
                   <Typography
@@ -111,24 +119,30 @@ const CryptocurrencyWallet: React.FC = (props) => {
                     }}
                   >
                     {'- '}
-                    {Number(Math.abs(priceChange(props.history))).toLocaleString(locale, {
-                      minimumFractionDigits: numberPrecision,
-                    })}
-                    {' ' + props.baseSign}
+                    {Number(Math.abs(priceChange(props.sparkline_in_7d.price))).toLocaleString(
+                      locale,
+                      {
+                        minimumFractionDigits: numberPrecision,
+                      }
+                    )}
+                    {' ' + props.baseSymbol}
                   </Typography>
                 )}
               </Grid>
             </Grid>
           </Grid>
           <Grid item xs={1}>
-            <Sparklines data={props.history.map((v) => parseFloat(v))}>
-              <SparklinesLine style={{ stroke: props.color, fill: props.color, strokeWidth: 5 }} />
+            <Sparklines
+              data={props.sparkline_in_7d.price.map((v) =>
+                typeof v === 'number' ? v : Number(0.0)
+              )}
+            >
+              <SparklinesLine style={{ stroke: color, fill: color, strokeWidth: 5 }} />
             </Sparklines>
           </Grid>
         </Grid>
       </CardActionArea>
     </Grid>
-    */
   );
 };
 

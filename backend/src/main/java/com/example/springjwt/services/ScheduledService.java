@@ -35,7 +35,7 @@ public class ScheduledService {
     // Every odd minute, in every 5 seconds from second 0 to second 45 (10 times per minute)
     // Update the data for the first half of the coins (first 500)
     @Scheduled(cron = "0-45/5 1-59/2 * * * *")
-    public void scheduleTaskUsingCronExpression1() {
+    public void updateCryptocurrenciesFirstHalf() {
         LocalDateTime now = LocalDateTime.now();
         int minute = now.getMinute();
         int second = now.getSecond();
@@ -52,7 +52,7 @@ public class ScheduledService {
     // Every even minute, in every 5 seconds from second 0 to second 45 (10 times per minute)
     // Update the data for the second half of the coins (last 500)
     @Scheduled(cron = "0-45/5 0-59/2 * * * *")
-    public void scheduleTaskUsingCronExpression2() {
+    public void updateCryptocurrenciesSecondHalf() {
         LocalDateTime now = LocalDateTime.now();
         int minute = now.getMinute();
         int second = now.getSecond();

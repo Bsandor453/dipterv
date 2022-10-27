@@ -27,13 +27,14 @@ const CryptocurrencyCard: React.FC<ICryptocurrency & { baseSymbol: string; baseC
   props
 ) => {
   // Calculate dominant color from image
-  const color = useColor(config.urls.proxy + props.image, 'hex', {
+  const originalColor = useColor(config.urls.proxy + props.image, 'hex', {
     crossOrigin: 'anonymous',
   }).data;
-
-  const brightness = calculateBrightness(color ?? '#000000');
-  const darkerColor =
-    brightness > 160 ? LightenDarkenColor(color ?? '#000000', 160 - brightness) : color;
+  const brightness = calculateBrightness(originalColor ?? '#000000');
+  const color =
+    brightness > 160
+      ? LightenDarkenColor(originalColor ?? '#000000', 160 - brightness)
+      : originalColor;
 
   const nameFontSize = props.name.length + props.symbol.length > 30 ? 16 : 18;
 
@@ -176,7 +177,7 @@ const CryptocurrencyCard: React.FC<ICryptocurrency & { baseSymbol: string; baseC
                 typeof v === 'number' ? v : Number(0.0)
               )}
             >
-              <SparklinesLine style={{ stroke: darkerColor, fill: darkerColor, strokeWidth: 2 }} />
+              <SparklinesLine style={{ stroke: color, fill: color, strokeWidth: 2 }} />
             </Sparklines>
           </Grid>
         </Grid>

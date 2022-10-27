@@ -247,7 +247,7 @@ export const getCryptocurrencies = (
   };
 };
 
-export const getCryptocurrency = (id: number) => {
+export const getCryptocurrency = (id: string) => {
   return (dispatch: Dispatch<CryptocurrencyAction>): void => {
     CryptocurrencyService.getCryptocurrency(id).then((response) => {
       dispatch({
@@ -258,7 +258,29 @@ export const getCryptocurrency = (id: number) => {
   };
 };
 
-export const getCryptocurrencyHistory = (id: number, timeframe: string) => {
+export const getCryptocurrenciesWithIds = (ids: string[]) => {
+  return (dispatch: Dispatch<CryptocurrencyAction>): void => {
+    CryptocurrencyService.getCryptocurrenciesWithIds(ids).then((response) => {
+      dispatch({
+        type: ActionType.GET_CRYPTOCURRENCIES_WITH_IDS,
+        payload: response.data,
+      });
+    });
+  };
+};
+
+export const getCryptocurrenciesInWallet = () => {
+  return (dispatch: Dispatch<CryptocurrencyAction>): void => {
+    CryptocurrencyService.getCryptocurrenciesInWallet().then((response) => {
+      dispatch({
+        type: ActionType.GET_CRYPTOCURRENCIES_IN_WALLET,
+        payload: response.data,
+      });
+    });
+  };
+};
+
+export const getCryptocurrencyHistory = (id: string, timeframe: string) => {
   return (dispatch: Dispatch<CryptocurrencyAction>): void => {
     CryptocurrencyService.getCryptocurrencyHistory(id, timeframe).then((response) => {
       dispatch({

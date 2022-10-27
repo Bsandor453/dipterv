@@ -122,12 +122,14 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
   const wallet = cryptocurrencies.wallet;
 
   // Calculate dominant color from image
-  const color = useColor(config.urls.proxy + coin?.image, 'hex', {
+  const originalColor = useColor(config.urls.proxy + coin?.image, 'hex', {
     crossOrigin: 'anonymous',
   }).data;
-  const brightness = calculateBrightness(color ?? '#000000');
-  const darkerColor =
-    brightness > 160 ? LightenDarkenColor(color ?? '#000000', 160 - brightness) : color;
+  const brightness = calculateBrightness(originalColor ?? '#000000');
+  const color =
+    brightness > 160
+      ? LightenDarkenColor(originalColor ?? '#000000', 160 - brightness)
+      : originalColor;
 
   const infoMessage = useSelector((state: State) => state.MESSAGE.info);
 
@@ -261,10 +263,11 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
         <Grid item xs={12}>
           <Paper sx={{ p: 5, display: 'flex', flexDirection: 'column' }}>
             <p>TODO: Better graph domain</p>
+            <p>TODO: Better usability for buy/sell currency input</p>
             <p>TODO: HTTP Requests only in needed quantity</p>
             <p>TODO: Enter search</p>
             <p>TODO: Undefinded error in console</p>
-            <p>TODO: Better usability for buy/sell currency input</p>
+            <p>TODO: Unified date format</p>
             <p>TODO: Separate components</p>
             <Box sx={{ ml: 2, mt: 2, pb: '2em' }}>
               {/*
@@ -289,7 +292,7 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
                       </Typography>
                     </Grid>
                     <Grid item xs={7}>
-                      <Typography variant="h4" sx={{ fontWeight: '500', color: darkerColor }}>
+                      <Typography variant="h4" sx={{ fontWeight: '500', color: color }}>
                         {coin?.name}
                       </Typography>
                     </Grid>
@@ -299,10 +302,7 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
                       </Typography>
                     </Grid>
                     <Grid item xs={7}>
-                      <Typography
-                        variant="h4"
-                        sx={{ fontWeight: '400', mt: 3, color: darkerColor }}
-                      >
+                      <Typography variant="h4" sx={{ fontWeight: '400', mt: 3, color: color }}>
                         {coin?.symbol.toLocaleUpperCase()}
                       </Typography>
                     </Grid>
@@ -461,7 +461,7 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
                     variant="h4"
                     sx={{
                       fontWeight: '600',
-                      color: darkerColor,
+                      color: color,
                       display: 'inline',
                     }}
                   >
@@ -480,12 +480,12 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
                       display: 'inline',
                       width: 200,
                       color: 'white',
-                      backgroundColor: darkerColor,
-                      borderColor: darkerColor,
+                      backgroundColor: color,
+                      borderColor: color,
                       ':hover': {
                         color: 'white',
-                        backgroundColor: darkerColor,
-                        borderColor: darkerColor,
+                        backgroundColor: color,
+                        borderColor: color,
                       },
                     }}
                     onClick={handleBuyDialogOpen}
@@ -543,12 +543,12 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
                       display: 'inline',
                       width: 200,
                       color: 'white',
-                      backgroundColor: darkerColor,
-                      borderColor: darkerColor,
+                      backgroundColor: color,
+                      borderColor: color,
                       ':hover': {
                         color: 'white',
-                        backgroundColor: darkerColor,
-                        borderColor: darkerColor,
+                        backgroundColor: color,
+                        borderColor: color,
                       },
                     }}
                     onClick={handleSellDialogOpen}
@@ -690,13 +690,13 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
                           sx={{
                             mr: '1em',
                             mb: 2,
-                            color: timeframe === tf ? 'white' : darkerColor,
-                            backgroundColor: timeframe === tf ? darkerColor : 'white',
-                            borderColor: darkerColor,
+                            color: timeframe === tf ? 'white' : color,
+                            backgroundColor: timeframe === tf ? color : 'white',
+                            borderColor: color,
                             ':hover': {
-                              color: timeframe === tf ? 'white' : darkerColor,
-                              backgroundColor: timeframe === tf ? darkerColor : 'white',
-                              borderColor: darkerColor,
+                              color: timeframe === tf ? 'white' : color,
+                              backgroundColor: timeframe === tf ? color : 'white',
+                              borderColor: color,
                             },
                           }}
                           onClick={() => {
@@ -731,12 +731,7 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
                           allowDataOverflow={true}
                         />
                         <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
-                        <Line
-                          type="monotone"
-                          dataKey="price"
-                          stroke={darkerColor}
-                          strokeWidth={3}
-                        />
+                        <Line type="monotone" dataKey="price" stroke={color} strokeWidth={3} />
                         <Tooltip
                           labelFormatter={tooltipLabelFormatter}
                           formatter={tooltipFormatter}

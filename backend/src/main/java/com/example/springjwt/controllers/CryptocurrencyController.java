@@ -17,6 +17,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @CrossOrigin(origins = "http://localhost:8081", maxAge = 3600)
 @RestController
 @RequestMapping("/api/cryptocurrency")
@@ -48,13 +50,25 @@ public class CryptocurrencyController {
     }
 
     @GetMapping("/{id}")
-    public CryptocurrencyDetailsResponse getCurrency(@PathVariable String id) {
-        return cryptocurrencyService.getCryptocurrencyDetails(id);
+    public ResponseEntity<CryptocurrencyDetailsResponse> getCurrency(@PathVariable String id) {
+        return ResponseEntity.ok(cryptocurrencyService.getCryptocurrencyDetails(id));
+    }
+
+    @GetMapping("/ids/{ids}")
+    public ResponseEntity<List<Cryptocurrency>> getCurrenciesByIds(@PathVariable List<String> ids) {
+        return ResponseEntity.ok(cryptocurrencyService.getCurrenciesWithIds(ids));
+    }
+
+    @GetMapping("/wallet/coins")
+    public ResponseEntity<List<Cryptocurrency>> getCurrenciesInWallet() {
+        return ResponseEntity.ok(cryptocurrencyService.getCurrenciesInWallet());
     }
 
     @GetMapping("/{id}/history")
-    public CryptocurrencyHistoryDb getCurrencyHistory(@PathVariable String id, @RequestParam String timeframe) {
-        return cryptocurrencyService.getCryptocurrencyHistory(id, ETimeframe.getEnumValueFromDaysAgoString(timeframe));
+    public ResponseEntity<CryptocurrencyHistoryDb> getCurrencyHistory(@PathVariable String id,
+                                                                      @RequestParam String timeframe) {
+        return ResponseEntity.ok(cryptocurrencyService.getCryptocurrencyHistory(id,
+                ETimeframe.getEnumValueFromDaysAgoString(timeframe)));
     }
 
     @GetMapping("/wallet")

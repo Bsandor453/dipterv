@@ -11,21 +11,21 @@ import CryptocurrencyWalletHeader from '../components/CryptocurrencyWalletHeader
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import React, { useEffect, useState } from 'react';
+import config from '../config/Config';
 
 const Wallet: React.FC<RouteComponentProps<any>> = () => {
-  //TODO
-
-  /*
   const dispatch = useDispatch();
-  const { getWallet, getCryptocurrencies, depositMoney, resetMoney } = bindActionCreators(
+  const { getWallet, getCryptocurrenciesInWallet, depositMoney, resetMoney } = bindActionCreators(
     actionCreators,
     dispatch
   );
 
   const [money, setMoney] = useState(0);
 
+  const baseCurrency = config.defaults.baseCurrency;
+
   const cryptocurrencies = useSelector((state: State) => state.CRYPTOCURRENCY);
-  const coinBase = cryptocurrencies.all.base;
+  const coinsWallet = cryptocurrencies.coinsWallet;
   const wallet = cryptocurrencies.wallet;
 
   const numberPrecision = 7;
@@ -33,22 +33,16 @@ const Wallet: React.FC<RouteComponentProps<any>> = () => {
 
   useEffect(() => {
     getWallet();
-    // TODO
-    // getCryptocurrencies();
+    getCryptocurrenciesInWallet();
   }, []);
 
   const interval = 20000;
 
   useInterval(() => {
-    // TODO
-    // getCryptocurrencies();
+    getCryptocurrenciesInWallet();
   }, interval);
-  */
 
   return (
-    //TODO
-    <p>TODO</p>
-    /*
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
       <Grid container spacing={3}>
         <Grid item xs={12}>
@@ -62,7 +56,7 @@ const Wallet: React.FC<RouteComponentProps<any>> = () => {
               </Typography>
               <Typography variant="body1" gutterBottom sx={{ mt: 2, mb: 3 }}>
                 You can buy cryptocurrencies from the reference fiat money. The reference money is
-                <strong>{' ' + coinBase.symbol + ' (' + coinBase.sign + ')  .'}</strong>
+                <strong>{' ' + baseCurrency.code + ' (' + baseCurrency.symbol + ')  .'}</strong>
               </Typography>
               <Typography variant="h5" gutterBottom sx={{ mt: 3, mr: 2, display: 'inline' }}>
                 Your current wealth:
@@ -80,7 +74,7 @@ const Wallet: React.FC<RouteComponentProps<any>> = () => {
                   minimumFractionDigits: numberPrecision,
                 }) +
                   ' ' +
-                  coinBase.sign}
+                  baseCurrency.symbol}
               </Typography>
               <Typography variant="h4" gutterBottom sx={{ mt: 5, mb: 3 }}>
                 Deposit or reset money
@@ -110,7 +104,7 @@ const Wallet: React.FC<RouteComponentProps<any>> = () => {
                   }}
                 />
                 <Typography variant="body1" sx={{ ml: 1, display: 'inline' }}>
-                  {coinBase.sign}
+                  {baseCurrency.symbol}
                 </Typography>
               </Box>
               <Box sx={{ mt: 2 }}>
@@ -139,16 +133,14 @@ const Wallet: React.FC<RouteComponentProps<any>> = () => {
                 )}
               {wallet?.cryptocurrencies &&
                 Object.entries(wallet?.cryptocurrencies).map(([key, value]) => {
-                  const cryptocurrency = cryptocurrencies.all.coins?.find(
-                    (coin) => coin.id === parseInt(key)
-                  );
+                  const cryptocurrency = coinsWallet?.find((coin) => coin.id === key);
                   return (
                     cryptocurrency &&
                     value !== 0 && (
                       <CryptocurrencyWallet
                         key={key}
-                        baseSymbol={cryptocurrencies.all.base.symbol}
-                        baseSign={cryptocurrencies.all.base.sign}
+                        baseSymbol={baseCurrency.symbol}
+                        baseCode={baseCurrency.code}
                         amount={value}
                         {...cryptocurrency}
                       />
@@ -161,7 +153,6 @@ const Wallet: React.FC<RouteComponentProps<any>> = () => {
       </Grid>
       <Copyright sx={{ pt: 4 }} />
     </Container>
-    */
   );
 };
 

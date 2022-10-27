@@ -545,4 +545,12 @@ public enum ECryptocurrency {
         return ID_LIST.subList(startIndex, endIndex);
     }
 
+    public static List<String> getIdList(List<ECryptocurrency> enumList) {
+        ArrayList<String> idList = new ArrayList<>();
+        for (ECryptocurrency e : enumList) {
+            idList.add(e.id);
+        }
+        return idList;
+    }
+
 }

@@ -79,6 +79,10 @@ public class CryptocurrencyService {
                 PageRequest.of(currentPage - 1, pageSize, sort));
     }
 
+    public List<Cryptocurrency> getCurrenciesWithIds(List<String> ids) {
+        return cryptocurrencyRepository.findAllByIdIn(ids);
+    }
+
     public CryptocurrencyDetailsResponse getCryptocurrencyDetails(String id) {
         updateCurrencyDetailsFromApi(id);
 
@@ -158,6 +162,12 @@ public class CryptocurrencyService {
 
     public Wallet getWallet() {
         return userService.getCurrentUserEntity().getWallet();
+    }
+
+    public List<Cryptocurrency> getCurrenciesInWallet() {
+        Wallet wallet = getWallet();
+        List<ECryptocurrency> coinIdsInWallet = wallet.getCryptocurrencies().keySet().stream().toList();
+        return cryptocurrencyRepository.findAllByIdIn(ECryptocurrency.getIdList(coinIdsInWallet));
     }
 
     public Map<String, Double> getWalletCryptocurrenciesMapped() {

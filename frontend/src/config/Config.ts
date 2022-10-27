@@ -48,8 +48,11 @@ const CRYPTOCURRENCY_GET_ALL = (
   asc +
   '&search=' +
   search;
-const CRYPTOCURRENCY_GET_COIN = (id: number): string => CRYPTOCURRENCY_URL + '/' + id;
-const CRYPTOCURRENCY_GET_HISTORY = (id: number, timeframe: string): string =>
+const CRYPTOCURRENCY_GET_COIN = (id: string): string => CRYPTOCURRENCY_URL + '/' + id;
+const CRYPTOCURRENCY_GET_COINS_WITH_IDS = (ids: string[]): string =>
+  CRYPTOCURRENCY_URL + '/ids/' + ids.join(', ');
+const CRYPTOCURRENCY_GET_COINS_IN_WALLET = CRYPTOCURRENCY_URL + '/wallet/coins';
+const CRYPTOCURRENCY_GET_HISTORY = (id: string, timeframe: string): string =>
   CRYPTOCURRENCY_GET_COIN(id) + '/history?timeframe=' + timeframe;
 const CRYPTOCURRENCY_BUY = CRYPTOCURRENCY_URL + '/buy';
 const CRYPTOCURRENCY_SELL = CRYPTOCURRENCY_URL + '/sell';
@@ -102,6 +105,8 @@ const config = {
     crypto: {
       all: CRYPTOCURRENCY_GET_ALL,
       coin: CRYPTOCURRENCY_GET_COIN,
+      coinsWithIds: CRYPTOCURRENCY_GET_COINS_WITH_IDS,
+      coinsInWallet: CRYPTOCURRENCY_GET_COINS_IN_WALLET,
       history: CRYPTOCURRENCY_GET_HISTORY,
       buy: CRYPTOCURRENCY_BUY,
       sell: CRYPTOCURRENCY_SELL,
