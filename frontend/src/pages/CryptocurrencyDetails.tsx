@@ -502,17 +502,18 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
                 </Box>
               )}
 
-              {/*
               {coin?.description && (
                 <Typography variant="h3" sx={{ mb: 3, mt: 3 }}>
                   Description
                 </Typography>
               )}
-              <div
+              <Typography
+                sx={{ lineHeight: 1.6 }}
                 dangerouslySetInnerHTML={{
-                  __html: cryptocurrencies.cryptoCoin?.coin?.description ?? '',
+                  __html: coin?.description ?? '',
                 }}
               />
+              {/*
               {coin?.socials.length !== 0 && (
                 <Typography variant="h3" sx={{ mt: 3 }}>
                   Socials
