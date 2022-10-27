@@ -170,6 +170,12 @@ public class CryptocurrencyService {
         return cryptocurrencyRepository.findAllByIdIn(ECryptocurrency.getIdList(coinIdsInWallet));
     }
 
+    public List<Cryptocurrency> getCurrenciesInTransactions() {
+        List<Transaction> transactions = userService.getCurrentUserEntity().getTransactionHistory().getTransactions();
+        List<String> transactionCoinsIdList = getCoinIdsInTransactions(transactions);
+        return cryptocurrencyRepository.findAllByIdIn(transactionCoinsIdList);
+    }
+
     public Map<String, Double> getWalletCryptocurrenciesMapped() {
         Wallet wallet = getWallet();
         Map<String, Double> mapped = new HashMap<>();
@@ -208,7 +214,9 @@ public class CryptocurrencyService {
                 new PagedListHolder<>(transactions, new MutableSortDefinition(sortByProperty, true, ascending));
         page.resort();
         page.setPageSize(pageSize);
-        page.setPage(currentPage);
+        // The backend counts pages from index 0, the frontend from index 1
+        // We have to subtract 1 from the current page number
+        page.setPage(currentPage - 1);
 
         return page;
     }
@@ -393,6 +401,15 @@ public class CryptocurrencyService {
             case HISTORY_MAX -> history.setHistoryMax(historyDataDbList);
         }
         cryptocurrencyHistoryRepository.save(history);
+    }
+
+    public List<String> getCoinIdsInTransactions(List<Transaction> transactions) {
+        ArrayList<String> ids = new ArrayList<>();
+        for (Transaction t : transactions) {
+            if (t.getCryptocurrency() != null && t.getCryptocurrency().id != null)
+                ids.add(t.getCryptocurrency().id);
+        }
+        return ids;
     }
 
 }

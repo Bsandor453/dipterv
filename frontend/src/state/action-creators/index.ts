@@ -280,6 +280,17 @@ export const getCryptocurrenciesInWallet = () => {
   };
 };
 
+export const getCryptocurrenciesInTransactions = () => {
+  return (dispatch: Dispatch<CryptocurrencyAction>): void => {
+    CryptocurrencyService.getCryptocurrenciesInTransactions().then((response) => {
+      dispatch({
+        type: ActionType.GET_CRYPTOCURRENCIES_IN_TRANSACTIONS,
+        payload: response.data,
+      });
+    });
+  };
+};
+
 export const getCryptocurrencyHistory = (id: string, timeframe: string) => {
   return (dispatch: Dispatch<CryptocurrencyAction>): void => {
     CryptocurrencyService.getCryptocurrencyHistory(id, timeframe).then((response) => {

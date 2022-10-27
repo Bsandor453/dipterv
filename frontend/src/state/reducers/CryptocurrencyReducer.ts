@@ -11,6 +11,7 @@ const initialState = {
   coins: null,
   coin: null,
   coinsWallet: null,
+  coinsTransactions: null,
   history: null,
   wallet: null,
   transactions: null,
@@ -20,6 +21,7 @@ type cryptocurrencyState = {
   coins: IPageable<ICryptocurrency> | null;
   coin: ICryptoCurrencyDetails | null;
   coinsWallet: ICryptocurrency[] | null;
+  coinsTransactions: ICryptocurrency[] | null;
   history: ICryptoCurrencyHistory | null;
   wallet: IWallet | null;
   transactions: IPageable<ITransaction> | null;
@@ -36,6 +38,8 @@ const reducer = (
       return { ...state, coin: action.payload };
     case ActionType.GET_CRYPTOCURRENCIES_IN_WALLET:
       return { ...state, coinsWallet: action.payload };
+    case ActionType.GET_CRYPTOCURRENCIES_IN_TRANSACTIONS:
+      return { ...state, coinsTransactions: action.payload };
     case ActionType.GET_CRYPTOCURRENCY_HISTORY:
       return { ...state, history: action.payload };
     case ActionType.CLEAR_CRYPTOCURRENCIES:

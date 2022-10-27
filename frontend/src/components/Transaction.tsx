@@ -13,8 +13,8 @@ const Transaction: React.FC<
   ITransaction & {
     iconUrl: string;
     cryptocurrencyName: string;
+    baseCode: string;
     baseSymbol: string;
-    baseSign: string;
   }
 > = (props) => {
   const sourceDateFormat = 'YYYY-MM-DDTHH:mm:ss';
@@ -58,7 +58,7 @@ const Transaction: React.FC<
       case 'SELL_CRYPTOCURRENCY':
         return formatAmount(props.amount);
       case 'DEPOSIT_MONEY':
-        return formatAmount(props.amount) + ' ' + props.baseSign;
+        return formatAmount(props.amount) + ' ' + props.baseSymbol;
       case 'RESET_MONEY':
         return '-';
     }
@@ -67,9 +67,9 @@ const Transaction: React.FC<
   const mapPriceText = () => {
     switch (props.type) {
       case 'BUY_CRYPTOCURRENCY':
-        return '- ' + formatAmount(props.price) + ' ' + props.baseSign;
+        return '- ' + formatAmount(props.price) + ' ' + props.baseSymbol;
       case 'SELL_CRYPTOCURRENCY':
-        return '+ ' + formatAmount(props.price) + ' ' + props.baseSign;
+        return '+ ' + formatAmount(props.price) + ' ' + props.baseSymbol;
       case 'DEPOSIT_MONEY':
         return '-';
       case 'RESET_MONEY':

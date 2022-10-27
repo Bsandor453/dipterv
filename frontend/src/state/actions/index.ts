@@ -106,6 +106,11 @@ interface IGetCryptocurrenciesInWallet {
   payload: ICryptocurrency[];
 }
 
+interface IGetCryptocurrenciesInTransactions {
+  type: ActionType.GET_CRYPTOCURRENCIES_IN_TRANSACTIONS;
+  payload: ICryptocurrency[];
+}
+
 interface IGetCryptocurrencyHistoryAction {
   type: ActionType.GET_CRYPTOCURRENCY_HISTORY;
   payload: ICryptocurrencyHistory;
@@ -147,6 +152,7 @@ export type CryptocurrencyAction =
   | IGetCryptocurrencyAction
   | IGetCryptocurrenciesWithIdsAction
   | IGetCryptocurrenciesInWallet
+  | IGetCryptocurrenciesInTransactions
   | IGetCryptocurrencyHistoryAction
   | IClearCryptocurrenciesAction
   | IBuyCryptocurrencyAction

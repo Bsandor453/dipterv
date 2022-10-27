@@ -262,10 +262,11 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
       <Grid container spacing={3}>
         <Grid item xs={12}>
           <Paper sx={{ p: 5, display: 'flex', flexDirection: 'column' }}>
-            <p>TODO: Better graph domain</p>
+            <p>TODO: Better graph domain (Search for standards!)</p>
             <p>TODO: Better usability for buy/sell currency input</p>
             <p>TODO: HTTP Requests only in needed quantity</p>
             <p>TODO: Enter search</p>
+            <p>TODO: Coins with always one 0 at the end - best type of format</p>
             <p>TODO: Undefinded error in console</p>
             <p>TODO: Unified date format</p>
             <p>TODO: Separate components</p>

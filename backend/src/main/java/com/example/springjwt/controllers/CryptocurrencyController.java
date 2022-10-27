@@ -64,6 +64,11 @@ public class CryptocurrencyController {
         return ResponseEntity.ok(cryptocurrencyService.getCurrenciesInWallet());
     }
 
+    @GetMapping("/transactions/coins")
+    public ResponseEntity<List<Cryptocurrency>> getCurrenciesInTransactions() {
+        return ResponseEntity.ok(cryptocurrencyService.getCurrenciesInTransactions());
+    }
+
     @GetMapping("/{id}/history")
     public ResponseEntity<CryptocurrencyHistoryDb> getCurrencyHistory(@PathVariable String id,
                                                                       @RequestParam String timeframe) {
@@ -85,8 +90,12 @@ public class CryptocurrencyController {
                                                                    @RequestParam Boolean asc) {
         PagedListHolder<MappedTransaction> transactionPage =
                 cryptocurrencyService.getTransactionHistory(page, size, sortBy, asc);
-        return ResponseEntity.ok(new TransactionPageResponse(transactionPage.getPageList(), transactionPage.getPage(),
-                transactionPage.getPageCount(), transactionPage.getNrOfElements()));
+
+        // The backend counts pages from index 0, the frontend from index 1
+        // We have to add 1 to the current page number
+        return ResponseEntity.ok(
+                new TransactionPageResponse(transactionPage.getPageList(), transactionPage.getPage() + 1,
+                        transactionPage.getPageCount(), transactionPage.getNrOfElements()));
     }
 
     @PostMapping("/depositmoney")

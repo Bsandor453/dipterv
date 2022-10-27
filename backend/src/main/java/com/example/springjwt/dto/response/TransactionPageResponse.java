@@ -11,7 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 public class TransactionPageResponse {
 
-    private List<MappedTransaction> transactions;
+    private List<MappedTransaction> content;
 
     private int currentPage;
 

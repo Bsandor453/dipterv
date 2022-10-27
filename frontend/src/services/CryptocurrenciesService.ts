@@ -34,6 +34,10 @@ const getCryptocurrenciesInWallet = (): Promise<AxiosResponse<any>> => {
   return httpClient.get(config.urls.crypto.coinsInWallet, tokenAuthUrlConfig());
 };
 
+const getCryptocurrenciesInTransactions = (): Promise<AxiosResponse<any>> => {
+  return httpClient.get(config.urls.crypto.coinsInTransactions, tokenAuthUrlConfig());
+};
+
 const getCryptocurrencyHistory = (id: string, timeframe: string): Promise<AxiosResponse<any>> => {
   return httpClient.get(config.urls.crypto.history(id, timeframe), tokenAuthUrlConfig());
 };
@@ -83,6 +87,7 @@ export default {
   getCryptocurrency,
   getCryptocurrenciesWithIds,
   getCryptocurrenciesInWallet,
+  getCryptocurrenciesInTransactions,
   getCryptocurrencyHistory,
   buyCryptocurrency,
   sellCryptocurrency,

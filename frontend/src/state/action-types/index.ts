@@ -25,6 +25,7 @@ export enum ActionType {
   GET_CRYPTOCURRENCY = 'get_cryptocurrency',
   GET_CRYPTOCURRENCIES_WITH_IDS = 'get_cryptocurrencies_with_ids',
   GET_CRYPTOCURRENCIES_IN_WALLET = 'get_cryptocurrencies_in_wallet',
+  GET_CRYPTOCURRENCIES_IN_TRANSACTIONS = 'get_cryptocurrencies_in_transactions',
   GET_CRYPTOCURRENCY_HISTORY = 'get_cryptocurrency_history',
   CLEAR_CRYPTOCURRENCIES = 'clear_cryptocurrencies',
   BUY_CRYPTOCURRENCY = 'buy_cryptocurrency',

@@ -3,51 +3,54 @@ import { RouteComponentProps } from 'react-router-dom';
 import { State, actionCreators } from '../state';
 import { bindActionCreators } from 'redux';
 import { useDispatch, useSelector } from 'react-redux';
-import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import Container from '@mui/material/Container';
 import Copyright from '../components/Copyright';
 import Grid from '@mui/material/Grid';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import Paper from '@mui/material/Paper';
 import React, { useEffect, useState } from 'react';
 import Transaction from '../components/Transaction';
 import TransactionHeader from '../components/TransactionHeader';
+import config from '../config/Config';
 
 const TransactionHistory: React.FC<RouteComponentProps<any>> = () => {
-  //TODO
-
-  /*
   const dispatch = useDispatch();
-  const { getCryptocurrencies, getTransactions } = bindActionCreators(actionCreators, dispatch);
+  const { getTransactions, getCryptocurrenciesInTransactions } = bindActionCreators(
+    actionCreators,
+    dispatch
+  );
 
   const cryptocurrencies = useSelector((state: State) => state.CRYPTOCURRENCY);
-  const transactions = cryptocurrencies.transactions;
+  const transactionPage = cryptocurrencies.transactions;
+  const transactions = transactionPage?.content;
+  const coinsTransactions = cryptocurrencies.coinsTransactions;
+  const baseCurrency = config.defaults.baseCurrency;
 
   const [sortBy, setSortBy] = useState('date');
   const [sortDirection, setSortDirection] = useState('desc');
 
   useEffect(() => {
-    // TODO: Why do we need this here?
-    // getCryptocurrencies();
+    getCryptocurrenciesInTransactions();
   }, []);
 
   useEffect(() => {
-    getTransactions(transactions?.currentPage ?? 0, 10, sortBy, sortDirection === 'asc');
+    getTransactions(transactionPage?.currentPage ?? 1, 10, sortBy, sortDirection === 'asc');
   }, [sortBy, sortDirection]);
 
   const PaginationController = () => {
     return (
-      transactions?.transactions &&
-      (transactions?.transactions).length !== 0 && (
+      transactions &&
+      transactions.length != 0 && (
         <Grid container sx={{ mb: 3, mt: 5 }}>
           <Grid item xs={6}>
             <Pagination
               variant="outlined"
               shape="rounded"
-              count={transactions?.pageCount}
-              page={transactions?.currentPage + 1}
+              count={transactionPage?.pageCount}
+              page={transactionPage?.currentPage}
               onChange={(_event, page) => {
-                getTransactions(page - 1, 10, sortBy, sortDirection === 'asc');
+                getTransactions(page, 10, sortBy, sortDirection === 'asc');
               }}
             />
           </Grid>
@@ -76,16 +79,28 @@ const TransactionHistory: React.FC<RouteComponentProps<any>> = () => {
                 <MenuItem value="amount">{'Amount'}</MenuItem>
                 <MenuItem value="price">{'Price'}</MenuItem>
               </Select>
-
               <Button
                 variant="outlined"
-                color="info"
-                sx={{ height: 40, mb: 1 }}
+                sx={{
+                  height: 40,
+                  mb: 1,
+                  color: 'rgba(0, 0, 0, 0.7)',
+                  borderColor: 'rgba(0, 0, 0, 0.23)',
+                  ':hover': {
+                    color: 'initial',
+                    backgroundColor: 'initial',
+                    borderColor: 'initial',
+                  },
+                }}
                 onClick={() => {
                   sortDirection === 'asc' ? setSortDirection('desc') : setSortDirection('asc');
                 }}
               >
-                {sortDirection === 'asc' ? <ArrowUpwardIcon /> : <ArrowDownwardIcon />}
+                {sortDirection === 'asc' ? (
+                  <KeyboardArrowUpIcon fontSize="large" />
+                ) : (
+                  <KeyboardArrowDownIcon fontSize="large" />
+                )}
               </Button>
             </Box>
           </Grid>
@@ -93,12 +108,8 @@ const TransactionHistory: React.FC<RouteComponentProps<any>> = () => {
       )
     );
   };
-  */
 
   return (
-    <p>TODO</p>
-    //TODO
-    /*
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
       <Grid container spacing={3}>
         <Grid item xs={12}>
@@ -108,25 +119,23 @@ const TransactionHistory: React.FC<RouteComponentProps<any>> = () => {
                 Transaction History
               </Typography>
               {PaginationController()}
-              {transactions?.transactions && (transactions?.transactions).length !== 0 && (
-                <TransactionHeader />
-              )}
-              {transactions?.transactions.map((transaction, index) => {
+              {transactions && transactions.length !== 0 && <TransactionHeader />}
+              {transactions?.map((transaction, index) => {
                 return (
                   <Transaction
                     key={index}
                     iconUrl={
-                      cryptocurrencies.all.coins?.find((coin) => {
-                        return coin.id === parseInt(transaction.cryptocurrencyId);
-                      })?.iconUrl ?? '/dollar.svg'
+                      coinsTransactions?.find((coin) => {
+                        return coin.id === transaction.cryptocurrencyId;
+                      })?.image ?? '/dollar.svg'
                     }
                     cryptocurrencyName={
-                      cryptocurrencies.all.coins?.find((coin) => {
-                        return coin.id === parseInt(transaction.cryptocurrencyId);
-                      })?.name ?? 'Fiat money (' + cryptocurrencies.all.base.symbol + ')'
+                      coinsTransactions?.find((coin) => {
+                        return coin.id === transaction.cryptocurrencyId;
+                      })?.name ?? 'Fiat money (' + baseCurrency.code + ')'
                     }
-                    baseSymbol={cryptocurrencies.all.base.symbol}
-                    baseSign={cryptocurrencies.all.base.sign}
+                    baseCode={baseCurrency.code}
+                    baseSymbol={baseCurrency.symbol}
                     {...transaction}
                   />
                 );
@@ -138,7 +147,6 @@ const TransactionHistory: React.FC<RouteComponentProps<any>> = () => {
       </Grid>
       <Copyright sx={{ pt: 4 }} />
     </Container>
-    */
   );
 };
 
