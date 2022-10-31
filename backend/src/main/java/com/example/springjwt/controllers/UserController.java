@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@CrossOrigin(origins = "http://localhost:8081", maxAge = 3600)
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/user")
 @PreAuthorize("hasRole('ROLE_USER')")
@@ -30,17 +30,11 @@ public class UserController {
     public ResponseEntity<UserProfileResponse> getUserProfile() {
         UserDetailsImpl user = userService.getCurrentUser();
 
-        List<String> roles = user.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toList());
+        List<String> roles =
+                user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList());
 
-        return ResponseEntity.ok(new UserProfileResponse(
-                        user.getUsername(),
-                        user.getFullName(),
-                        roles,
-                        user.getEmail()
-                )
-        );
+        return ResponseEntity.ok(
+                new UserProfileResponse(user.getUsername(), user.getFullName(), roles, user.getEmail()));
     }
 
     @PostMapping("/profile/update")
