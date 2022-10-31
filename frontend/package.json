@@ -92,5 +92,5 @@
       "eslint --fix"
     ]
   },
-  "proxy": "https://cors-anywhere.herokuapp.com/"
+  "proxy": "http://localhost:8081/"
 }

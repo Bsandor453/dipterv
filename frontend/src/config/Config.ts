@@ -1,6 +1,6 @@
 // Backend base URLs
 const BACKEND_PROTOCOL = 'http';
-const BACKEND_HOST = 'localhost';
+const BACKEND_HOST = '192.168.0.17';
 const BACKEND_PORT = '8080';
 const BACKEND_BASE_PATH = '/api';
 const BACKEND_BASE_URL =
