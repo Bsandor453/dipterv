@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins = "*", maxAge = 3600)
+@CrossOrigin(origins = {"http://localhost:8081", "http://192.168.0.17:8081"}, maxAge = 3600)
 @RestController
 @RequestMapping("/api/cryptocurrency")
 @PreAuthorize("hasRole('ROLE_USER')")
