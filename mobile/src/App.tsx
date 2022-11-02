@@ -1,11 +1,42 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button } from 'react-native';
+import type { RootState } from './redux/store';
+import { useSelector, useDispatch } from 'react-redux';
+import {
+  decrement,
+  increment,
+  incrementByAmount,
+} from './redux/slices/counterSlice';
+import { Button, Text } from 'react-native-paper';
+import { StyleSheet, View, Alert } from 'react-native';
+import { Provider } from 'react-redux';
+import { store } from './redux/store';
+import { bindActionCreators } from 'redux';
 
 const App = () => {
+  const count = useSelector((state: RootState) => state.counter.value);
+  const dispatch = useDispatch();
+  bindActionCreators;
+
   return (
     <View style={styles.container}>
-      <Text>Hello World!</Text>
-      <Button title="Tap me!" />
+      <Text variant="displayMedium">Redux test</Text>
+      <Button
+        mode="contained"
+        onPress={() => {
+          dispatch(incrementByAmount(10));
+        }}
+      >
+        Increment (+)
+      </Button>
+      <Text variant="displayMedium">{count}</Text>
+      <Button
+        mode="contained"
+        onPress={() => {
+          dispatch(decrement());
+        }}
+      >
+        Decrement (-)
+      </Button>
     </View>
   );
 };
