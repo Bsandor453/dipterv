@@ -182,16 +182,6 @@ const Cryptocurrencies: React.FC<IPage> = () => {
         <Grid item xs={12}>
           <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
             <Box sx={{ m: 2 }}>
-              <p>TODO: Create interface for coin details!</p>
-              <p>TODO: Backend/Paging: Why we have to add 1 and substract 1 too when paging?</p>
-              <p>TODO: Add Updated X ago to coins</p>
-              <p>TODO: Fix card size margin at bottom is variable (name length)</p>
-              <p>TODO: Add all reasonable sort by to sorting</p>
-              <p>TODO: What to do with 0.00000000 $ coins?</p>
-              <p>TODO: Check page details redux store</p>
-              <p>TODO: Unused imports, warning in chrome</p>
-              <p>TODO: Loaders</p>
-              <p>TODO: Check other TODOs!</p>
               <Typography variant="h2" sx={{ mt: 3, mb: 8 }}>
                 Trade cryptocurrencies
               </Typography>
@@ -214,6 +204,13 @@ const Cryptocurrencies: React.FC<IPage> = () => {
                   value={searchText}
                   onChange={(e) => {
                     setSearchText(e.target.value);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      pushCurrentLocationToHistory();
+                      setParamAndReplaceHistory('search', searchText);
+                    }
                   }}
                 />
                 <Button
