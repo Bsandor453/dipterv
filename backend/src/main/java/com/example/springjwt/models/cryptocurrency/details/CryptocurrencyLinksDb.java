@@ -25,8 +25,11 @@ public class CryptocurrencyLinksDb {
     @JsonProperty("announcement_url")
     private List<String> announcementUrl;
 
-    @JsonProperty("twitter_screen_name")
+    @JsonProperty("twitter_username")
     private String twitterUsername;
+
+    @JsonProperty("facebook_username")
+    private String facebookUsername;
 
     @JsonProperty("subreddit_url")
     private String subredditUrl;

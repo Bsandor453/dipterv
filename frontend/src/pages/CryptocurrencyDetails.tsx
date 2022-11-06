@@ -34,6 +34,7 @@ import { useInterval } from 'usehooks-ts';
 import Container from '@mui/material/Container';
 import Copyright from '../components/Copyright';
 import CryptocurrencyDetail from '../components/CryptocurrencyDetail';
+import CryptocurrencyLinks from '../components/CryptocurrencyLinks';
 import Grid from '@mui/material/Grid';
 import ICryptocurrencyHistory from '../interfaces/cryptocurrency/ICryptocurrencyHistory';
 import ICryptocurrencyHistoryData from '../interfaces/cryptocurrency/ICryptocurrencyHistoryData';
@@ -257,6 +258,10 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
       sellCryptocurrency(coin.id, sellAmount, sellAmount * coin.current_price, coin.name);
   };
 
+  type PickByType<T, Value> = {
+    [P in keyof T as T[P] extends Value | undefined ? P : never]: T[P];
+  };
+
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
       <Grid container spacing={3}>
@@ -280,7 +285,7 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
                 <Grid item xs={5} sx={{ height: 350 }}>
                   <Box
                     component="img"
-                    alt="Not found image"
+                    alt="Cryptocurrency logo"
                     src={coin?.image}
                     sx={{ width: 350, height: 'auto', maxHeight: 350, maxWidth: 350 }}
                   />
@@ -753,84 +758,17 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
                 </Typography>
               )}
               <Typography
-                sx={{ lineHeight: 1.6 }}
+                sx={{ lineHeight: 2 }}
                 dangerouslySetInnerHTML={{
                   __html: coin?.description ?? '',
                 }}
               />
+              <CryptocurrencyLinks
+                {...coin?.links}
+                {...coin?.community_data}
+                color={color ?? '#000000'}
+              />
               {/*
-              {coin?.socials.length !== 0 && (
-                <Typography variant="h3" sx={{ mt: 3 }}>
-                  Socials
-                </Typography>
-              )}
-              <List dense={true}>
-                {coin?.socials.map((social, index) => {
-                  return (
-                    <ListItem key={index}>
-                      <ListItemIcon>
-                        <PeopleIcon sx={{ color: coin?.color }} />
-                      </ListItemIcon>
-                      <Button
-                        variant="text"
-                        sx={{
-                          textTransform: 'none',
-                          mr: '2',
-                          fontSize: 20,
-                          color: coin?.color,
-                          ':hover': {
-                            color: 'black',
-                            backgroundColor: 'white',
-                            borderColor: coin?.color,
-                          },
-                        }}
-                        component={Link}
-                        to={{ pathname: social.url }}
-                        target="_blank"
-                      >
-                        {social.name}
-                      </Button>
-                      <Typography variant="body1" sx={{ color: '#a3a3a3' }}>
-                        ({social.type})
-                      </Typography>
-                    </ListItem>
-                  );
-                })}
-              </List>
-              {coin?.links.length !== 0 && <Typography variant="h3">Links</Typography>}
-              <List dense={true}>
-                {coin?.links.map((link, index) => {
-                  return (
-                    <ListItem key={index}>
-                      <ListItemIcon>
-                        <PublicIcon sx={{ color: coin?.color }} />
-                      </ListItemIcon>
-                      <Button
-                        variant="text"
-                        sx={{
-                          textTransform: 'none',
-                          mr: '2',
-                          fontSize: 20,
-                          color: coin?.color,
-                          ':hover': {
-                            color: 'black',
-                            backgroundColor: 'white',
-                            borderColor: coin?.color,
-                          },
-                        }}
-                        component={Link}
-                        to={{ pathname: link.url }}
-                        target="_blank"
-                      >
-                        {link.name}
-                      </Button>
-                      <Typography variant="body1" sx={{ color: '#a3a3a3' }}>
-                        ({link.type})
-                      </Typography>
-                    </ListItem>
-                  );
-                })}
-              </List>
               <Typography variant="h3" sx={{ mt: 3 }}>
                 Details
               </Typography>

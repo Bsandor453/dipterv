@@ -346,6 +346,7 @@ public class CryptocurrencyService {
         linksResponse.setChatUrl(cryptocurrencyDetails.getLinks().getChatUrl());
         linksResponse.setAnnouncementUrl(cryptocurrencyDetails.getLinks().getAnnouncementUrl());
         linksResponse.setTwitterUsername(cryptocurrencyDetails.getLinks().getTwitterUsername());
+        linksResponse.setFacebookUsername(cryptocurrencyDetails.getLinks().getFacebookUsername());
         linksResponse.setSubredditUrl(cryptocurrencyDetails.getLinks().getSubredditUrl());
         linksResponse.setGithubRepos(cryptocurrencyDetails.getLinks().getRepos().getGithubRepos());
 

@@ -28,6 +28,9 @@ public class CryptocurrencyLinks {
     @JsonProperty("twitter_screen_name")
     private String twitterUsername;
 
+    @JsonProperty("facebook_username")
+    private String facebookUsername;
+
     @JsonProperty("subreddit_url")
     private String subredditUrl;
 

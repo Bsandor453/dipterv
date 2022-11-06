@@ -1,3 +1,7 @@
+import ICryptocurrencyCommunityData from './ICryptocurrencyCommunityData';
+import ICryptocurrencyDeveloperData from './ICryptocurrencyDeveloperData';
+import ICryptocurrencyLinks from './ICryptocurrencyLinks';
+
 export default interface ICryptocurrencyDetails {
   id: string;
   symbol: string;
@@ -28,16 +32,7 @@ export default interface ICryptocurrencyDetails {
   price_change_percentage_24h_in_currency: number;
   price_change_percentage_7d_in_currency: number;
   description: string;
-  links: {
-    homepage: string[];
-    blockchain_site: string[];
-    official_forum_url: string[];
-    chat_url: string[];
-    announcement_url: string[];
-    twitter_username: string;
-    subreddit_url: string;
-    github_repos: string[];
-  };
+  links: ICryptocurrencyLinks;
   genesis_date: string;
   votes_up_percentage: number;
   votes_down_percentage: number;
@@ -46,17 +41,6 @@ export default interface ICryptocurrencyDetails {
   community_score: number;
   liquidity_score: number;
   public_interest_score: number;
-  community_data: {
-    twitter_followers: number;
-    reddit_subscribers: number;
-  };
-  developer_data: {
-    forks: number;
-    stars: number;
-    subscribers: number;
-    total_issues: number;
-    closed_issues: number;
-    pull_requests_merged: number;
-    pull_request_contributors: number;
-  };
+  community_data: ICryptocurrencyCommunityData;
+  developer_data: ICryptocurrencyDeveloperData;
 }
