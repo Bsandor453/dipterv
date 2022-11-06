@@ -31,6 +31,7 @@ import { useInterval } from 'usehooks-ts';
 import Container from '@mui/material/Container';
 import Copyright from '../components/Copyright';
 import CryptocurrencyDetail from '../components/CryptocurrencyDetail';
+import CryptocurrencyDeveloperData from '../components/CryptocurrencyDeveloperData';
 import CryptocurrencyLinks from '../components/CryptocurrencyLinks';
 import CryptocurrencyScores from '../components/CryptocurrencyScores';
 import Grid from '@mui/material/Grid';
@@ -760,8 +761,13 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
                 color={color ?? '#000000'}
               />
               <CryptocurrencyScores {...coin} color={color ?? '#000000'} />
+              <CryptocurrencyDeveloperData
+                {...coin?.developer_data}
+                color={color ?? '#000000'}
+                githubRepos={coin?.links?.github_repos ?? []}
+              />
               <Box id="description">
-                <Typography variant="h3" sx={{ mt: 3 }}>
+                <Typography variant="h3" sx={{ mt: 8 }}>
                   Details
                 </Typography>
                 {coin && <CryptocurrencyDetail />}

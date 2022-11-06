@@ -32,7 +32,7 @@ export default interface ICryptocurrencyDetails {
   price_change_percentage_24h_in_currency: number;
   price_change_percentage_7d_in_currency: number;
   description: string;
-  links: ICryptocurrencyLinks;
+  links?: ICryptocurrencyLinks;
   genesis_date: string;
   votes_up_percentage: number;
   votes_down_percentage: number;
