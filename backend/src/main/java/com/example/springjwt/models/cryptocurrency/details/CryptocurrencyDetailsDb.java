@@ -23,10 +23,10 @@ public class CryptocurrencyDetailsDb {
     @JsonProperty("genesis_date")
     private String genesisDate;
 
-    @JsonProperty("sentiment_votes_up_percentage")
+    @JsonProperty("votes_up_percentage")
     private double votesUpPercentage;
 
-    @JsonProperty("sentiment_votes_down_percentage")
+    @JsonProperty("votes_down_percentage")
     private double votesDownPercentage;
 
     @JsonProperty("coingecko_score")

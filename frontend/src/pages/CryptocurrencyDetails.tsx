@@ -6,9 +6,6 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  List,
-  ListItem,
-  ListItemIcon,
   TextField,
   Typography,
 } from '@mui/material';
@@ -22,8 +19,8 @@ import {
   YAxis,
 } from 'recharts';
 import { LightenDarkenColor } from '../services/util/colorUtils';
-import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
 import { MomentInput } from 'moment';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { State, actionCreators } from '../state';
 import { TransitionProps } from '@mui/material/transitions';
 import { bindActionCreators } from 'redux';
@@ -35,12 +32,10 @@ import Container from '@mui/material/Container';
 import Copyright from '../components/Copyright';
 import CryptocurrencyDetail from '../components/CryptocurrencyDetail';
 import CryptocurrencyLinks from '../components/CryptocurrencyLinks';
+import CryptocurrencyScores from '../components/CryptocurrencyScores';
 import Grid from '@mui/material/Grid';
-import ICryptocurrencyHistory from '../interfaces/cryptocurrency/ICryptocurrencyHistory';
 import ICryptocurrencyHistoryData from '../interfaces/cryptocurrency/ICryptocurrencyHistoryData';
 import Paper from '@mui/material/Paper';
-import PeopleIcon from '@mui/icons-material/People';
-import PublicIcon from '@mui/icons-material/Public';
 import React, { useEffect, useLayoutEffect, useState } from 'react';
 import Slide from '@mui/material/Slide';
 import config from '../config/Config';
@@ -78,8 +73,6 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
 
   const [buyAmount, setBuyAmount] = useState(0.0);
   const [sellAmount, setSellAmount] = useState(0.0);
-
-  const backupURL = true;
 
   const [timeframe, setTimeframe] = useState('7d');
 
@@ -258,10 +251,6 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
       sellCryptocurrency(coin.id, sellAmount, sellAmount * coin.current_price, coin.name);
   };
 
-  type PickByType<T, Value> = {
-    [P in keyof T as T[P] extends Value | undefined ? P : never]: T[P];
-  };
-
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
       <Grid container spacing={3}>
@@ -437,7 +426,7 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
                *
                */}
               <Box id="trade">
-                <Typography variant="h3" sx={{ mt: 3, mb: 3 }}>
+                <Typography variant="h3" sx={{ mt: 8, mb: 3 }}>
                   {'Buy or sell ' + coin?.name}
                 </Typography>
                 <Box>
@@ -684,7 +673,7 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
                */}
               {history?.history_7d?.length !== 0 && (
                 <Box>
-                  <Typography variant="h3" sx={{ mb: 3, mt: 3 }}>
+                  <Typography variant="h3" sx={{ mb: 3, mt: 8 }}>
                     Price history
                   </Typography>
                   <Box sx={{ textAlign: 'right', mr: 6 }}>
@@ -752,35 +741,31 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
                * * * * Description * * * *
                *
                */}
-              {coin?.description && (
-                <Typography variant="h3" sx={{ mb: 3, mt: 3 }}>
-                  Description
-                </Typography>
-              )}
-              <Typography
-                sx={{ lineHeight: 2 }}
-                dangerouslySetInnerHTML={{
-                  __html: coin?.description ?? '',
-                }}
-              />
+              <Box id="description">
+                {coin?.description && (
+                  <Typography variant="h3" sx={{ mb: 3, mt: 8 }}>
+                    Description
+                  </Typography>
+                )}
+                <Typography
+                  sx={{ lineHeight: 2 }}
+                  dangerouslySetInnerHTML={{
+                    __html: coin?.description ?? '',
+                  }}
+                />
+              </Box>
               <CryptocurrencyLinks
                 {...coin?.links}
                 {...coin?.community_data}
                 color={color ?? '#000000'}
               />
-              {/*
-              <Typography variant="h3" sx={{ mt: 3 }}>
-                Details
-              </Typography>
-              {coin && (
-                <CryptocurrencyDetail
-                  baseSymbol={cryptocurrencies.all.base.symbol}
-                  baseSign={cryptocurrencies.all.base.sign}
-                  {...coin}
-                />
-              )}
-              
-                              */}
+              <CryptocurrencyScores {...coin} color={color ?? '#000000'} />
+              <Box id="description">
+                <Typography variant="h3" sx={{ mt: 3 }}>
+                  Details
+                </Typography>
+                {coin && <CryptocurrencyDetail />}
+              </Box>
             </Box>
           </Paper>
         </Grid>

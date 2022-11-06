@@ -40,7 +40,7 @@ const CryptocurrencyLinks: React.FC<
 
   return (
     <>
-      <Typography variant="h3" sx={{ mt: 3 }}>
+      <Typography variant="h3" sx={{ mt: 8 }}>
         Links and socials
       </Typography>
       <List>
