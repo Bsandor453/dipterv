@@ -196,10 +196,11 @@ public class CryptocurrencyService {
         for (var transaction : transactions) {
             if (transaction.getCryptocurrency() != null)
                 mapped.add(new MappedTransaction(transaction.getDate(), transaction.getType(),
-                        transaction.getCryptocurrency().id, transaction.getAmount(), transaction.getPrice()));
+                        transaction.getCryptocurrency().id, transaction.getPrice(), transaction.getAmount(),
+                        transaction.getPriceTotal()));
             else {
                 mapped.add(new MappedTransaction(transaction.getDate(), transaction.getType(), "none",
-                        transaction.getAmount(), transaction.getPrice()));
+                        transaction.getPrice(), transaction.getAmount(), transaction.getPriceTotal()));
             }
         }
 
@@ -233,7 +234,7 @@ public class CryptocurrencyService {
         walletRepository.save(currentUserWallet);
 
         currentUserTransactionHistory.getTransactions()
-                .add(new Transaction(new Date(), ETransaction.DEPOSIT_MONEY, null, amount, 0.0));
+                .add(new Transaction(new Date(), ETransaction.DEPOSIT_MONEY, null, amount, 0.0, 0.0));
         transactionRepository.save(currentUserTransactionHistory);
 
         currentUser.setWallet(currentUserWallet);
@@ -252,7 +253,7 @@ public class CryptocurrencyService {
         walletRepository.save(currentUserWallet);
 
         currentUserTransactionHistory.getTransactions()
-                .add(new Transaction(new Date(), ETransaction.RESET_MONEY, null, 0.0, 0.0));
+                .add(new Transaction(new Date(), ETransaction.RESET_MONEY, null, 0.0, 0.0, 0.0));
         transactionRepository.save(currentUserTransactionHistory);
 
         currentUser.setWallet(currentUserWallet);
@@ -261,63 +262,90 @@ public class CryptocurrencyService {
     }
 
     @Transactional
-    public void buyCurrency(ECryptocurrency currency, Double amount, Double price) {
+    public void buyCurrency(ECryptocurrency currency, Double amount) {
         User currentUser = userService.getCurrentUserEntity();
-        Wallet currentUserWallet = currentUser.getWallet();
-        TransactionHistory currentUserTransactionHistory = currentUser.getTransactionHistory();
+        Wallet wallet = currentUser.getWallet();
+        TransactionHistory transactionHistory = currentUser.getTransactionHistory();
 
-        Double money = currentUserWallet.getReferenceCurrency();
-        Map<ECryptocurrency, Double> cryptocurrencies = currentUserWallet.getCryptocurrencies();
+        Double money = wallet.getReferenceCurrency();
+        Map<ECryptocurrency, Double> cryptocurrencies = wallet.getCryptocurrencies();
+
+        Optional<Cryptocurrency> coin = cryptocurrencyRepository.findById(currency.id);
+
+        if (coin.isEmpty()) {
+            throw new RuntimeException("Cryptocurrency not found with id: \"" + currency.id + "\"");
+        }
+
+        double currentPrice = coin.get().getCurrentPrice();
+        double price = currentPrice * amount;
 
         if (price > money) {
             throw new NotEnoughMoneyException();
         }
 
+        // Add the new cryptocurrency to the wallet
         if (!cryptocurrencies.containsKey(currency)) {
             cryptocurrencies.put(currency, amount);
         } else {
             cryptocurrencies.put(currency, cryptocurrencies.get(currency) + amount);
         }
 
-        currentUserWallet.setReferenceCurrency(money - price);
-        currentUserWallet.setCryptocurrencies(cryptocurrencies);
-        walletRepository.save(currentUserWallet);
+        // Withdraw the reference currency from the wallet
+        wallet.setReferenceCurrency(money - price);
 
-        currentUserTransactionHistory.getTransactions()
-                .add(new Transaction(new Date(), ETransaction.BUY_CRYPTOCURRENCY, currency, amount, price));
-        transactionRepository.save(currentUserTransactionHistory);
+        wallet.setCryptocurrencies(cryptocurrencies);
+        walletRepository.save(wallet);
 
-        currentUser.setWallet(currentUserWallet);
-        currentUser.setTransactionHistory(currentUserTransactionHistory);
+        transactionHistory.getTransactions()
+                .add(new Transaction(new Date(), ETransaction.BUY_CRYPTOCURRENCY, currency, currentPrice, amount,
+                        price));
+        transactionRepository.save(transactionHistory);
+
+        currentUser.setWallet(wallet);
+        currentUser.setTransactionHistory(transactionHistory);
         userRepository.save(currentUser);
     }
 
     @Transactional
-    public void sellCurrency(ECryptocurrency currency, Double amount, Double price) {
+    public void sellCurrency(ECryptocurrency currency, Double amount) {
         User currentUser = userService.getCurrentUserEntity();
-        Wallet currentUserWallet = currentUser.getWallet();
-        TransactionHistory currentUserTransactionHistory = currentUser.getTransactionHistory();
+        Wallet wallet = currentUser.getWallet();
+        TransactionHistory transactionHistory = currentUser.getTransactionHistory();
 
-        Double money = currentUserWallet.getReferenceCurrency();
-        Map<ECryptocurrency, Double> cryptocurrencies = currentUserWallet.getCryptocurrencies();
-        Double currencyAmount = cryptocurrencies.get(currency);
+        Double money = wallet.getReferenceCurrency();
+        Map<ECryptocurrency, Double> cryptocurrencies = wallet.getCryptocurrencies();
 
-        if (!cryptocurrencies.containsKey(currency) || currencyAmount < amount) {
+        Optional<Cryptocurrency> coin = cryptocurrencyRepository.findById(currency.id);
+
+        if (coin.isEmpty()) {
+            throw new RuntimeException("Cryptocurrency not found with id: \"" + currency.id + "\"");
+        }
+
+        Double currencyAmountOwned = cryptocurrencies.get(currency);
+
+        if (!cryptocurrencies.containsKey(currency) || currencyAmountOwned < amount) {
             throw new NotEnoughCryptocurrencyException();
         }
 
-        cryptocurrencies.put(currency, currencyAmount - amount);
+        double currentPrice = coin.get().getCurrentPrice();
+        double price = currentPrice * amount;
 
-        currentUserWallet.setReferenceCurrency(money + price);
-        currentUserWallet.setCryptocurrencies(cryptocurrencies);
-        walletRepository.save(currentUserWallet);
+        // Withdraw the cryptocurrency from the wallet
+        cryptocurrencies.put(currency, currencyAmountOwned - amount);
 
-        currentUserTransactionHistory.getTransactions()
-                .add(new Transaction(new Date(), ETransaction.SELL_CRYPTOCURRENCY, currency, amount, price));
-        transactionRepository.save(currentUserTransactionHistory);
+        // Add the reference currency to the wallet
+        wallet.setReferenceCurrency(money + price);
 
-        currentUser.setWallet(currentUserWallet);
-        currentUser.setTransactionHistory(currentUserTransactionHistory);
+        wallet.setCryptocurrencies(cryptocurrencies);
+        walletRepository.save(wallet);
+
+        transactionHistory.getTransactions()
+                .add(new Transaction(new Date(), ETransaction.SELL_CRYPTOCURRENCY, currency, currentPrice, amount,
+                        price));
+        transactionRepository.save(transactionHistory);
+
+        currentUser.setWallet(wallet);
+        currentUser.setTransactionHistory(transactionHistory);
         userRepository.save(currentUser);
     }
 

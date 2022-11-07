@@ -113,16 +113,25 @@ public class CryptocurrencyController {
     @PostMapping("/buy")
     public ResponseEntity<String> buyCurrency(@RequestBody CurrencyBuyRequest currencyBuyRequest) {
         ECryptocurrency cryptocurrency = ECryptocurrency.getById(currencyBuyRequest.getId());
-        cryptocurrencyService.buyCurrency(cryptocurrency, currencyBuyRequest.getAmount(),
-                currencyBuyRequest.getPrice());
-        return ResponseEntity.ok("Purchase successful");
+        if (cryptocurrency != null) {
+            cryptocurrencyService.buyCurrency(cryptocurrency, currencyBuyRequest.getAmount());
+            return ResponseEntity.ok("Purchase successful");
+        } else {
+            return ResponseEntity.badRequest()
+                    .body("Cryptocurrency not found with id: \"" + currencyBuyRequest.getId() + "\"");
+        }
     }
 
     @PostMapping("/sell")
     public ResponseEntity<String> sellCurrency(@RequestBody CurrencySellRequest currencySellRequest) {
         ECryptocurrency cryptocurrency = ECryptocurrency.getById(currencySellRequest.getId());
-        cryptocurrencyService.sellCurrency(cryptocurrency, currencySellRequest.getAmount(),
-                currencySellRequest.getPrice());
-        return ResponseEntity.ok("Sale successful");
+        if (cryptocurrency != null) {
+            cryptocurrencyService.sellCurrency(cryptocurrency, currencySellRequest.getAmount());
+            return ResponseEntity.ok("Sale successful");
+        } else {
+            return ResponseEntity.badRequest()
+                    .body("Cryptocurrency not found with id: \"" + currencySellRequest.getId() + "\"");
+        }
     }
+
 }

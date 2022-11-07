@@ -13,7 +13,4 @@ public class CurrencySellRequest {
     @NotBlank
     private Double amount;
 
-    @NotBlank
-    private Double price;
-
 }
