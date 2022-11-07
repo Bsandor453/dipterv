@@ -57,6 +57,8 @@ const Transition = React.forwardRef(function Transition(
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
+const dateFormat = 'D MMMM, YYYY';
+
 const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
   const coinId = props.match.params.number;
 
@@ -152,7 +154,7 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
   }, interval);
 
   function formatXAxis(tickItem: MomentInput) {
-    return moment(tickItem).format('MMM Do YYYY');
+    return moment(tickItem).format(dateFormat);
   }
 
   const getNumberMagnitude = (n: number): number => {
@@ -205,7 +207,7 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
   });
 
   const tooltipLabelFormatter = (value: number) => {
-    return 'Date : ' + moment(value).format('MMM Do YYYY');
+    return 'Date : ' + moment(value).format(dateFormat);
   };
 
   const formatTooltipNumber = (value: string): string => {
@@ -230,8 +232,9 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
 
   const handleBuyDialogCloseYes = () => {
     setOpenBuyDialog(false);
-
     coin &&
+      coin.id &&
+      coin.name &&
       coin.current_price &&
       buyCryptocurrency(coin.id, buyAmount, buyAmount * coin.current_price, coin.name);
   };
@@ -246,8 +249,9 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
 
   const handleSellDialogCloseYes = () => {
     setOpenSellDialog(false);
-
     coin &&
+      coin.id &&
+      coin.name &&
       coin.current_price &&
       sellCryptocurrency(coin.id, sellAmount, sellAmount * coin.current_price, coin.name);
   };
@@ -257,14 +261,6 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
       <Grid container spacing={3}>
         <Grid item xs={12}>
           <Paper sx={{ p: 5, display: 'flex', flexDirection: 'column' }}>
-            <p>TODO: Better graph domain (Search for standards!)</p>
-            <p>TODO: Better usability for buy/sell currency input</p>
-            <p>TODO: HTTP Requests only in needed quantity</p>
-            <p>TODO: Enter search</p>
-            <p>TODO: Coins with always one 0 at the end - best type of format</p>
-            <p>TODO: Undefinded error in console</p>
-            <p>TODO: Unified date format</p>
-            <p>TODO: Separate components</p>
             <Box sx={{ ml: 2, mt: 2, pb: '2em' }}>
               {/*
                *
@@ -299,7 +295,7 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
                     </Grid>
                     <Grid item xs={7}>
                       <Typography variant="h4" sx={{ fontWeight: '400', mt: 3, color: color }}>
-                        {coin?.symbol.toLocaleUpperCase()}
+                        {coin && coin.symbol && coin?.symbol.toLocaleUpperCase()}
                       </Typography>
                     </Grid>
                     <Grid item xs={5}>
@@ -323,6 +319,7 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
                     <Grid item xs={7}>
                       <Typography variant="h4" sx={{ fontWeight: '450', lineHeight: 1.2, mt: 3 }}>
                         {coin &&
+                          coin.current_price &&
                           coin.current_price.toLocaleString(locale, {
                             minimumFractionDigits: numberPrecision,
                           }) +
@@ -338,6 +335,7 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
                     <Grid item xs={7}>
                       <Box sx={{ mt: 3 }}>
                         {coin &&
+                          coin.sparkline_in_7d &&
                           coin.sparkline_in_7d.price[coin.sparkline_in_7d.price.length - 1] &&
                           coin.sparkline_in_7d.price[coin.sparkline_in_7d.price.length - 2] &&
                           (priceChange(coin.sparkline_in_7d.price) > 0 ? (
@@ -369,6 +367,7 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
                             >
                               {'- '}
                               {coin &&
+                                coin.sparkline_in_7d &&
                                 Number(
                                   Math.abs(priceChange(coin.sparkline_in_7d.price))
                                 ).toLocaleString(locale, {
@@ -378,6 +377,7 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
                             </Typography>
                           ))}
                         {coin &&
+                          coin.sparkline_in_7d &&
                           coin.sparkline_in_7d.price &&
                           (!coin.sparkline_in_7d.price[coin.sparkline_in_7d.price.length - 1] ||
                             !coin.sparkline_in_7d.price[coin.sparkline_in_7d.price.length - 2]) && (
@@ -405,6 +405,7 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
                         sx={{ fontWeight: '350', lineHeight: 1.2, mt: 3, color: '#a3a3a3' }}
                       >
                         {coin &&
+                          coin.ath &&
                           coin.ath.toLocaleString(locale, {
                             minimumFractionDigits: numberPrecision,
                           }) +
@@ -415,7 +416,7 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
                         variant="body1"
                         sx={{ fontWeight: '350', lineHeight: 1.2, color: '#a3a3a3', mt: 1 }}
                       >
-                        {'(' + moment(coin?.ath_date).format('MMM Do YYYY') + ')'}
+                        {'(' + moment(coin?.ath_date).format(dateFormat) + ')'}
                       </Typography>
                     </Grid>
                   </Grid>
@@ -770,7 +771,7 @@ const CryptocurrencyDetails: React.FC<RouteComponentProps<any>> = (props) => {
                 <Typography variant="h3" sx={{ mt: 8 }}>
                   Details
                 </Typography>
-                {coin && <CryptocurrencyDetail />}
+                <CryptocurrencyDetail {...coin} />
               </Box>
             </Box>
           </Paper>

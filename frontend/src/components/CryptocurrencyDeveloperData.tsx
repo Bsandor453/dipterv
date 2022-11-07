@@ -74,7 +74,7 @@ const CryptocurrencyScores: React.FC<
           </Collapse>
         </List>
       )}
-      <Box id="upvotes">
+      <Box id="forks">
         <Typography variant="h5" sx={{ mr: 2, mt: 5, display: 'inline-block' }}>
           Forks:
         </Typography>
@@ -89,7 +89,7 @@ const CryptocurrencyScores: React.FC<
           {props.forks !== 0 ? props.forks?.toLocaleString(locale) ?? '?' : '?'}
         </Typography>
       </Box>
-      <Box id="downvotes">
+      <Box id="stars">
         <Typography variant="h5" sx={{ mr: 2, mt: 3, display: 'inline-block' }}>
           Stars:
         </Typography>
@@ -104,7 +104,7 @@ const CryptocurrencyScores: React.FC<
           {props.stars !== 0 ? props.stars?.toLocaleString(locale) ?? '?' : '?'}
         </Typography>
       </Box>
-      <Box id="coingecko_score">
+      <Box id="subscribers">
         <Typography variant="h5" sx={{ mr: 2, mt: 3, display: 'inline-block' }}>
           Subscribers:
         </Typography>
@@ -119,7 +119,7 @@ const CryptocurrencyScores: React.FC<
           {props.subscribers !== 0 ? props.subscribers?.toLocaleString(locale) ?? '?' : '?'}
         </Typography>
       </Box>
-      <Box id="developer_score">
+      <Box id="total_issues">
         <Typography variant="h5" sx={{ mr: 2, mt: 3, display: 'inline-block' }}>
           Total issues:
         </Typography>
@@ -134,7 +134,7 @@ const CryptocurrencyScores: React.FC<
           {props.total_issues !== 0 ? props.total_issues?.toLocaleString(locale) ?? '?' : '?'}
         </Typography>
       </Box>
-      <Box id="community_score">
+      <Box id="closed_issues">
         <Typography variant="h5" sx={{ mr: 2, mt: 3, display: 'inline-block' }}>
           Closed issues:
         </Typography>
@@ -149,7 +149,7 @@ const CryptocurrencyScores: React.FC<
           {props.closed_issues !== 0 ? props.closed_issues?.toLocaleString(locale) ?? '?' : '?'}
         </Typography>
       </Box>
-      <Box id="liquidity_score">
+      <Box id="pull_requests_merged">
         <Typography variant="h5" sx={{ mr: 2, mt: 3, display: 'inline-block' }}>
           Pull requests merged:
         </Typography>
@@ -166,7 +166,7 @@ const CryptocurrencyScores: React.FC<
             : '?'}
         </Typography>
       </Box>
-      <Box id="public_interest_score">
+      <Box id="pull_request_contributors">
         <Typography variant="h5" sx={{ mr: 2, mt: 3, display: 'inline-block' }}>
           Pull request contributors:
         </Typography>
