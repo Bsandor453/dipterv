@@ -69,6 +69,13 @@ public class CryptocurrencyController {
         return ResponseEntity.ok(cryptocurrencyService.getCurrenciesInTransactions());
     }
 
+    @GetMapping("/summary")
+    public ResponseEntity<SummaryResponse> getSummary(@RequestParam Integer page, @RequestParam Integer size,
+                                                      @RequestParam String sortBy, @RequestParam Boolean asc) {
+
+        return ResponseEntity.ok(cryptocurrencyService.getSummary(page, size, sortBy, asc));
+    }
+
     @GetMapping("/{id}/history")
     public ResponseEntity<CryptocurrencyHistoryDb> getCurrencyHistory(@PathVariable String id,
                                                                       @RequestParam String timeframe) {

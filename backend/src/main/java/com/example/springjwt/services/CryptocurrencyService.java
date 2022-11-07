@@ -1,7 +1,6 @@
 package com.example.springjwt.services;
 
-import com.example.springjwt.dto.response.CryptocurrencyDetailsResponse;
-import com.example.springjwt.dto.response.MappedTransaction;
+import com.example.springjwt.dto.response.*;
 import com.example.springjwt.exception.NotEnoughCryptocurrencyException;
 import com.example.springjwt.exception.NotEnoughMoneyException;
 import com.example.springjwt.models.cryptocurrency.Cryptocurrency;
@@ -160,6 +159,112 @@ public class CryptocurrencyService {
         }
     }
 
+    public SummaryResponse getSummary(int currentPage, int pageSize, String sortByProperty, boolean ascending) {
+        List<MappedTransaction> transactions = getTransactionsMapped();
+        Map<String, Double> wallet = getWalletCryptocurrenciesMapped();
+
+        // These are the parts of the summary
+        double profit = 0;
+        double totalMoneyDeposited = 0;
+        int depositCount = 0;
+        double totalPurchaseAmount = 0;
+        int purchaseCount = 0;
+        double totalSaleAmount = 0;
+        int saleCount = 0;
+        int moneyResetCount = 0;
+        Map<String, Double> profitOnCoin = new HashMap<>();
+
+        for (MappedTransaction transaction : transactions) {
+            String coinId = transaction.getCryptocurrencyId();
+
+            switch (transaction.getType()) {
+                // Cryptocurrency purchase removes from the profit
+                case BUY_CRYPTOCURRENCY -> {
+                    Optional<Cryptocurrency> coin = cryptocurrencyRepository.findById(coinId);
+                    if (coin.isEmpty()) {
+                        throw new RuntimeException("Cryptocurrency not found with id: \"" + coinId + "\"");
+                    }
+                    double pastValue = transaction.getPriceTotal();
+
+                    profit -= pastValue;
+                    if (profitOnCoin.containsKey(coinId)) {
+                        profitOnCoin.put(coinId, profitOnCoin.get(coinId) - pastValue);
+                    } else {
+                        profitOnCoin.put(coinId, -pastValue);
+                    }
+                    totalPurchaseAmount += pastValue;
+                    purchaseCount++;
+                }
+                // Cryptocurrency sale adds to the profit
+                case SELL_CRYPTOCURRENCY -> {
+                    Optional<Cryptocurrency> coin = cryptocurrencyRepository.findById(coinId);
+                    if (coin.isEmpty()) {
+                        throw new RuntimeException("Cryptocurrency not found with id: \"" + coinId + "\"");
+                    }
+                    double pastValue = transaction.getPriceTotal();
+
+                    profit += pastValue;
+                    if (profitOnCoin.containsKey(coinId)) {
+                        profitOnCoin.put(coinId, profitOnCoin.get(coinId) + pastValue);
+                    } else {
+                        profitOnCoin.put(coinId, pastValue);
+                    }
+                    totalSaleAmount += pastValue;
+                    saleCount++;
+                }
+                case DEPOSIT_MONEY -> {
+                    totalMoneyDeposited += transaction.getAmount();
+                    depositCount++;
+                }
+                case RESET_MONEY -> moneyResetCount++;
+            }
+        }
+
+        // Cryptocurrency in wallet adds to the profit
+        for (var coinInWallet : wallet.entrySet()) {
+            String coinId = coinInWallet.getKey();
+            Double coinAmount = coinInWallet.getValue();
+
+            Optional<Cryptocurrency> coin = cryptocurrencyRepository.findById(coinId);
+
+            if (coin.isEmpty()) {
+                throw new RuntimeException("Cryptocurrency not found with id: \"" + coinId + "\"");
+            }
+
+            double presentValue = coinAmount * coin.get().getCurrentPrice();
+
+            profit += presentValue;
+            if (profitOnCoin.containsKey(coinId)) {
+                profitOnCoin.put(coinId, profitOnCoin.get(coinId) + presentValue);
+            } else {
+                profitOnCoin.put(coinId, presentValue);
+            }
+        }
+
+        // Convert map to list
+        List<ProfitOnCryptocurrency> coinProfits = new ArrayList<>();
+        for (var coin : profitOnCoin.entrySet()) {
+            coinProfits.add(new ProfitOnCryptocurrency(coin.getKey(), coin.getValue()));
+        }
+
+        // Create the page from profits on coins
+        PagedListHolder<ProfitOnCryptocurrency> page =
+                new PagedListHolder<>(coinProfits, new MutableSortDefinition(sortByProperty, true, ascending));
+        page.resort();
+        page.setPageSize(pageSize);
+
+        // The backend counts pages from index 0, the frontend from index 1
+        // We have to subtract 1 from the current page number
+        page.setPage(currentPage - 1);
+
+        ProfitOnCryptocurrencyPage profitsPage =
+                new ProfitOnCryptocurrencyPage(page.getPageList(), currentPage, page.getPageCount(),
+                        page.getNrOfElements());
+
+        return new SummaryResponse(depositCount, purchaseCount, saleCount, moneyResetCount, profit, totalMoneyDeposited,
+                getWallet().getReferenceCurrency(), totalPurchaseAmount, totalSaleAmount, profitsPage);
+    }
+
     public Wallet getWallet() {
         return userService.getCurrentUserEntity().getWallet();
     }
@@ -234,7 +339,7 @@ public class CryptocurrencyService {
         walletRepository.save(currentUserWallet);
 
         currentUserTransactionHistory.getTransactions()
-                .add(new Transaction(new Date(), ETransaction.DEPOSIT_MONEY, null, amount, 0.0, 0.0));
+                .add(new Transaction(new Date(), ETransaction.DEPOSIT_MONEY, null, 0.0, amount, 0.0));
         transactionRepository.save(currentUserTransactionHistory);
 
         currentUser.setWallet(currentUserWallet);

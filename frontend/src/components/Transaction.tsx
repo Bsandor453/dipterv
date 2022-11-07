@@ -65,11 +65,12 @@ const Transaction: React.FC<
   };
 
   const mapPriceText = () => {
+    const priceTotal = props.priceTotal ?? 0;
     switch (props.type) {
       case 'BUY_CRYPTOCURRENCY':
-        return '- ' + formatAmount(props.price) + ' ' + props.baseSymbol;
+        return '- ' + formatAmount(priceTotal) + ' ' + props.baseSymbol;
       case 'SELL_CRYPTOCURRENCY':
-        return '+ ' + formatAmount(props.price) + ' ' + props.baseSymbol;
+        return '+ ' + formatAmount(priceTotal) + ' ' + props.baseSymbol;
       case 'DEPOSIT_MONEY':
         return '-';
       case 'RESET_MONEY':
