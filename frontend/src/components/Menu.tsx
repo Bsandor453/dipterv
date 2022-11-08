@@ -25,8 +25,12 @@ import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import SummarizeIcon from '@mui/icons-material/Summarize';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
+import config from '../config/Config';
 
+const locale = 'en-GB';
 const drawerWidth = 240;
+const numberPrecision = 3;
+const baseCurrency = config.defaults.baseCurrency;
 
 interface AppBarProps extends MuiAppBarProps {
   open?: boolean;
@@ -80,6 +84,8 @@ const Menu: React.FC = () => {
   const { isLoggedIn } = useSelector((state: State) => state.AUTH);
 
   const user = useSelector((state: State) => state.USER);
+  const cryptocurrencies = useSelector((state: State) => state.CRYPTOCURRENCY);
+  const profit = cryptocurrencies.summary?.profit ?? 0;
 
   const [open, setOpen] = React.useState(true);
   const toggleDrawer = () => {
@@ -171,9 +177,43 @@ const Menu: React.FC = () => {
           >
             <MenuIcon />
           </IconButton>
-          <Typography component="h1" variant="h6" color="inherit" noWrap sx={{ flexGrow: 1 }}>
-            Welcome {user?.userName || 'Guest'}!
-          </Typography>
+          <Box sx={{ flexGrow: 1 }}>
+            <Typography
+              component="h1"
+              variant="h6"
+              color="inherit"
+              noWrap
+              sx={{ flexGrow: 1, display: 'inline-block' }}
+            >
+              Logged in as {user?.userName || 'Guest'}
+            </Typography>
+            <Typography
+              component="h1"
+              variant="h6"
+              color="inherit"
+              noWrap
+              sx={{ flexGrow: 1, display: 'inline-block', ml: 1 }}
+            >
+              {'| Current profit:'}
+            </Typography>
+            <Typography
+              component="h1"
+              variant="h6"
+              noWrap
+              sx={{
+                color: 'white',
+                display: 'inline-block',
+                ml: 1,
+              }}
+            >
+              {profit > 0 ? '+' : ''}
+              {profit.toLocaleString(locale, {
+                minimumFractionDigits: numberPrecision,
+              }) +
+                ' ' +
+                baseCurrency.symbol}
+            </Typography>
+          </Box>
           {isLoggedIn ? (
             <Button
               sx={{

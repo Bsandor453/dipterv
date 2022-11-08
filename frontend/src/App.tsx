@@ -13,7 +13,7 @@ import routes from './config/Routes';
 
 const App: React.FC<RouteComponentProps> = (props) => {
   const dispatch = useDispatch();
-  const { getUserData } = bindActionCreators(actionCreators, dispatch);
+  const { getUserData, getSummary } = bindActionCreators(actionCreators, dispatch);
 
   const state = useSelector((state: State) => state);
   const authState = state.AUTH;
@@ -33,6 +33,10 @@ const App: React.FC<RouteComponentProps> = (props) => {
     const text = messageState.info.text;
     text !== '' && enqueueSnackbar(text, { variant });
   }, [messageState.info]);
+
+  useEffect(() => {
+    getSummary(1, 10, 'profit', false);
+  }, []);
 
   const loginAndRegisterPage = routes.filter(
     (route) => route.name === 'Login' || route.name === 'Register'
