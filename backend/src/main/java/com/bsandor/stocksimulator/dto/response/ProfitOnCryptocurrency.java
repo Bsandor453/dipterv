@@ -5,10 +5,16 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class ProfitOnCryptocurrency {
+public class ProfitOnCryptocurrency implements Comparable<ProfitOnCryptocurrency> {
 
     private String id;
 
-    private double profit;
+    private String name;
 
+    private Double profit;
+
+    @Override
+    public int compareTo(ProfitOnCryptocurrency o) {
+        return profit.compareTo(o.profit);
+    }
 }

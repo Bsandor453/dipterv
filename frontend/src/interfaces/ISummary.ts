@@ -1,5 +1,6 @@
 import IPageable from './IPageable';
 import IProfit from './IProfit';
+import IProfitableCoin from './IProfitableCoin';
 
 export default interface ISummary {
   depositCount: number;
@@ -7,6 +8,8 @@ export default interface ISummary {
   saleCount: number;
   moneyResetCount: number;
   profit: number;
+  mostProfitableCoin: IProfitableCoin;
+  leastProfitableCoin: IProfitableCoin;
   totalMoneyDeposited: number;
   moneyInWallet: number;
   totalPurchaseAmount: number;

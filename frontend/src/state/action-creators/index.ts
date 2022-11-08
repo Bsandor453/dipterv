@@ -230,6 +230,17 @@ export const saveUserDataEdit = (edited: IUser) => {
 
 // Cryptocurrencies
 
+export const getSummary = (page: number, size: number, sortBy: string, asc: boolean) => {
+  return (dispatch: Dispatch<CryptocurrencyAction>): void => {
+    CryptocurrencyService.getSummary(page, size, sortBy, asc).then((response) => {
+      dispatch({
+        type: ActionType.GET_SUMMARY,
+        payload: response.data,
+      });
+    });
+  };
+};
+
 export const getCryptocurrencies = (
   page: number,
   size: number,

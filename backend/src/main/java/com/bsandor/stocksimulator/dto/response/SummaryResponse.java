@@ -17,6 +17,10 @@ public class SummaryResponse {
 
     private double profit;
 
+    private ProfitableCoinResponse mostProfitableCoin;
+
+    private ProfitableCoinResponse leastProfitableCoin;
+
     private double totalMoneyDeposited;
 
     private double moneyInWallet;

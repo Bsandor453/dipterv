@@ -7,7 +7,6 @@ import { useInterval } from 'usehooks-ts';
 import Container from '@mui/material/Container';
 import Copyright from '../components/Copyright';
 import CryptocurrencyWallet from '../components/CryptocurrencyWallet';
-import CryptocurrencyWalletHeader from '../components/CryptocurrencyWalletHeader';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import React, { useEffect, useState } from 'react';
@@ -123,14 +122,34 @@ const Wallet: React.FC<RouteComponentProps<any>> = () => {
                   Reset money
                 </Button>
               </Box>
-
               <Typography variant="h4" gutterBottom sx={{ mt: 5, mb: 3 }}>
                 Cryptocurrencies
               </Typography>
-              {wallet?.cryptocurrencies &&
-                Object.entries(wallet?.cryptocurrencies).length !== 0 && (
-                  <CryptocurrencyWalletHeader />
-                )}
+              {wallet?.cryptocurrencies && Object.entries(wallet?.cryptocurrencies).length !== 0 && (
+                <Grid item xs={12} sx={{ mb: 1, p: 1 }}>
+                  <Grid container alignItems="center" justifyContent="center">
+                    <Grid item xs={1}></Grid>
+                    <Grid item xs={2}>
+                      <Typography sx={{ fontWeight: '500', fontSize: 20 }}>Name</Typography>
+                    </Grid>
+                    <Grid item xs={2}>
+                      <Typography sx={{ fontWeight: '500', fontSize: 20 }}>Amount</Typography>
+                    </Grid>
+                    <Grid item xs={2}>
+                      <Typography sx={{ fontWeight: '500', fontSize: 20 }}>Worth</Typography>
+                    </Grid>
+                    <Grid item xs={2}>
+                      <Typography sx={{ fontWeight: '500', fontSize: 20 }}>Price</Typography>
+                    </Grid>
+                    <Grid item xs={2}>
+                      <Typography sx={{ fontWeight: '500', fontSize: 20 }}>Change</Typography>
+                    </Grid>
+                    <Grid item xs={1}>
+                      <Typography sx={{ fontWeight: '500', fontSize: 20 }}>Sparkline</Typography>
+                    </Grid>
+                  </Grid>
+                </Grid>
+              )}
               {wallet?.cryptocurrencies &&
                 Object.entries(wallet?.cryptocurrencies).map(([key, value]) => {
                   const cryptocurrency = coinsWallet?.find((coin) => coin.id === key);
@@ -142,6 +161,7 @@ const Wallet: React.FC<RouteComponentProps<any>> = () => {
                         baseSymbol={baseCurrency.symbol}
                         baseCode={baseCurrency.code}
                         amount={value}
+                        showProfit={false}
                         {...cryptocurrency}
                       />
                     )

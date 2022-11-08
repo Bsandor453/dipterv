@@ -244,7 +244,10 @@ public class CryptocurrencyService {
         // Convert map to list
         List<ProfitOnCryptocurrency> coinProfits = new ArrayList<>();
         for (var coin : profitOnCoin.entrySet()) {
-            coinProfits.add(new ProfitOnCryptocurrency(coin.getKey(), coin.getValue()));
+            String coinId = cryptocurrencyRepository.findById(coin.getKey())
+                    .orElseThrow(() -> new RuntimeException("Cryptocurrency not found with id: " + coin.getKey()))
+                    .getId();
+            coinProfits.add(new ProfitOnCryptocurrency(coin.getKey(), coinId, coin.getValue()));
         }
 
         // Create the page from profits on coins
@@ -261,8 +264,36 @@ public class CryptocurrencyService {
                 new ProfitOnCryptocurrencyPage(page.getPageList(), currentPage, page.getPageCount(),
                         page.getNrOfElements());
 
-        return new SummaryResponse(depositCount, purchaseCount, saleCount, moneyResetCount, profit, totalMoneyDeposited,
-                getWallet().getReferenceCurrency(), totalPurchaseAmount, totalSaleAmount, profitsPage);
+        // Calculate the most and least profitable coins
+        // Copy to avoid ConcurrentModificationException
+        List<ProfitOnCryptocurrency> coinProfitsCopy = new ArrayList<>(coinProfits);
+        Collections.sort(coinProfitsCopy);
+        ProfitOnCryptocurrency mostProfitableCoin = coinProfitsCopy.get(coinProfits.size() - 1);
+        ProfitOnCryptocurrency leastProfitableCoin = coinProfitsCopy.get(0);
+
+        // Get the names of the most and least profitable coins
+        Optional<Cryptocurrency> mostProfitableCryptocurrency =
+                cryptocurrencyRepository.findById(mostProfitableCoin.getId());
+        Optional<Cryptocurrency> leastProfitableCryptocurrency =
+                cryptocurrencyRepository.findById(leastProfitableCoin.getId());
+
+        if (mostProfitableCryptocurrency.isEmpty()) {
+            throw new RuntimeException(
+                    "Most profitable cryptocurrency not found with id " + mostProfitableCoin.getId());
+        }
+
+        if (leastProfitableCryptocurrency.isEmpty()) {
+            throw new RuntimeException(
+                    "Least profitable Cryptocurrency not found with id " + leastProfitableCoin.getId());
+        }
+
+        return new SummaryResponse(depositCount, purchaseCount, saleCount, moneyResetCount, profit,
+                new ProfitableCoinResponse(mostProfitableCryptocurrency.get().getName(),
+                        mostProfitableCryptocurrency.get().getImage(), mostProfitableCoin.getProfit()),
+                new ProfitableCoinResponse(leastProfitableCryptocurrency.get().getName(),
+                        leastProfitableCryptocurrency.get().getImage(), leastProfitableCoin.getProfit()),
+                totalMoneyDeposited, getWallet().getReferenceCurrency(), totalPurchaseAmount, totalSaleAmount,
+                profitsPage);
     }
 
     public Wallet getWallet() {

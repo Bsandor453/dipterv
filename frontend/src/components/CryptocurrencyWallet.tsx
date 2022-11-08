@@ -17,12 +17,20 @@ const priceChange = (history: number[]) => {
   return lastElement - lastButOneElement;
 };
 
-const numberPrecision = 7;
 const locale = 'en-GB';
+const defaultNumberPrecision = 7;
 
 const CryptocurrencyWallet: React.FC<
-  ICryptocurrency & { baseSymbol: string; baseCode: string; amount: number }
+  ICryptocurrency & {
+    baseSymbol: string;
+    baseCode: string;
+    amount: number;
+    showProfit: boolean;
+    profit?: number;
+    profitNumberPrecision?: number;
+  }
 > = (props) => {
+  const numberPrecision = props.profitNumberPrecision ?? defaultNumberPrecision;
   // Calculate dominant color from image
   const originalColor = useColor(config.urls.proxy + props.image, 'hex', {
     crossOrigin: 'anonymous',
@@ -67,12 +75,24 @@ const CryptocurrencyWallet: React.FC<
             </Typography>
           </Grid>
           <Grid item xs={2}>
-            <Typography sx={{ fontWeight: '450', fontSize: 20, color: 'green' }}>
-              {Number(props.current_price * props.amount).toLocaleString(locale, {
-                minimumFractionDigits: numberPrecision,
-              }) +
-                ' ' +
-                props.baseSymbol}
+            <Typography
+              sx={{
+                fontWeight: '450',
+                fontSize: 20,
+                color: props.profit && props.profit >= 0 ? 'green' : 'red',
+              }}
+            >
+              {props.showProfit
+                ? props.profit?.toLocaleString(locale, {
+                    minimumFractionDigits: numberPrecision,
+                  }) +
+                  ' ' +
+                  props.baseSymbol
+                : Number(props.current_price * props.amount).toLocaleString(locale, {
+                    minimumFractionDigits: numberPrecision,
+                  }) +
+                  ' ' +
+                  props.baseSymbol}
             </Typography>
           </Grid>
           <Grid item xs={2}>
