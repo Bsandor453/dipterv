@@ -2,6 +2,7 @@ import { Box, Button, MenuItem, Pagination, Select, Typography } from '@mui/mate
 import { State, actionCreators } from '../state';
 import { bindActionCreators } from 'redux';
 import { useDispatch, useSelector } from 'react-redux';
+import { useInterval } from 'usehooks-ts';
 import Container from '@mui/material/Container';
 import Copyright from '../components/Copyright';
 import CryptocurrencyWallet from '../components/CryptocurrencyWallet';
@@ -41,6 +42,12 @@ const Summary: React.FC = () => {
     getWallet();
     getCryptocurrenciesInTransactions();
   }, []);
+
+  const interval = 20000;
+
+  useInterval(() => {
+    getSummary(summaryPage?.currentPage ?? 1, pageSize, sortBy, sortDirection === 'asc');
+  }, interval);
 
   useEffect(() => {
     getSummary(summaryPage?.currentPage ?? 1, pageSize, sortBy, sortDirection === 'asc');

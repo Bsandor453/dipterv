@@ -119,7 +119,7 @@ const Menu: React.FC = () => {
   const menuElementsCryptocurrency = [
     {
       path: '/summary',
-      name: 'Tade summary',
+      name: 'Trade summary',
       icon: <SummarizeIcon />,
       show: user,
     },
