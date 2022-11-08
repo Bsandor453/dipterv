@@ -20,9 +20,9 @@ import MenuIcon from '@mui/icons-material/Menu';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import MuiDrawer from '@mui/material/Drawer';
 import PersonIcon from '@mui/icons-material/Person';
-import PublicIcon from '@mui/icons-material/Public';
 import React from 'react';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
+import SummarizeIcon from '@mui/icons-material/Summarize';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 
@@ -117,6 +117,12 @@ const Menu: React.FC = () => {
   ];
 
   const menuElementsCryptocurrency = [
+    {
+      path: '/summary',
+      name: 'Tade summary',
+      icon: <SummarizeIcon />,
+      show: user,
+    },
     {
       path: '/cryptocurrencies',
       name: 'Browse & Trade',

@@ -23,7 +23,7 @@ public class SummaryResponse {
 
     private double totalPurchaseAmount;
 
-    private double totalSellAmount;
+    private double totalSaleAmount;
 
     private ProfitOnCryptocurrencyPage profitOnCryptocurrencyPage;
 

@@ -5,6 +5,7 @@ import ICryptocurrencyHistory from '../../interfaces/cryptocurrency/ICryptocurre
 import IMessage from '../../interfaces/IMessage';
 import IPageable from '../../interfaces/IPageable';
 import IPropertyUpdate from '../../interfaces/IPropertyUpdate';
+import ISummary from '../../interfaces/ISummary';
 import IToken from '../../interfaces/IToken';
 import ITransaction from '../../interfaces/ITransaction';
 import IUser from '../../interfaces/IUser';
@@ -86,6 +87,11 @@ export type UserAction =
   | IEditUserDataAction
   | ISaveUserDataEditAction;
 
+interface IGetSummaryAction {
+  type: ActionType.GET_SUMMARY;
+  payload: ISummary;
+}
+
 interface IGetCryptocurrenciesAction {
   type: ActionType.GET_CRYPTOCURRENCIES;
   payload: IPageable<ICryptocurrency>;
@@ -148,6 +154,7 @@ interface IGetTransactionsAction {
 }
 
 export type CryptocurrencyAction =
+  | IGetSummaryAction
   | IGetCryptocurrenciesAction
   | IGetCryptocurrencyAction
   | IGetCryptocurrenciesWithIdsAction

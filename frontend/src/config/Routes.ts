@@ -8,6 +8,7 @@ import LogoutPage from '../pages/Logout';
 import NotFoundPage from '../pages/NotFound';
 import ProfilePage from '../pages/Profile';
 import RegisterPage from '../pages/Register';
+import SummaryPage from '../pages/SummaryPage';
 import TransactionHistoryPage from '../pages/TransactionHistory';
 import UserBoard from '../pages/UserBoard';
 import WalletPage from '../pages/Wallet';
@@ -59,6 +60,12 @@ const routes: IRoute[] = [
     path: '/admin',
     name: 'AdminBoard',
     component: AdminBoard,
+    exact: true,
+  },
+  {
+    path: '/summary',
+    name: 'Summary',
+    component: SummaryPage,
     exact: true,
   },
   {

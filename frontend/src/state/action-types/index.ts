@@ -21,6 +21,7 @@ export enum ActionType {
   BANKRUPT = 'bankrupt',
 
   // Cryptocurrencies
+  GET_SUMMARY = 'get_summary',
   GET_CRYPTOCURRENCIES = 'get_cryptocurrencies',
   GET_CRYPTOCURRENCY = 'get_cryptocurrency',
   GET_CRYPTOCURRENCIES_WITH_IDS = 'get_cryptocurrencies_with_ids',

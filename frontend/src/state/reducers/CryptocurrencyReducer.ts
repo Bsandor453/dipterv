@@ -4,10 +4,12 @@ import ICryptoCurrencyDetails from '../../interfaces/cryptocurrency/ICryptocurre
 import ICryptoCurrencyHistory from '../../interfaces/cryptocurrency/ICryptocurrencyHistory';
 import ICryptocurrency from '../../interfaces/cryptocurrency/ICryptocurrency';
 import IPageable from '../../interfaces/IPageable';
+import ISummary from '../../interfaces/ISummary';
 import ITransaction from '../../interfaces/ITransaction';
 import IWallet from '../../interfaces/IWallet';
 
 const initialState = {
+  summary: null,
   coins: null,
   coin: null,
   coinsWallet: null,
@@ -18,6 +20,7 @@ const initialState = {
 };
 
 type cryptocurrencyState = {
+  summary: ISummary | null;
   coins: IPageable<ICryptocurrency> | null;
   coin: ICryptoCurrencyDetails | null;
   coinsWallet: ICryptocurrency[] | null;
@@ -32,6 +35,8 @@ const reducer = (
   action: CryptocurrencyAction
 ): cryptocurrencyState => {
   switch (action.type) {
+    case ActionType.GET_SUMMARY:
+      return { ...state, summary: action.payload };
     case ActionType.GET_CRYPTOCURRENCIES:
       return { ...state, coins: action.payload };
     case ActionType.GET_CRYPTOCURRENCY:

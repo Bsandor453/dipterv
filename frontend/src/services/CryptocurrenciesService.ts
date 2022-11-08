@@ -9,6 +9,15 @@ const tokenAuthUrlConfig = () => {
   return { headers: { 'Content-Type': 'application/json', ...authHeader() } };
 };
 
+const getSummary = (
+  page: number,
+  size: number,
+  sortBy: string,
+  asc: boolean
+): Promise<AxiosResponse<any>> => {
+  return httpClient.get(config.urls.crypto.summary(page, size, sortBy, asc), tokenAuthUrlConfig());
+};
+
 const getCryptocurrencies = (
   page: number,
   size: number,
@@ -83,6 +92,7 @@ const getTransactions = (
 };
 
 export default {
+  getSummary,
   getCryptocurrencies,
   getCryptocurrency,
   getCryptocurrenciesWithIds,
