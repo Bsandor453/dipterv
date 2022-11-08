@@ -10,72 +10,49 @@ const BACKEND_BASE_URL =
 const PROXY =
   'https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&refresh=2592000&url=';
 
-// Testing
-const TEST_URL = BACKEND_BASE_URL + '/test';
-const TEST_PUBLIC_URL = TEST_URL + '/all';
-const TEST_USER_URL = TEST_URL + '/user';
-const TEST_MOD_URL = TEST_URL + '/mod';
-const TEST_ADMIN_URL = TEST_URL + '/admin';
+// Testing URLs
+const TEST = BACKEND_BASE_URL + '/test';
+const TEST_PUBLIC = TEST + '/all';
+const TEST_USER = TEST + '/user';
+const TEST_MOD = TEST + '/mod';
+const TEST_ADMIN = TEST + '/admin';
 
-// Authentication
-const AUTH_URL = BACKEND_BASE_URL + '/auth';
-const SIGN_IN_URL = AUTH_URL + '/signin';
-const SIGN_UP_URL = AUTH_URL + '/signup';
-const REFRESH_TOKEN_URL = AUTH_URL + '/refreshtoken';
+// Authentication URLs
+const AUTH = BACKEND_BASE_URL + '/auth';
+const SIGN_IN = AUTH + '/signin';
+const SIGN_UP = AUTH + '/signup';
+const REFRESH_TOKEN = AUTH + '/refreshtoken';
 
-// User
-const USER_URL = BACKEND_BASE_URL + '/user';
-const GET_USER_DATA = USER_URL + '/profile';
-const UPDATE_USER_DATA = USER_URL + '/profile/update';
+// User URLs
+const USER = BACKEND_BASE_URL + '/user';
+const GET_USER_DATA = USER + '/profile';
+const UPDATE_USER_DATA = USER + '/profile/update';
 
-// Cryptocurrencies
-const CRYPTOCURRENCY_URL = BACKEND_BASE_URL + '/cryptocurrency';
-const CRYPTOCURRENCY_GET_ALL = (
+// Cryptocurrency URLs
+const CRYPTOCURRENCY = BACKEND_BASE_URL + '/cryptocurrency';
+const GET_ALL = (
   page: number,
   size: number,
   sortBy: string,
   asc: boolean,
   search: string
 ): string =>
-  CRYPTOCURRENCY_URL +
-  '/all?page=' +
-  page +
-  '&size=' +
-  size +
-  '&sortBy=' +
-  sortBy +
-  '&asc=' +
-  asc +
-  '&search=' +
-  search;
-const CRYPTOCURRENCY_GET_COIN = (id: string): string => CRYPTOCURRENCY_URL + '/' + id;
-const CRYPTOCURRENCY_GET_COINS_WITH_IDS = (ids: string[]): string =>
-  CRYPTOCURRENCY_URL + '/ids/' + ids.join(', ');
-const CRYPTOCURRENCY_GET_COINS_IN_WALLET = CRYPTOCURRENCY_URL + '/wallet/coins';
-const CRYPTOCURRENCY_GET_COINS_IN_TRANSACTIONS = CRYPTOCURRENCY_URL + '/transactions/coins';
-const CRYPTOCURRENCY_GET_HISTORY = (id: string, timeframe: string): string =>
-  CRYPTOCURRENCY_GET_COIN(id) + '/history?timeframe=' + timeframe;
-const CRYPTOCURRENCY_BUY = CRYPTOCURRENCY_URL + '/buy';
-const CRYPTOCURRENCY_SELL = CRYPTOCURRENCY_URL + '/sell';
-const CRYPTOCURRENCY_DEPOSIT_MONEY = (amount: number): string =>
-  CRYPTOCURRENCY_URL + '/depositmoney?amount=' + amount;
-const CRYPTOCURRENCY_RESET_MONEY = CRYPTOCURRENCY_URL + '/resetmoney';
-const CRYPTOCURRENCY_GET_WALLET = CRYPTOCURRENCY_URL + '/wallet';
-const CRYPTOCURRENCY_GET_TRANSACTIONS = (
-  page: number,
-  size: number,
-  sortBy: string,
-  asc: boolean
-): string =>
-  CRYPTOCURRENCY_URL +
-  '/transactions?page=' +
-  page +
-  '&size=' +
-  size +
-  '&sortBy=' +
-  sortBy +
-  '&asc=' +
-  asc;
+  `${CRYPTOCURRENCY}/all?page=${page}&size=${size}&sortBy=${sortBy}&asc=${asc}&search=${search}`;
+const GET_SUMMARY = (page: number, size: number, sortBy: string, asc: boolean): string =>
+  `${CRYPTOCURRENCY}/summary?page=${page}&size=${size}&sortBy=${sortBy}&asc=${asc}`;
+const GET_COIN = (id: string): string => `${CRYPTOCURRENCY}/${id}`;
+const GET_COINS_WITH_IDS = (ids: string[]): string => `${CRYPTOCURRENCY}/ids/${ids.join(', ')}`;
+const GET_COINS_IN_WALLET = `${CRYPTOCURRENCY}'/wallet/coins`;
+const GET_COINS_IN_TRANSACTIONS = `${CRYPTOCURRENCY}/transactions/coins`;
+const GET_HISTORY = (id: string, timeframe: string): string =>
+  `${GET_COIN(id)}/history?timeframe=${timeframe}`;
+const BUY = `${CRYPTOCURRENCY}/buy`;
+const SELL = `${CRYPTOCURRENCY}/sell`;
+const DEPOSIT_MONEY = (amount: number): string => `${CRYPTOCURRENCY}/depositmoney?amount=${amount}`;
+const RESET_MONEY = `${CRYPTOCURRENCY}/resetmoney`;
+const GET_WALLET = `${CRYPTOCURRENCY}/wallet`;
+const GET_TRANSACTIONS = (page: number, size: number, sortBy: string, asc: boolean): string =>
+  `${CRYPTOCURRENCY}/transactions?page=${page}&size=${size}&sortBy=${sortBy}&asc=${asc}`;
 
 const config = {
   defaults: {
@@ -89,33 +66,34 @@ const config = {
   interceptorDebug: true,
   urls: {
     auth: {
-      signIn: SIGN_IN_URL,
-      signUp: SIGN_UP_URL,
-      refreshToken: REFRESH_TOKEN_URL,
+      signIn: SIGN_IN,
+      signUp: SIGN_UP,
+      refreshToken: REFRESH_TOKEN,
     },
     user: {
       getUserData: GET_USER_DATA,
       updateUserData: UPDATE_USER_DATA,
     },
     test: {
-      public: TEST_PUBLIC_URL,
-      user: TEST_USER_URL,
-      mod: TEST_MOD_URL,
-      admin: TEST_ADMIN_URL,
+      public: TEST_PUBLIC,
+      user: TEST_USER,
+      mod: TEST_MOD,
+      admin: TEST_ADMIN,
     },
     crypto: {
-      all: CRYPTOCURRENCY_GET_ALL,
-      coin: CRYPTOCURRENCY_GET_COIN,
-      coinsWithIds: CRYPTOCURRENCY_GET_COINS_WITH_IDS,
-      coinsInWallet: CRYPTOCURRENCY_GET_COINS_IN_WALLET,
-      coinsInTransactions: CRYPTOCURRENCY_GET_COINS_IN_TRANSACTIONS,
-      history: CRYPTOCURRENCY_GET_HISTORY,
-      buy: CRYPTOCURRENCY_BUY,
-      sell: CRYPTOCURRENCY_SELL,
-      depositMoney: CRYPTOCURRENCY_DEPOSIT_MONEY,
-      resetMoney: CRYPTOCURRENCY_RESET_MONEY,
-      wallet: CRYPTOCURRENCY_GET_WALLET,
-      transactions: CRYPTOCURRENCY_GET_TRANSACTIONS,
+      summary: GET_SUMMARY,
+      all: GET_ALL,
+      coin: GET_COIN,
+      coinsWithIds: GET_COINS_WITH_IDS,
+      coinsInWallet: GET_COINS_IN_WALLET,
+      coinsInTransactions: GET_COINS_IN_TRANSACTIONS,
+      history: GET_HISTORY,
+      buy: BUY,
+      sell: SELL,
+      depositMoney: DEPOSIT_MONEY,
+      resetMoney: RESET_MONEY,
+      wallet: GET_WALLET,
+      transactions: GET_TRANSACTIONS,
     },
     proxy: PROXY,
   },
