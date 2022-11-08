@@ -42,7 +42,7 @@ const GET_SUMMARY = (page: number, size: number, sortBy: string, asc: boolean): 
   `${CRYPTOCURRENCY}/summary?page=${page}&size=${size}&sortBy=${sortBy}&asc=${asc}`;
 const GET_COIN = (id: string): string => `${CRYPTOCURRENCY}/${id}`;
 const GET_COINS_WITH_IDS = (ids: string[]): string => `${CRYPTOCURRENCY}/ids/${ids.join(', ')}`;
-const GET_COINS_IN_WALLET = `${CRYPTOCURRENCY}'/wallet/coins`;
+const GET_COINS_IN_WALLET = `${CRYPTOCURRENCY}/wallet/coins`;
 const GET_COINS_IN_TRANSACTIONS = `${CRYPTOCURRENCY}/transactions/coins`;
 const GET_HISTORY = (id: string, timeframe: string): string =>
   `${GET_COIN(id)}/history?timeframe=${timeframe}`;
