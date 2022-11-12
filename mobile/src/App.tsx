@@ -3,13 +3,27 @@ import React from 'react';
 import HomeScreen from './screens/HomeScreen';
 import ReduxTestScreen from './screens/ReduxTestScreen';
 
-const Stack = createNativeStackNavigator();
+export type StackParamList = {
+  Home: { userName: string };
+  ReduxTest: undefined;
+};
+
+const Stack = createNativeStackNavigator<StackParamList>();
 
 const App = () => {
   return (
-    <Stack.Navigator initialRouteName="ReduxTest">
-      <Stack.Screen name="Home" component={HomeScreen} />
-      <Stack.Screen name="ReduxTest" component={ReduxTestScreen} />
+    <Stack.Navigator initialRouteName="Home">
+      <Stack.Screen
+        name="Home"
+        component={HomeScreen}
+        options={{ title: 'Home' }}
+        initialParams={{ userName: 'Guest' }}
+      />
+      <Stack.Screen
+        name="ReduxTest"
+        component={ReduxTestScreen}
+        options={{ title: 'Redux Test' }}
+      />
     </Stack.Navigator>
   );
 };
