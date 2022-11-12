@@ -10,7 +10,7 @@ import type { RootState } from '../redux/store';
 
 type NavigationProps = NativeStackScreenProps<StackParamList, 'ReduxTest'>;
 
-const ReduxTest = ({ route, navigation }: NavigationProps) => {
+const ReduxTestScreen = ({ route, navigation }: NavigationProps) => {
   const count = useSelector((state: RootState) => state.counter.value);
   const dispatch = useDispatch();
   bindActionCreators;
@@ -19,6 +19,7 @@ const ReduxTest = ({ route, navigation }: NavigationProps) => {
   return (
     <View style={styles.container}>
       <Text variant="displayMedium">Redux test</Text>
+      <Text>Welcome, {route.params.username}!</Text>
       <Button
         mode="contained"
         onPress={() => {
@@ -38,10 +39,10 @@ const ReduxTest = ({ route, navigation }: NavigationProps) => {
       </Button>
       <Button
         mode="outlined"
-        style={{ marginTop: 50, color: 'blue' }}
-        onPress={() => navigation.navigate('Home', { userName: 'Guest' })}
+        style={{ marginTop: 50 }}
+        onPress={() => navigation.navigate('Home')}
       >
-        Go to 'Home' Screen
+        Go to Home
       </Button>
     </View>
   );
@@ -56,4 +57,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ReduxTest;
+export default ReduxTestScreen;
