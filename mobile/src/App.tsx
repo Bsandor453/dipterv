@@ -1,4 +1,7 @@
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {
+  createDrawerNavigator,
+  DrawerNavigationOptions,
+} from '@react-navigation/drawer';
 import React from 'react';
 import HomeScreen from './screens/HomeScreen';
 import ReduxTestScreen from './screens/ReduxTestScreen';
@@ -8,23 +11,30 @@ export type StackParamList = {
   ReduxTest: undefined;
 };
 
-const Stack = createNativeStackNavigator<StackParamList>();
+const Drawer = createDrawerNavigator<StackParamList>();
+
+const navigationOptions: DrawerNavigationOptions = {
+  headerShown: true,
+};
 
 const App = () => {
   return (
-    <Stack.Navigator initialRouteName="Home">
-      <Stack.Screen
+    <Drawer.Navigator
+      initialRouteName="Home"
+      screenOptions={{ ...navigationOptions }}
+    >
+      <Drawer.Screen
         name="Home"
         component={HomeScreen}
         options={{ title: 'Home' }}
         initialParams={{ userName: 'Guest' }}
       />
-      <Stack.Screen
+      <Drawer.Screen
         name="ReduxTest"
         component={ReduxTestScreen}
         options={{ title: 'Redux Test' }}
       />
-    </Stack.Navigator>
+    </Drawer.Navigator>
   );
 };
 
