@@ -17,18 +17,10 @@ module.exports = {
     'plugin:@typescript-eslint/recommended', // Uses the recommended rules from the @typescript-eslint/eslint-plugin
     'plugin:prettier/recommended', // Enables eslint-plugin-prettier and eslint-config-prettier. This will display prettier errors as ESLint errors. Make sure this is always the last configuration in the extends array.
   ],
-  plugins: ['sort-imports-es6-autofix'],
+  plugins: [],
   rules: {
     // Place to specify ESLint rules. Can be used to overwrite rules specified from the extended configs
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
-    'sort-imports-es6-autofix/sort-imports-es6': [
-      2,
-      {
-        ignoreCase: false,
-        ignoreMemberSort: false,
-        memberSyntaxSortOrder: ['none', 'all', 'multiple', 'single'],
-      },
-    ],
   },
 };
