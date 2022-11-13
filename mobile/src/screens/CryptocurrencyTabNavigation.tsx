@@ -1,7 +1,7 @@
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import React, { useState } from 'react';
+import React from 'react';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { StackParamList } from '../App';
 import CryptocurrencyListScreen from './cryptocurrency/CryptocurrencyList';
@@ -38,7 +38,6 @@ const CryptocurrencyTabNavigation = ({
         return '#f9a825';
     }
   };
-  const [bgColor, setBgColor] = useState(tabColorOfScreen());
 
   return (
     <Tab.Navigator

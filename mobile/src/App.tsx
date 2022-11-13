@@ -3,7 +3,9 @@ import {
   DrawerNavigationOptions,
 } from '@react-navigation/drawer';
 import React from 'react';
+import NavigationDrawer from './components/NavigationDrawer';
 import CryptocurrencyDetailsScreen from './screens/cryptocurrency/CryptocurrencyDetails';
+import Profile from './screens/cryptocurrency/Profile';
 import CryptocurrencyTabNavigation from './screens/CryptocurrencyTabNavigation';
 import Home from './screens/Home';
 import ReduxTest from './screens/ReduxTest';
@@ -43,6 +45,7 @@ const App = () => {
     <Drawer.Navigator
       initialRouteName="Home"
       screenOptions={{ ...navigationOptions }}
+      drawerContent={(props) => <NavigationDrawer {...props} />}
     >
       <Drawer.Screen
         name="ReduxTest"
@@ -51,6 +54,11 @@ const App = () => {
         initialParams={{ username: 'Guest' }}
       />
       <Drawer.Screen name="Home" component={Home} options={{ title: 'Home' }} />
+      <Drawer.Screen
+        name="Profile"
+        component={Profile}
+        options={{ title: 'Profile' }}
+      />
       <Drawer.Screen
         name="TabNavigation"
         component={CryptocurrencyTabNavigation}
