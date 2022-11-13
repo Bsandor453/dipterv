@@ -1,4 +1,5 @@
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
+import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -24,18 +25,17 @@ const CryptocurrencyTabNavigation = ({
   navigation,
 }: NavigationProps) => {
   const tabColorOfScreen = () => {
-    console.log(route.params.screen);
-    switch (route.params.screen) {
+    switch (getFocusedRouteNameFromRoute(route)) {
       case 'Summary':
-        return '#ff6f00';
-      case 'CryptocurrencyList':
         return '#f9a825';
+      case 'CryptocurrencyList':
+        return '#fbc02d';
       case 'Wallet':
-        return '#ffa000';
-      case 'TransactionHistory':
         return '#fdd835';
+      case 'TransactionHistory':
+        return '#ffeb3b';
       default:
-        return '#ff6f00';
+        return '#f9a825';
     }
   };
   const [bgColor, setBgColor] = useState(tabColorOfScreen());
@@ -43,15 +43,14 @@ const CryptocurrencyTabNavigation = ({
   return (
     <Tab.Navigator
       initialRouteName="Summary"
+      barStyle={{ backgroundColor: tabColorOfScreen() }}
       shifting={true}
-      barStyle={{ backgroundColor: bgColor }}
     >
       <Tab.Screen
         name="Summary"
         component={SummaryScreen}
         options={{
           tabBarLabel: 'Summary',
-          tabBarColor: '#ff6f00',
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons name="receipt" color={color} size={26} />
           ),
@@ -62,7 +61,6 @@ const CryptocurrencyTabNavigation = ({
         component={CryptocurrencyListScreen}
         options={{
           tabBarLabel: 'Browse & Trade',
-          tabBarColor: '#f9a825',
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons name="bitcoin" color={color} size={26} />
           ),
@@ -73,7 +71,6 @@ const CryptocurrencyTabNavigation = ({
         component={WalletScreen}
         options={{
           tabBarLabel: 'Wallet',
-          tabBarColor: '#ffa000',
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons name="wallet" color={color} size={26} />
           ),
@@ -84,7 +81,6 @@ const CryptocurrencyTabNavigation = ({
         component={TransactionHistoryScreen}
         options={{
           tabBarLabel: 'Transaction History',
-          tabBarColor: '#fdd835',
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons name="history" color={color} size={26} />
           ),
