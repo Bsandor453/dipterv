@@ -3,17 +3,15 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Button, Text } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { StackParamList } from '../App';
-import { decrement, incrementByAmount } from '../redux/slices/counterSlice';
-import type { RootState } from '../redux/store';
+import { decrement, incrementByAmount } from '../../redux/slices/counterSlice';
+import { AppDispatch, RootState } from '../../redux/store';
+import { DrawerParamList } from '../navigation/DrawerNavigation';
 
-type NavigationProps = NativeStackScreenProps<StackParamList, 'ReduxTest'>;
+type NavigationProps = NativeStackScreenProps<DrawerParamList, 'ReduxTest'>;
 
 const ReduxTestScreen = ({ route, navigation }: NavigationProps) => {
   const count = useSelector((state: RootState) => state.counter.value);
-  const dispatch = useDispatch();
-  bindActionCreators;
+  const dispatch = useDispatch<AppDispatch>();
   const [active, setActive] = React.useState('');
 
   return (

@@ -1,75 +1,73 @@
-import {
-  createDrawerNavigator,
-  DrawerNavigationOptions,
-} from '@react-navigation/drawer';
-import React from 'react';
-import NavigationDrawer from './components/NavigationDrawer';
-import CryptocurrencyDetailsScreen from './screens/cryptocurrency/CryptocurrencyDetails';
-import Profile from './screens/cryptocurrency/Profile';
-import CryptocurrencyTabNavigation from './screens/CryptocurrencyTabNavigation';
-import Home from './screens/Home';
-import ReduxTest from './screens/ReduxTest';
+import React, { useEffect, useState } from 'react';
+import { View } from 'react-native';
+import { ActivityIndicator, Snackbar } from 'react-native-paper';
+import { useDispatch, useSelector } from 'react-redux';
+import config from './config/MainConfig';
+import { hide } from './redux/slices/snackbarSlice';
+import { AmberPalette, TextColor } from './util/ColorPalette';
+import { AppDispatch, RootState } from './redux/store';
+import DrawerNavigation from './screens/navigation/DrawerNavigation';
+import RootStackScreen from './screens/navigation/RootStackScreen';
 
-export type StackParamList = {
-  // Testing
-  ReduxTest: { username: string };
-  // Public
-  Home: undefined;
-  Profile: undefined;
-  // Tab Navigation
-  TabNavigation: { screen: string | undefined };
-  // Tabs
-  Summary: undefined;
-  CryptocurrencyList: undefined;
-  Wallet: undefined;
-  TransactionHistory: undefined;
-  // Details
-  CryptocurrencyDetails: undefined;
-};
-
-const Drawer = createDrawerNavigator<StackParamList>();
-
-const navigationOptions: DrawerNavigationOptions = {
-  headerShown: true,
-  headerStyle: {
-    backgroundColor: '#ef6c00',
-  },
-  headerTintColor: '#fff',
-  headerTitleStyle: {
-    fontWeight: 'bold',
-  },
+const getSnackbarColor = (type: 'info' | 'success' | 'error') => {
+  switch (type) {
+    case 'info':
+      return 'white';
+    case 'success':
+      return '#4bf542';
+    case 'error':
+      return 'red';
+  }
 };
 
 const App = () => {
+  const [isLoading, setIsLoading] = useState(true);
+
+  const dispatch = useDispatch<AppDispatch>();
+  const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
+  const snackbar = useSelector((state: RootState) => state.snackbar);
+
+  useEffect(() => {
+    setTimeout(() => setIsLoading(false), 1000);
+  }, []);
+
+  if (isLoading) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
+
   return (
-    <Drawer.Navigator
-      initialRouteName="Home"
-      screenOptions={{ ...navigationOptions }}
-      drawerContent={(props) => <NavigationDrawer {...props} />}
-    >
-      <Drawer.Screen
-        name="ReduxTest"
-        component={ReduxTest}
-        options={{ title: 'Redux Test' }}
-        initialParams={{ username: 'Guest' }}
-      />
-      <Drawer.Screen name="Home" component={Home} options={{ title: 'Home' }} />
-      <Drawer.Screen
-        name="Profile"
-        component={Profile}
-        options={{ title: 'Profile' }}
-      />
-      <Drawer.Screen
-        name="TabNavigation"
-        component={CryptocurrencyTabNavigation}
-        options={{ title: 'Cryptocurrencies' }}
-      />
-      <Drawer.Screen
-        name="CryptocurrencyDetails"
-        component={CryptocurrencyDetailsScreen}
-        options={{ title: 'Cryptocurrency Details' }}
-      />
-    </Drawer.Navigator>
+    <>
+      {isLoggedIn ? <DrawerNavigation /> : <RootStackScreen />}
+      <Snackbar
+        theme={{
+          colors: {
+            inversePrimary: 'white',
+            surface: getSnackbarColor(snackbar.type),
+          },
+        }}
+        visible={snackbar.visible}
+        duration={config.defaults.snackbarDuration}
+        onDismiss={() => dispatch(hide())}
+        action={{
+          label: 'Dismiss',
+          onPress: () => {
+            dispatch(hide());
+          },
+        }}
+      >
+        {snackbar.message}
+      </Snackbar>
+    </>
   );
 };
 

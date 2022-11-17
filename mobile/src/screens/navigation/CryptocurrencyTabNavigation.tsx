@@ -3,11 +3,11 @@ import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React from 'react';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { StackParamList } from '../App';
-import CryptocurrencyListScreen from './cryptocurrency/CryptocurrencyList';
-import SummaryScreen from './cryptocurrency/Summary';
-import TransactionHistoryScreen from './cryptocurrency/TransactionHistory';
-import WalletScreen from './cryptocurrency/Wallet';
+import CryptocurrencyListScreen from '../cryptocurrency/CryptocurrencyList';
+import SummaryScreen from '../cryptocurrency/Summary';
+import TransactionHistoryScreen from '../cryptocurrency/TransactionHistory';
+import WalletScreen from '../cryptocurrency/Wallet';
+import { DrawerParamList } from './DrawerNavigation';
 
 export type TabParamList = {
   Summary: undefined;
@@ -18,7 +18,7 @@ export type TabParamList = {
 
 const Tab = createMaterialBottomTabNavigator();
 
-type NavigationProps = NativeStackScreenProps<StackParamList, 'TabNavigation'>;
+type NavigationProps = NativeStackScreenProps<DrawerParamList, 'TabNavigation'>;
 
 const CryptocurrencyTabNavigation = ({
   route,

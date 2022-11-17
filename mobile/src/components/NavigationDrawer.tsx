@@ -7,11 +7,16 @@ import React from 'react';
 import { View } from 'react-native';
 import { Avatar, Divider, Drawer, Text, Title } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useDispatch } from 'react-redux';
+import { logout } from '../redux/slices/authSlice';
+import { AppDispatch } from '../redux/store';
 
 const username = 'John Doe';
 const role = 'User';
 
 const NavigationDrawer = (props: DrawerContentComponentProps) => {
+  const dispatch = useDispatch<AppDispatch>();
+
   return (
     <View style={{ flex: 1 }}>
       <DrawerContentScrollView {...props}>
@@ -134,7 +139,7 @@ const NavigationDrawer = (props: DrawerContentComponentProps) => {
           )}
           label="Sign out"
           onPress={() => {
-            console.log('Log out!');
+            dispatch(logout());
           }}
         ></DrawerItem>
       </Drawer.Section>
