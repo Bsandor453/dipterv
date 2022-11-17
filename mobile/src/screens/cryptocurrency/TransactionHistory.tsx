@@ -1,14 +1,15 @@
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
-import { CompositeScreenProps, ParamListBase } from '@react-navigation/native';
-import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { DrawerScreenProps } from '@react-navigation/drawer';
+import { CompositeScreenProps } from '@react-navigation/native';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Button, Text } from 'react-native-paper';
-import { StackParamList } from '../../App';
+import { TabParamList } from '../navigation/CryptocurrencyTabNavigation';
+import { DrawerParamList } from '../navigation/DrawerNavigation';
 
 type NavigationProps = CompositeScreenProps<
-  BottomTabScreenProps<ParamListBase, 'TransactionHistory'>,
-  NativeStackScreenProps<StackParamList>
+  BottomTabScreenProps<TabParamList, 'TransactionHistory'>,
+  DrawerScreenProps<DrawerParamList>
 >;
 
 const TransactionHistoryScreen = ({ route, navigation }: NavigationProps) => {

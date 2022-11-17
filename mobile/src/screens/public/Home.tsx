@@ -1,10 +1,10 @@
-import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { DrawerScreenProps } from '@react-navigation/drawer';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Button, Text } from 'react-native-paper';
 import { DrawerParamList } from '../navigation/DrawerNavigation';
 
-type NavigationProps = NativeStackScreenProps<DrawerParamList, 'Home'>;
+type NavigationProps = DrawerScreenProps<DrawerParamList, 'Home'>;
 
 const HomeScreen = ({ navigation }: NavigationProps) => {
   return (

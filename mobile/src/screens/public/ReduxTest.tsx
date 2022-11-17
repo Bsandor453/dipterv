@@ -1,4 +1,4 @@
-import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { DrawerScreenProps } from '@react-navigation/drawer';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Button, Text } from 'react-native-paper';
@@ -7,7 +7,7 @@ import { decrement, incrementByAmount } from '../../redux/slices/counterSlice';
 import { AppDispatch, RootState } from '../../redux/store';
 import { DrawerParamList } from '../navigation/DrawerNavigation';
 
-type NavigationProps = NativeStackScreenProps<DrawerParamList, 'ReduxTest'>;
+type NavigationProps = DrawerScreenProps<DrawerParamList, 'ReduxTest'>;
 
 const ReduxTestScreen = ({ route, navigation }: NavigationProps) => {
   const count = useSelector((state: RootState) => state.counter.value);

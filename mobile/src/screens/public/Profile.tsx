@@ -1,10 +1,10 @@
-import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { DrawerScreenProps } from '@react-navigation/drawer';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Button, Text } from 'react-native-paper';
-import { StackParamList } from '../../App';
+import { DrawerParamList } from '../navigation/DrawerNavigation';
 
-type NavigationProps = NativeStackScreenProps<StackParamList, 'Profile'>;
+type NavigationProps = DrawerScreenProps<DrawerParamList, 'Profile'>;
 
 const ProfileScreen = ({ route, navigation }: NavigationProps) => {
   return (

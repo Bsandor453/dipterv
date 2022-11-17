@@ -1,6 +1,6 @@
+import { DrawerScreenProps } from '@react-navigation/drawer';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React from 'react';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import CryptocurrencyListScreen from '../cryptocurrency/CryptocurrencyList';
@@ -16,9 +16,9 @@ export type TabParamList = {
   TransactionHistory: undefined;
 };
 
-const Tab = createMaterialBottomTabNavigator();
+const Tab = createMaterialBottomTabNavigator<TabParamList>();
 
-type NavigationProps = NativeStackScreenProps<DrawerParamList, 'TabNavigation'>;
+type NavigationProps = DrawerScreenProps<DrawerParamList, 'TabNavigation'>;
 
 const CryptocurrencyTabNavigation = ({
   route,

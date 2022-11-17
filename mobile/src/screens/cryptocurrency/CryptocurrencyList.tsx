@@ -1,15 +1,15 @@
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
+import { DrawerScreenProps } from '@react-navigation/drawer';
 import type { CompositeScreenProps } from '@react-navigation/native';
-import { ParamListBase } from '@react-navigation/native';
-import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Button, Text } from 'react-native-paper';
-import { StackParamList } from '../../App';
+import { TabParamList } from '../navigation/CryptocurrencyTabNavigation';
+import { DrawerParamList } from '../navigation/DrawerNavigation';
 
 type NavigationProps = CompositeScreenProps<
-  BottomTabScreenProps<ParamListBase, 'CryptocurrencyList'>,
-  NativeStackScreenProps<StackParamList>
+  BottomTabScreenProps<TabParamList, 'CryptocurrencyList'>,
+  DrawerScreenProps<DrawerParamList>
 >;
 
 const CryptocurrencyListScreen = ({ route, navigation }: NavigationProps) => {

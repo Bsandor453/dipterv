@@ -1,15 +1,13 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import logging from '../../config/Logging';
-import config from '../../config/MainConfig';
 import IToken from '../../interfaces/IToken';
+import AuthService from '../../service/AuthService';
 import {
-  storeJwtInAsyncStorage,
   readObject,
+  storeJwtInAsyncStorage,
 } from '../../util/AsyncStorageUtils';
-import AxiosWithInterceptors from '../../util/AxiosWithInterceptors';
 import { show } from '../slices/snackbarSlice';
 import { RootState } from '../store';
-import AuthService from '../../service/AuthService';
 
 export const checkLoggedIn = createAsyncThunk(
   'auth/checkLoggedIn',
