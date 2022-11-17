@@ -6,8 +6,8 @@ import config from './config/MainConfig';
 import { checkLoggedIn } from './redux/action_creators/auth';
 import { hide } from './redux/slices/snackbarSlice';
 import { AppDispatch, RootState } from './redux/store';
-import DrawerNavigation from './screens/navigation/DrawerNavigation';
-import RootStackScreen from './screens/navigation/RootStackScreen';
+import DrawerNavigationScreen from './screens/navigation/DrawerNavigationScreen';
+import RootStackScreen from './screens/navigation/RootStackScreenScreen';
 
 const getSnackbarColor = (type: 'info' | 'success' | 'error') => {
   switch (type) {
@@ -47,7 +47,7 @@ const App = () => {
 
   return (
     <>
-      {isLoggedIn ? <DrawerNavigation /> : <RootStackScreen />}
+      {isLoggedIn ? <DrawerNavigationScreen /> : <RootStackScreen />}
       <Snackbar
         theme={{
           colors: {

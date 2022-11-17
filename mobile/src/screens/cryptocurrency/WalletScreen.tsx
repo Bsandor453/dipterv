@@ -1,27 +1,27 @@
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { DrawerScreenProps } from '@react-navigation/drawer';
-import type { CompositeScreenProps } from '@react-navigation/native';
+import { CompositeScreenProps } from '@react-navigation/native';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Button, Text } from 'react-native-paper';
-import { TabParamList } from '../navigation/CryptocurrencyTabNavigation';
-import { DrawerParamList } from '../navigation/DrawerNavigation';
+import { TabParamList } from '../navigation/TabNavigationScreen';
+import { DrawerParamList } from '../navigation/DrawerNavigationScreen';
 
 type NavigationProps = CompositeScreenProps<
-  BottomTabScreenProps<TabParamList, 'CryptocurrencyList'>,
+  BottomTabScreenProps<TabParamList, 'Wallet'>,
   DrawerScreenProps<DrawerParamList>
 >;
 
-const CryptocurrencyListScreen = ({ route, navigation }: NavigationProps) => {
+const WalletScreen = ({ route, navigation }: NavigationProps) => {
   return (
     <View style={styles.container}>
-      <Text>Cryptocurrency List Screen</Text>
+      <Text>Wallet Screen</Text>
       <Button
         mode="outlined"
         style={{ marginTop: 50 }}
-        onPress={() => navigation.navigate('CryptocurrencyDetails')}
+        onPress={() => navigation.navigate('Home')}
       >
-        Go to Coin details
+        Go to Home
       </Button>
     </View>
   );
@@ -36,4 +36,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CryptocurrencyListScreen;
+export default WalletScreen;

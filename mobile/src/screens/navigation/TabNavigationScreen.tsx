@@ -4,11 +4,11 @@ import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import React from 'react';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { AmberPalette } from '../../util/ColorPalette';
-import CryptocurrencyListScreen from '../cryptocurrency/CryptocurrencyList';
-import SummaryScreen from '../cryptocurrency/Summary';
-import TransactionHistoryScreen from '../cryptocurrency/TransactionHistory';
-import WalletScreen from '../cryptocurrency/Wallet';
-import { DrawerParamList } from './DrawerNavigation';
+import CryptocurrencyListScreen from '../cryptocurrency/CryptocurrencyListScreen';
+import SummaryScreen from '../cryptocurrency/SummaryScreen';
+import TransactionHistoryScreen from '../cryptocurrency/TransactionHistoryScreen';
+import WalletScreen from '../cryptocurrency/WalletScreen';
+import { DrawerParamList } from './DrawerNavigationScreen';
 
 export type TabParamList = {
   Summary: undefined;

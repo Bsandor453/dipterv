@@ -16,7 +16,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { login } from '../../redux/action_creators/auth';
 import { AppDispatch, RootState } from '../../redux/store';
 import { AmberPalette, TextColor, TitleColor } from '../../util/ColorPalette';
-import { RootStackParamList } from '../navigation/RootStackScreen';
+import { RootStackParamList } from '../navigation/RootStackScreenScreen';
 
 type NavigationProps = NativeStackScreenProps<
   RootStackParamList,

@@ -4,14 +4,14 @@ import {
 } from '@react-navigation/drawer';
 import React from 'react';
 import NavigationDrawer from '../../components/NavigationDrawer';
-import CryptocurrencyDetailsScreen from '../../screens/cryptocurrency/CryptocurrencyDetails';
-import Profile from '../public/Profile';
-import CryptocurrencyTabNavigation from '../../screens/navigation/CryptocurrencyTabNavigation';
-import Home from '../../screens/public/Home';
-import ReduxTest from '../public/ReduxTest';
+import CryptocurrencyDetailsScreen from '../cryptocurrency/CryptocurrencyDetailsScreen';
+import ProfileScreen from '../public/ProfileScreen';
+import CryptocurrencyTabNavigationScreen from './TabNavigationScreen';
+import HomeScreen from '../public/HomeScreen';
+import TestScreen from '../public/TestScreen';
 
 export type DrawerParamList = {
-  ReduxTest: { username: string };
+  Test: { username: string };
   Home: undefined;
   Profile: undefined;
   TabNavigation: { screen: string | undefined };
@@ -42,21 +42,25 @@ const DrawerNavigation = () => {
       screenOptions={{ ...navigationOptions }}
       drawerContent={(props) => <NavigationDrawer {...props} />}
     >
-      <Drawer.Screen name="Home" component={Home} options={{ title: 'Home' }} />
       <Drawer.Screen
-        name="ReduxTest"
-        component={ReduxTest}
-        options={{ title: 'Redux Test' }}
+        name="Home"
+        component={HomeScreen}
+        options={{ title: 'Home' }}
+      />
+      <Drawer.Screen
+        name="Test"
+        component={TestScreen}
+        options={{ title: 'Test' }}
         initialParams={{ username: 'Guest' }}
       />
       <Drawer.Screen
         name="Profile"
-        component={Profile}
+        component={ProfileScreen}
         options={{ title: 'Profile' }}
       />
       <Drawer.Screen
         name="TabNavigation"
-        component={CryptocurrencyTabNavigation}
+        component={CryptocurrencyTabNavigationScreen}
         options={{ title: 'Cryptocurrencies' }}
       />
       <Drawer.Screen

@@ -5,9 +5,9 @@ import { Button, Text } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 import { decrement, incrementByAmount } from '../../redux/slices/counterSlice';
 import { AppDispatch, RootState } from '../../redux/store';
-import { DrawerParamList } from '../navigation/DrawerNavigation';
+import { DrawerParamList } from '../navigation/DrawerNavigationScreen';
 
-type NavigationProps = DrawerScreenProps<DrawerParamList, 'ReduxTest'>;
+type NavigationProps = DrawerScreenProps<DrawerParamList, 'Test'>;
 
 const ReduxTestScreen = ({ route, navigation }: NavigationProps) => {
   const count = useSelector((state: RootState) => state.counter.value);

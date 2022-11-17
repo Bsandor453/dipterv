@@ -4,8 +4,8 @@ import { CompositeScreenProps } from '@react-navigation/native';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Button, Text } from 'react-native-paper';
-import { TabParamList } from '../navigation/CryptocurrencyTabNavigation';
-import { DrawerParamList } from '../navigation/DrawerNavigation';
+import { TabParamList } from '../navigation/TabNavigationScreen';
+import { DrawerParamList } from '../navigation/DrawerNavigationScreen';
 
 type NavigationProps = CompositeScreenProps<
   BottomTabScreenProps<TabParamList, 'TransactionHistory'>,

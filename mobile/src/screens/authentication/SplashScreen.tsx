@@ -17,7 +17,7 @@ import {
   AmberPalette,
   TitleColor,
 } from '../../util/ColorPalette';
-import { RootStackParamList } from '../navigation/RootStackScreen';
+import { RootStackParamList } from '../navigation/RootStackScreenScreen';
 
 type NavigationProps = NativeStackScreenProps<
   RootStackParamList,

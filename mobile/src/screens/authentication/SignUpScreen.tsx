@@ -15,7 +15,7 @@ import Feather from 'react-native-vector-icons/Feather';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { AmberPalette, TextColor, TitleColor } from '../../util/ColorPalette';
-import { RootStackParamList } from '../navigation/RootStackScreen';
+import { RootStackParamList } from '../navigation/RootStackScreenScreen';
 
 type NavigationProps = NativeStackScreenProps<
   RootStackParamList,

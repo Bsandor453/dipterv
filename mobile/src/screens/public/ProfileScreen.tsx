@@ -2,7 +2,7 @@ import { DrawerScreenProps } from '@react-navigation/drawer';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Button, Text } from 'react-native-paper';
-import { DrawerParamList } from '../navigation/DrawerNavigation';
+import { DrawerParamList } from '../navigation/DrawerNavigationScreen';
 
 type NavigationProps = DrawerScreenProps<DrawerParamList, 'Profile'>;
 
@@ -13,7 +13,7 @@ const ProfileScreen = ({ route, navigation }: NavigationProps) => {
       <Button
         mode="outlined"
         style={{ marginTop: 50 }}
-        onPress={() => navigation.navigate('ReduxTest', { username: 'Guest' })}
+        onPress={() => navigation.navigate('Test', { username: 'Guest' })}
       >
         Go to test screen
       </Button>

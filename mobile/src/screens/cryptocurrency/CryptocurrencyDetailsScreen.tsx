@@ -2,7 +2,7 @@ import { DrawerScreenProps } from '@react-navigation/drawer';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Button, Text } from 'react-native-paper';
-import { DrawerParamList } from '../navigation/DrawerNavigation';
+import { DrawerParamList } from '../navigation/DrawerNavigationScreen';
 
 type NavigationProps = DrawerScreenProps<
   DrawerParamList,
