@@ -3,6 +3,7 @@ import { createMaterialBottomTabNavigator } from '@react-navigation/material-bot
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import React from 'react';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { AmberPalette } from '../../util/ColorPalette';
 import CryptocurrencyListScreen from '../cryptocurrency/CryptocurrencyList';
 import SummaryScreen from '../cryptocurrency/Summary';
 import TransactionHistoryScreen from '../cryptocurrency/TransactionHistory';
@@ -27,15 +28,15 @@ const CryptocurrencyTabNavigation = ({
   const tabColorOfScreen = () => {
     switch (getFocusedRouteNameFromRoute(route)) {
       case 'Summary':
-        return '#f9a825';
+        return AmberPalette[0];
       case 'CryptocurrencyList':
-        return '#fbc02d';
+        return AmberPalette[1];
       case 'Wallet':
-        return '#fdd835';
+        return AmberPalette[2];
       case 'TransactionHistory':
-        return '#ffeb3b';
+        return AmberPalette[3];
       default:
-        return '#f9a825';
+        return AmberPalette[0];
     }
   };
 
