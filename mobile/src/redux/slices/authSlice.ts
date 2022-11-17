@@ -1,13 +1,7 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import type { PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import IToken from '../../interfaces/IToken';
-import { readObject, removeItem } from '../../util/AsyncStorageUtils';
-import AuthService from '../../service/AuthService';
-import useAxios from '../../util/AxiosWithInterceptors';
-import config from '../../config/MainConfig';
-import { login } from '../action_creators/auth';
-
-//const userString = readObject('user') || '{}';
+import { removeItem } from '../../util/AsyncStorageUtils';
+import { checkLoggedIn, login } from '../action_creators/auth';
 
 export interface AuthState {
   isLoggedIn: boolean;
@@ -48,7 +42,13 @@ export const authSlice = createSlice({
       .addCase(login.rejected, (state, action) => {
         state.error = action.error.message;
         state.loginStatus = 'error';
-      });
+      })
+      .addCase(
+        checkLoggedIn.fulfilled,
+        (state, action: PayloadAction<IToken>) => {
+          state.isLoggedIn = !!action.payload;
+        }
+      );
   },
 });
 

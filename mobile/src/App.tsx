@@ -3,8 +3,8 @@ import { View } from 'react-native';
 import { ActivityIndicator, Snackbar } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 import config from './config/MainConfig';
+import { checkLoggedIn } from './redux/action_creators/auth';
 import { hide } from './redux/slices/snackbarSlice';
-import { AmberPalette, TextColor } from './util/ColorPalette';
 import { AppDispatch, RootState } from './redux/store';
 import DrawerNavigation from './screens/navigation/DrawerNavigation';
 import RootStackScreen from './screens/navigation/RootStackScreen';
@@ -28,7 +28,7 @@ const App = () => {
   const snackbar = useSelector((state: RootState) => state.snackbar);
 
   useEffect(() => {
-    setTimeout(() => setIsLoading(false), 1000);
+    dispatch(checkLoggedIn()).then(() => setIsLoading(false));
   }, []);
 
   if (isLoading) {
@@ -40,7 +40,7 @@ const App = () => {
           alignItems: 'center',
         }}
       >
-        <ActivityIndicator size="large" />
+        <ActivityIndicator size="large" color="black" />
       </View>
     );
   }
