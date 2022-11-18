@@ -28,6 +28,8 @@ public class Cryptocurrency {
 
     @JsonProperty("current_price")
     private double currentPrice;
+    
+    private String color;
 
     @JsonProperty("market_cap")
     private double marketCap;
