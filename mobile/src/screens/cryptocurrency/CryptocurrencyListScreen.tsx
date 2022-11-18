@@ -3,8 +3,11 @@ import { DrawerScreenProps } from '@react-navigation/drawer';
 import type { CompositeScreenProps } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
 import { Button, Text } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
+import CryptocurrencyCard from '../../components/CryptocurrencyCard';
+import config from '../../config/MainConfig';
 import ICryptocurrency from '../../interfaces/cryptocurrency/ICryptocurrency';
 import IPageable from '../../interfaces/IPageable';
 import getCryptocurrencies from '../../redux/action_creators/cryptocurrency';
@@ -53,21 +56,19 @@ const CryptocurrencyListScreen = ({ route, navigation }: NavigationProps) => {
   }, []);
 
   return (
-    <View style={styles.container}>
-      <Text>Cryptocurrency List Screen</Text>
-      <Button
-        mode="outlined"
-        style={{ marginTop: 50 }}
-        onPress={() => navigation.navigate('CryptocurrencyDetails')}
-      >
-        Go to Coin details
-      </Button>
-      <>
-        {coins?.content?.map((coin) => (
-          <Text>{coin.name + ' --- ' + coin.current_price}</Text>
-        ))}
-      </>
-    </View>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={{ alignItems: 'center', justifyContent: 'center' }}
+    >
+      {coins?.content?.map((coin) => (
+        <CryptocurrencyCard
+          key={coin.id}
+          baseSymbol={config.defaults.baseCurrency.symbol}
+          baseCode={config.defaults.baseCurrency.code}
+          {...coin}
+        />
+      ))}
+    </ScrollView>
   );
 };
 
@@ -75,8 +76,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
 });
 
