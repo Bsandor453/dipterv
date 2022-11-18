@@ -8,7 +8,7 @@ const httpClient = AxiosWithInterceptors();
 
 const tokenAuthUrlConfig = async () => {
   const authHeader = await readObject('user');
-  return { headers: { 'Content-Type': 'application/json', ...authHeader() } };
+  return { headers: { 'Content-Type': 'application/json', ...authHeader } };
 };
 
 const getUserData = async (): Promise<AxiosResponse<any>> => {

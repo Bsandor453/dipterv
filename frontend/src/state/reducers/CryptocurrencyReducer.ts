@@ -1,8 +1,8 @@
 import { ActionType } from '../action-types';
 import { CryptocurrencyAction } from '../actions';
-import ICryptoCurrencyDetails from '../../interfaces/cryptocurrency/ICryptocurrencyDetails';
-import ICryptoCurrencyHistory from '../../interfaces/cryptocurrency/ICryptocurrencyHistory';
 import ICryptocurrency from '../../interfaces/cryptocurrency/ICryptocurrency';
+import ICryptocurrencyDetails from '../../interfaces/cryptocurrency/ICryptocurrencyDetails';
+import ICryptocurrencyHistory from '../../interfaces/cryptocurrency/ICryptocurrencyHistory';
 import IPageable from '../../interfaces/IPageable';
 import ISummary from '../../interfaces/ISummary';
 import ITransaction from '../../interfaces/ITransaction';
@@ -22,10 +22,10 @@ const initialState = {
 type cryptocurrencyState = {
   summary: ISummary | null;
   coins: IPageable<ICryptocurrency> | null;
-  coin: ICryptoCurrencyDetails | null;
+  coin: ICryptocurrencyDetails | null;
   coinsWallet: ICryptocurrency[] | null;
   coinsTransactions: ICryptocurrency[] | null;
-  history: ICryptoCurrencyHistory | null;
+  history: ICryptocurrencyHistory | null;
   wallet: IWallet | null;
   transactions: IPageable<ITransaction> | null;
 };

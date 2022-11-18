@@ -1,6 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
-import counterReducer from './slices/counterSlice';
 import authReducer from './slices/authSlice';
+import counterReducer from './slices/counterSlice';
+import cryptocurrencyReducer from './slices/cryptocurrencySlice';
 import snackbarReducer from './slices/snackbarSlice';
 
 export const store = configureStore({
@@ -8,6 +9,7 @@ export const store = configureStore({
     counter: counterReducer,
     auth: authReducer,
     snackbar: snackbarReducer,
+    crypto: cryptocurrencyReducer,
   },
 });
 
