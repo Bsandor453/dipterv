@@ -56,7 +56,7 @@ export const login = createAsyncThunk<
     if (error.name && error.message) {
       if (error.name === 'AxiosError') {
         thunkAPI.dispatch(
-          show({ message: 'Server in unavailable!', type: 'error' })
+          show({ message: 'Server is unavailable!', type: 'error' })
         );
       } else {
         thunkAPI.dispatch(

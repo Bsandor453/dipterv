@@ -187,7 +187,7 @@ const SignUpScreen = ({ navigation }: NavigationProps) => {
             Confirm Password
           </Text>
           <View style={styles.action}>
-            <Feather name="lock" color="black" size={20} />
+            <Feather name="lock" color={TextColor} size={20} />
             <TextInput
               placeholder="Your password again"
               secureTextEntry={!data.showConfirmPassword}
