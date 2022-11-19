@@ -19,7 +19,7 @@ export type DrawerParamList = {
   CryptocurrencyList: undefined;
   Wallet: undefined;
   TransactionHistory: undefined;
-  CryptocurrencyDetails: undefined;
+  CryptocurrencyDetails: { coinId: string };
 };
 
 const Drawer = createDrawerNavigator<DrawerParamList>();
@@ -67,6 +67,7 @@ const DrawerNavigation = () => {
         name="CryptocurrencyDetails"
         component={CryptocurrencyDetailsScreen}
         options={{ title: 'Cryptocurrency Details' }}
+        initialParams={{ coinId: 'bitcoin' }}
       />
     </Drawer.Navigator>
   );

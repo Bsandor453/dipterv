@@ -16,18 +16,7 @@ const CryptocurrencyDetailsScreen = ({
   return (
     <View style={styles.container}>
       <Text>Cryptocurrency Details Screen</Text>
-      <Text>.</Text>
-      <Text>.</Text>
-      <Text>.</Text>
-      <Text>Details</Text>
-      <Text>Details</Text>
-      <Text>Details</Text>
-      <Text>Details</Text>
-      <Text>Details</Text>
-      <Text>Details</Text>
-      <Text>.</Text>
-      <Text>.</Text>
-      <Text>.</Text>
+      <Text>Coin id: {route.params.coinId}</Text>
       <Button
         mode="outlined"
         style={{ marginTop: 50 }}

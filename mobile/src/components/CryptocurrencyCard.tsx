@@ -1,4 +1,6 @@
 import { formatCurrency as format } from '@coingecko/cryptoformat';
+import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
+import { useNavigation } from '@react-navigation/native';
 import { default as dayjs } from 'dayjs';
 import React from 'react';
 import { Image, StyleSheet, View } from 'react-native';
@@ -10,7 +12,9 @@ import ICryptocurrency from '../interfaces/cryptocurrency/ICryptocurrency';
 import { TextColor } from '../util/ColorPalette';
 import { calculateBrightness, LightenDarkenColor } from '../util/ColorUtil';
 
-type Props = ICryptocurrency & { lastElementInList: boolean };
+type Props = ICryptocurrency & {
+  lastElementInList: boolean;
+};
 
 const dateFormat = config.defaults.dateFormat;
 
@@ -50,6 +54,8 @@ const CryptocurrencyCard = (props: Props) => {
     ],
   };
 
+  const navigation = useNavigation<BottomTabNavigationProp<any>>();
+
   const priceChangeIcon = () => {
     return priceChange(props.sparkline_in_7d.price) > 0 ? (
       <Feather name="trending-up" color="green" size={40} />
@@ -80,7 +86,9 @@ const CryptocurrencyCard = (props: Props) => {
       ]}
     >
       <TouchableRipple
-        onPress={() => console.log('Pressed ' + props.name)}
+        onPress={() =>
+          navigation.navigate('CryptocurrencyDetails', { coinId: props.id })
+        }
         rippleColor="rgba(0, 0, 0, .1)"
         style={[styles.ripple]}
         borderless
