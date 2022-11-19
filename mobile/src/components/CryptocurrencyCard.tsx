@@ -82,7 +82,7 @@ const CryptocurrencyCard = (props: Props) => {
         { marginBottom: props.lastElementInList ? 15 : 0 },
       ]}
     >
-      <View>
+      <>
         <View style={styles.cardTop}>
           <View style={styles.logoView}>
             <Image
@@ -154,7 +154,7 @@ const CryptocurrencyCard = (props: Props) => {
             />
           </View>
         </View>
-      </View>
+      </>
     </TouchableRipple>
   );
 };
@@ -163,18 +163,15 @@ const styles = StyleSheet.create({
   container: {
     width: '90%',
     marginTop: 15,
-    elevation: 1,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.23,
-    shadowRadius: 2.62,
+    borderRadius: 20,
     paddingVertical: 10,
     paddingHorizontal: 10,
     display: 'flex',
     flexDirection: 'column',
+    borderWidth: 0.5,
+    borderColor: 'gray',
+    elevation: 5,
+    backgroundColor: 'white',
   },
   cardTop: {
     display: 'flex',
