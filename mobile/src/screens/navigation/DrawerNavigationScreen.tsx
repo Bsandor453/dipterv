@@ -38,10 +38,15 @@ const navigationOptions: DrawerNavigationOptions = {
 const DrawerNavigation = () => {
   return (
     <Drawer.Navigator
-      initialRouteName="Home"
+      initialRouteName="TabNavigation"
       screenOptions={{ ...navigationOptions }}
       drawerContent={(props) => <NavigationDrawer {...props} />}
     >
+      <Drawer.Screen
+        name="TabNavigation"
+        component={CryptocurrencyTabNavigationScreen}
+        options={{ title: 'Cryptocurrencies' }}
+      />
       <Drawer.Screen
         name="Home"
         component={HomeScreen}
@@ -57,11 +62,6 @@ const DrawerNavigation = () => {
         name="Profile"
         component={ProfileScreen}
         options={{ title: 'Profile' }}
-      />
-      <Drawer.Screen
-        name="TabNavigation"
-        component={CryptocurrencyTabNavigationScreen}
-        options={{ title: 'Cryptocurrencies' }}
       />
       <Drawer.Screen
         name="CryptocurrencyDetails"

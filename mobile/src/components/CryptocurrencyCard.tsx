@@ -86,9 +86,9 @@ const CryptocurrencyCard = (props: Props) => {
       ]}
     >
       <TouchableRipple
-        onPress={() =>
-          navigation.navigate('CryptocurrencyDetails', { coinId: props.id })
-        }
+        onPress={() => {
+          navigation.navigate('CryptocurrencyDetails', { coinId: props.id });
+        }}
         rippleColor="rgba(0, 0, 0, .1)"
         style={[styles.ripple]}
         borderless
