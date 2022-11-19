@@ -74,88 +74,98 @@ const CryptocurrencyCard = (props: Props) => {
   };
 
   return (
-    <TouchableRipple
-      onPress={() => console.log('Pressed ' + props.name)}
-      rippleColor="rgba(0, 0, 0, .1)"
+    <View
       style={[
         styles.container,
         { marginBottom: props.lastElementInList ? 15 : 0 },
       ]}
     >
-      <>
-        <View style={styles.cardTop}>
-          <View style={styles.logoView}>
-            <Image
-              style={styles.logo}
-              source={{
-                uri: props.image,
-              }}
-            />
+      <TouchableRipple
+        onPress={() => console.log('Pressed ' + props.name)}
+        rippleColor="rgba(0, 0, 0, .1)"
+        style={[
+          styles.ripple,
+          { marginBottom: props.lastElementInList ? 15 : 0 },
+        ]}
+        borderless
+      >
+        <>
+          <View style={styles.cardTop}>
+            <View style={styles.logoView}>
+              <Image
+                style={styles.logo}
+                source={{
+                  uri: props.image,
+                }}
+              />
+            </View>
+            <View style={styles.baseData}>
+              <Text>
+                {props.name + ' (' + props.symbol.toUpperCase() + ')'}
+              </Text>
+              <Text>{'CoinGecko Rank' + ' #' + props.market_cap_rank}</Text>
+              <Text>{formatCurrency(props.current_price)}</Text>
+              <Text>{`MAX: ${formatCurrency(props.ath)}`}</Text>
+              <Text>
+                {`(On ${
+                  allTimeHighDate.toString() !== 'Invalid Date'
+                    ? allTimeHighDate.toString()
+                    : '-'
+                })`}
+              </Text>
+            </View>
           </View>
-          <View style={styles.baseData}>
-            <Text>{props.name + ' (' + props.symbol.toUpperCase() + ')'}</Text>
-            <Text>{'CoinGecko Rank' + ' #' + props.market_cap_rank}</Text>
-            <Text>{formatCurrency(props.current_price)}</Text>
-            <Text>{`MAX: ${formatCurrency(props.ath)}`}</Text>
-            <Text>
-              {`(On ${
-                allTimeHighDate.toString() !== 'Invalid Date'
-                  ? allTimeHighDate.toString()
-                  : '-'
-              })`}
-            </Text>
-          </View>
-        </View>
-        <View style={styles.cardBottom}>
-          <View style={styles.priceChange}>
-            <View style={styles.priceChangeIcon}>
-              {props.sparkline_in_7d.price[
-                props.sparkline_in_7d.price.length - 1
-              ] &&
+          <View style={styles.cardBottom}>
+            <View style={styles.priceChange}>
+              <View style={styles.priceChangeIcon}>
+                {props.sparkline_in_7d.price[
+                  props.sparkline_in_7d.price.length - 1
+                ] &&
+                  props.sparkline_in_7d.price[
+                    props.sparkline_in_7d.price.length - 2
+                  ] &&
+                  priceChangeIcon()}
+              </View>
+              <View style={styles.priceChangeText}>
+                {props.sparkline_in_7d.price[
+                  props.sparkline_in_7d.price.length - 1
+                ] &&
                 props.sparkline_in_7d.price[
                   props.sparkline_in_7d.price.length - 2
-                ] &&
-                priceChangeIcon()}
+                ] ? (
+                  <Text style={{ marginStart: 10 }}>{priceChangeText()}</Text>
+                ) : (
+                  <Text>No price data!</Text>
+                )}
+              </View>
             </View>
-            <View style={styles.priceChangeText}>
-              {props.sparkline_in_7d.price[
-                props.sparkline_in_7d.price.length - 1
-              ] &&
-              props.sparkline_in_7d.price[
-                props.sparkline_in_7d.price.length - 2
-              ] ? (
-                <Text style={{ marginStart: 10 }}>{priceChangeText()}</Text>
-              ) : (
-                <Text>No price data!</Text>
-              )}
+            <View style={styles.sparkline}>
+              <LineChart
+                style={{ paddingRight: 0, margin: 0, shadowColor: 'green' }}
+                data={data}
+                height={80}
+                width={160}
+                chartConfig={{
+                  color: () => color,
+                  backgroundGradientFrom: 'white',
+                  backgroundGradientTo: 'white',
+                  fillShadowGradientOpacity: 0.2,
+                  strokeWidth: 1,
+                }}
+                withDots={false}
+                withHorizontalLabels={false}
+                withInnerLines={false}
+                withHorizontalLines={false}
+                withOuterLines={false}
+                withScrollableDot={false}
+                withVerticalLabels={false}
+                withVerticalLines={false}
+              />
             </View>
           </View>
-          <View style={styles.sparkline}>
-            <LineChart
-              style={{ paddingRight: 0, margin: 0, shadowColor: 'green' }}
-              data={data}
-              height={80}
-              width={160}
-              chartConfig={{
-                color: () => color,
-                backgroundGradientFrom: 'white',
-                backgroundGradientTo: 'white',
-                fillShadowGradientOpacity: 0.2,
-                strokeWidth: 1,
-              }}
-              withDots={false}
-              withHorizontalLabels={false}
-              withInnerLines={false}
-              withHorizontalLines={false}
-              withOuterLines={false}
-              withScrollableDot={false}
-              withVerticalLabels={false}
-              withVerticalLines={false}
-            />
-          </View>
-        </View>
-      </>
-    </TouchableRipple>
+        </>
+      </TouchableRipple>
+    </View>
   );
 };
 
@@ -164,14 +174,17 @@ const styles = StyleSheet.create({
     width: '90%',
     marginTop: 15,
     borderRadius: 20,
-    paddingVertical: 10,
-    paddingHorizontal: 10,
     display: 'flex',
     flexDirection: 'column',
     borderWidth: 0.5,
     borderColor: 'gray',
     elevation: 5,
     backgroundColor: 'white',
+  },
+  ripple: {
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+    borderRadius: 20,
   },
   cardTop: {
     display: 'flex',
