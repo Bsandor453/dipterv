@@ -60,12 +60,11 @@ const CryptocurrencyListScreen = ({ route, navigation }: NavigationProps) => {
       style={styles.container}
       contentContainerStyle={{ alignItems: 'center', justifyContent: 'center' }}
     >
-      {coins?.content?.map((coin) => (
+      {coins?.content?.map((coin, index) => (
         <CryptocurrencyCard
           key={coin.id}
-          baseSymbol={config.defaults.baseCurrency.symbol}
-          baseCode={config.defaults.baseCurrency.code}
           {...coin}
+          lastElementInList={!!(index === pageSize - 1)}
         />
       ))}
     </ScrollView>

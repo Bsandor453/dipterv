@@ -1,19 +1,27 @@
 import { default as dayjs } from 'dayjs';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Image, StyleSheet, View } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
-import { Text } from 'react-native-paper';
-import ImageColors from 'react-native-image-colors';
-import ICryptocurrency from '../interfaces/cryptocurrency/ICryptocurrency';
-import { getColorFromURL } from 'rn-dominant-color';
+import { Text, TouchableRipple } from 'react-native-paper';
 import Feather from 'react-native-vector-icons/Feather';
+import ICryptocurrency from '../interfaces/cryptocurrency/ICryptocurrency';
 import { calculateBrightness, LightenDarkenColor } from '../util/ColorUtil';
+import { formatCurrency as format } from '@coingecko/cryptoformat';
+import config from '../config/MainConfig';
 
-type Props = ICryptocurrency & { baseSymbol: string; baseCode: string };
+type Props = ICryptocurrency & { lastElementInList: boolean };
 
-const numberPrecision = 7;
-const locale = 'en-GB';
-const dateFormat = 'DD MMMM, YYYY';
+const dateFormat = config.defaults.dateFormat;
+const baseCode = config.defaults.baseCurrency.code;
+const baseSymbol = config.defaults.baseCurrency.symbol;
+
+const formatCurrency = (currency: number) => {
+  return format(
+    currency,
+    config.defaults.baseCurrency.symbol,
+    config.defaults.localeShort
+  );
+};
 
 const priceChange = (history: number[]) => {
   const lastElement = history[history.length - 1];
@@ -23,27 +31,7 @@ const priceChange = (history: number[]) => {
 
 const CryptocurrencyCard = (props: Props) => {
   const allTimeHighDate = dayjs(props.ath_date).format(dateFormat);
-
-  // Calculate dominant color from image
-  const [originalColor, setOriginalColor] = useState('white');
-
-  useEffect(() => {
-    console.log(props.name);
-
-    const fun = async () => {
-      const response = await ImageColors.getColors(
-        'https://imgur.com/O3XSdU7',
-        {
-          fallback: '#228B22',
-          cache: true,
-          key: 'unique_key',
-        }
-      );
-      console.log(response);
-    };
-
-    fun().catch((error) => console.log(error));
-  }, []);
+  const originalColor = props.color;
 
   const brightness = calculateBrightness(originalColor ?? '#000000');
   const color =
@@ -58,151 +46,172 @@ const CryptocurrencyCard = (props: Props) => {
         data: props.sparkline_in_7d.price.map((v) =>
           typeof v === 'number' ? v : Number(0.0)
         ),
-        color: () => 'red',
+        color: () => color,
       },
     ],
   };
 
   const priceChangeIcon = () => {
     return priceChange(props.sparkline_in_7d.price) > 0 ? (
-      <Feather name="trending-up" color="green" size={20} />
+      <Feather name="trending-up" color="green" size={40} />
     ) : (
-      <Feather name="trending-down" color="red" size={20} />
+      <Feather name="trending-down" color="red" size={40} />
     );
   };
 
   const priceChangeText = () => {
     return priceChange(props.sparkline_in_7d.price) > 0 ? (
-      <Text>
-        {'+ '}
-        {Number(priceChange(props.sparkline_in_7d.price)).toLocaleString(
-          locale,
-          {
-            minimumFractionDigits: numberPrecision,
-          }
-        )}
-        {' ' + props.baseSymbol}
+      <Text style={{ color: 'green' }}>
+        {`+ ${formatCurrency(priceChange(props.sparkline_in_7d.price))}`}
       </Text>
     ) : (
-      <Text>
-        {'- '}
-        {Number(
+      <Text style={{ color: 'red' }}>
+        {`- ${formatCurrency(
           Math.abs(priceChange(props.sparkline_in_7d.price))
-        ).toLocaleString(locale, {
-          minimumFractionDigits: numberPrecision,
-        })}
-        {' ' + props.baseSymbol}
+        )}`}
       </Text>
     );
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.cardTop}>
-        <Image
-          style={styles.logo}
-          source={{
-            uri: props.image,
-          }}
-        />
-        <View style={styles.baseData}>
-          <Text>{props.name + ' (' + props.symbol.toUpperCase() + ')'}</Text>
-          <Text>{'CoinGecko Rank' + ' #' + props.market_cap_rank}</Text>
-          <Text>
-            {props.current_price.toLocaleString(locale, {
-              minimumFractionDigits: numberPrecision,
-            }) +
-              ' ' +
-              props.baseSymbol}
-          </Text>
-          <Text>
-            {'MAX: ' +
-              props.ath.toLocaleString(locale, {
-                minimumFractionDigits: numberPrecision,
-              }) +
-              ' ' +
-              props.baseSymbol}
-          </Text>
-          <Text>
-            {'(On ' +
-              (allTimeHighDate.toString() !== 'Invalid Date'
-                ? allTimeHighDate.toString()
-                : '-') +
-              ')'}
-          </Text>
+    <TouchableRipple
+      onPress={() => console.log('Pressed ' + props.name)}
+      rippleColor="rgba(0, 0, 0, .1)"
+      style={[
+        styles.container,
+        { marginBottom: props.lastElementInList ? 15 : 0 },
+      ]}
+    >
+      <View>
+        <View style={styles.cardTop}>
+          <View style={styles.logoView}>
+            <Image
+              style={styles.logo}
+              source={{
+                uri: props.image,
+              }}
+            />
+          </View>
+          <View style={styles.baseData}>
+            <Text>{props.name + ' (' + props.symbol.toUpperCase() + ')'}</Text>
+            <Text>{'CoinGecko Rank' + ' #' + props.market_cap_rank}</Text>
+            <Text>{formatCurrency(props.current_price)}</Text>
+            <Text>{`MAX: ${formatCurrency(props.ath)}`}</Text>
+            <Text>
+              {`(On ${
+                allTimeHighDate.toString() !== 'Invalid Date'
+                  ? allTimeHighDate.toString()
+                  : '-'
+              })`}
+            </Text>
+          </View>
+        </View>
+        <View style={styles.cardBottom}>
+          <View style={styles.priceChange}>
+            <View style={styles.priceChangeIcon}>
+              {props.sparkline_in_7d.price[
+                props.sparkline_in_7d.price.length - 1
+              ] &&
+                props.sparkline_in_7d.price[
+                  props.sparkline_in_7d.price.length - 2
+                ] &&
+                priceChangeIcon()}
+            </View>
+            <View style={styles.priceChangeText}>
+              {props.sparkline_in_7d.price[
+                props.sparkline_in_7d.price.length - 1
+              ] &&
+              props.sparkline_in_7d.price[
+                props.sparkline_in_7d.price.length - 2
+              ] ? (
+                <Text style={{ marginStart: 10 }}>{priceChangeText()}</Text>
+              ) : (
+                <Text>No price data!</Text>
+              )}
+            </View>
+          </View>
+          <View style={styles.sparkline}>
+            <LineChart
+              style={{ paddingRight: 0, margin: 0, shadowColor: 'green' }}
+              data={data}
+              height={80}
+              width={160}
+              chartConfig={{
+                color: () => color,
+                backgroundGradientFrom: 'white',
+                backgroundGradientTo: 'white',
+                fillShadowGradientOpacity: 0.2,
+                strokeWidth: 1,
+              }}
+              withDots={false}
+              withHorizontalLabels={false}
+              withInnerLines={false}
+              withHorizontalLines={false}
+              withOuterLines={false}
+              withScrollableDot={false}
+              withVerticalLabels={false}
+              withVerticalLines={false}
+            />
+          </View>
         </View>
       </View>
-      <View style={styles.cardBottom}>
-        {props.sparkline_in_7d.price[props.sparkline_in_7d.price.length - 1] &&
-          props.sparkline_in_7d.price[props.sparkline_in_7d.price.length - 2] &&
-          priceChangeIcon()}
-        {props.sparkline_in_7d.price[props.sparkline_in_7d.price.length - 1] &&
-        props.sparkline_in_7d.price[props.sparkline_in_7d.price.length - 2] ? (
-          priceChangeText()
-        ) : (
-          <Text>No price data!</Text>
-        )}
-        <LineChart
-          style={{ paddingRight: 0, margin: 0, shadowColor: 'green' }}
-          data={data}
-          height={80}
-          width={150}
-          chartConfig={{
-            color: () => 'red',
-            backgroundGradientFrom: 'white',
-            backgroundGradientTo: 'white',
-            fillShadowGradientOpacity: 0.2,
-            strokeWidth: 1,
-          }}
-          withDots={false}
-          withHorizontalLabels={false}
-          withInnerLines={false}
-          withHorizontalLines={false}
-          withOuterLines={false}
-          withScrollableDot={false}
-          withVerticalLabels={false}
-          withVerticalLines={false}
-        />
-      </View>
-    </View>
+    </TouchableRipple>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    margin: 10,
     width: '90%',
-    borderColor: 'gray',
-    borderRadius: 10,
-    borderWidth: 1,
-    paddingVertical: 20,
-    paddingHorizontal: 20,
+    marginTop: 15,
+    elevation: 1,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.23,
+    shadowRadius: 2.62,
+    paddingVertical: 10,
+    paddingHorizontal: 10,
     display: 'flex',
     flexDirection: 'column',
   },
   cardTop: {
     display: 'flex',
     flexDirection: 'row',
+    alignItems: 'center',
+  },
+  logoView: {
+    flex: 4,
   },
   logo: {
-    flex: 1,
-    width: 110,
-    height: 110,
-    maxHeight: 110,
-    maxWidth: 110,
+    marginStart: 10,
+    width: 100,
+    height: 100,
+    maxHeight: 100,
+    maxWidth: 100,
   },
   baseData: {
-    flex: 1,
+    flex: 5,
   },
   cardBottom: {
     display: 'flex',
     flexDirection: 'row',
-  },
-  sparkline: {
-    flex: 1,
+    alignItems: 'center',
   },
   priceChange: {
-    flex: 1,
+    flex: 4,
+    marginTop: 10,
+    marginStart: 5,
+    flexDirection: 'column',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+  },
+  priceChangeIcon: { flex: 1, marginStart: 35 },
+  priceChangeText: { flex: 1 },
+  sparkline: {
+    marginStart: -5,
+    flex: 5,
   },
 });
 

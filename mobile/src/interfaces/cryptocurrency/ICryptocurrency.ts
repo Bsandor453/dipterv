@@ -4,6 +4,7 @@ export default interface ICryptocurrency {
   name: string;
   image: string;
   current_price: number;
+  color: string;
   market_cap: number;
   market_cap_rank: number;
   fully_diluted_valuation: number;
