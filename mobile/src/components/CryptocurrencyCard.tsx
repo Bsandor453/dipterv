@@ -84,10 +84,7 @@ const CryptocurrencyCard = (props: Props) => {
       <TouchableRipple
         onPress={() => console.log('Pressed ' + props.name)}
         rippleColor="rgba(0, 0, 0, .1)"
-        style={[
-          styles.ripple,
-          { marginBottom: props.lastElementInList ? 15 : 0 },
-        ]}
+        style={[styles.ripple]}
         borderless
       >
         <>
