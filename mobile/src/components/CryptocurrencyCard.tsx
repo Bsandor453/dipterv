@@ -5,6 +5,7 @@ import { LineChart } from 'react-native-chart-kit';
 import { Text, TouchableRipple } from 'react-native-paper';
 import Feather from 'react-native-vector-icons/Feather';
 import ICryptocurrency from '../interfaces/cryptocurrency/ICryptocurrency';
+import { TextColor } from '../util/ColorPalette';
 import { calculateBrightness, LightenDarkenColor } from '../util/ColorUtil';
 import { formatCurrency as format } from '@coingecko/cryptoformat';
 import config from '../config/MainConfig';
@@ -100,13 +101,19 @@ const CryptocurrencyCard = (props: Props) => {
               />
             </View>
             <View style={styles.baseData}>
-              <Text>
+              <Text style={styles.nameText}>
                 {props.name + ' (' + props.symbol.toUpperCase() + ')'}
               </Text>
-              <Text>{'CoinGecko Rank' + ' #' + props.market_cap_rank}</Text>
-              <Text>{formatCurrency(props.current_price)}</Text>
-              <Text>{`MAX: ${formatCurrency(props.ath)}`}</Text>
-              <Text>
+              <Text style={styles.rankText}>
+                {'CoinGecko Rank' + ' #' + props.market_cap_rank}
+              </Text>
+              <Text style={styles.priceText}>
+                {formatCurrency(props.current_price)}
+              </Text>
+              <Text style={styles.maxPriceText}>{`MAX: ${formatCurrency(
+                props.ath
+              )}`}</Text>
+              <Text style={styles.maxPriceDate}>
                 {`(On ${
                   allTimeHighDate.toString() !== 'Invalid Date'
                     ? allTimeHighDate.toString()
@@ -143,7 +150,7 @@ const CryptocurrencyCard = (props: Props) => {
               <LineChart
                 style={{ paddingRight: 0, margin: 0, shadowColor: 'green' }}
                 data={data}
-                height={80}
+                height={60}
                 width={160}
                 chartConfig={{
                   color: () => color,
@@ -203,6 +210,36 @@ const styles = StyleSheet.create({
   },
   baseData: {
     flex: 5,
+  },
+  nameText: {
+    fontWeight: '700',
+    marginBottom: 5,
+    fontSize: 20,
+    color: TextColor,
+  },
+  rankText: {
+    fontWeight: '600',
+    marginBottom: 5,
+    fontSize: 14,
+    color: '#627a8a',
+  },
+  priceText: {
+    fontWeight: '600',
+    marginBottom: 5,
+    fontSize: 22,
+    color: TextColor,
+  },
+  maxPriceText: {
+    fontWeight: '600',
+    marginBottom: 2,
+    fontSize: 15,
+    color: TextColor,
+  },
+  maxPriceDate: {
+    fontWeight: '600',
+    marginBottom: 2,
+    fontSize: 14,
+    color: '#627a8a',
   },
   cardBottom: {
     display: 'flex',
