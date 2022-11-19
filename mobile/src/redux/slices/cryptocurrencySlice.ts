@@ -9,14 +9,24 @@ import IWallet from '../../interfaces/IWallet';
 import getCryptocurrencies from '../action_creators/cryptocurrency';
 
 export interface CryptocurrencyState {
-  summary?: ISummary | null | string | undefined;
-  coins: IPageable<ICryptocurrency> | null | string | undefined;
-  coin: ICryptocurrencyDetails | null | string | undefined;
-  coinsWallet: ICryptocurrency[] | null | string | undefined;
-  coinsTransactions: ICryptocurrency[] | null | string | undefined;
-  history: ICryptocurrencyHistory | null | string | undefined;
-  wallet: IWallet | null | string | undefined;
-  transactions: IPageable<ITransaction> | null | string | undefined;
+  summary?: ISummary | null;
+  coins: IPageable<ICryptocurrency> | null;
+  coin: ICryptocurrencyDetails | null;
+  coinsWallet: ICryptocurrency[] | null;
+  coinsTransactions: ICryptocurrency[] | null;
+  history: ICryptocurrencyHistory | null;
+  wallet: IWallet | null;
+  transactions: IPageable<ITransaction> | null;
+  _status: {
+    summary: string;
+    coins: string;
+    coin: string;
+    coinsWallet: string;
+    coinsTransactions: string;
+    history: string;
+    wallet: string;
+    transactions: string;
+  };
 }
 
 const initialState: CryptocurrencyState = {
@@ -28,6 +38,16 @@ const initialState: CryptocurrencyState = {
   history: null,
   wallet: null,
   transactions: null,
+  _status: {
+    summary: 'init',
+    coins: 'init',
+    coin: 'init',
+    coinsWallet: 'init',
+    coinsTransactions: 'init',
+    history: 'init',
+    wallet: 'init',
+    transactions: 'init',
+  },
 };
 
 export const cryptocurrencySlice = createSlice({
@@ -37,16 +57,17 @@ export const cryptocurrencySlice = createSlice({
   extraReducers(builder) {
     builder
       .addCase(getCryptocurrencies.pending, (state) => {
-        state.coins = 'pending';
+        state._status.coins = 'pending';
       })
       .addCase(
         getCryptocurrencies.fulfilled,
         (state, action: PayloadAction<IPageable<ICryptocurrency>>) => {
+          state._status.coins = 'success';
           state.coins = action.payload;
         }
       )
       .addCase(getCryptocurrencies.rejected, (state, action) => {
-        state.coins = action.error?.message ?? 'error';
+        state._status.coins = action.error?.message ?? 'error';
       });
   },
 });

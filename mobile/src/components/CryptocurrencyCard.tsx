@@ -1,20 +1,18 @@
+import { formatCurrency as format } from '@coingecko/cryptoformat';
 import { default as dayjs } from 'dayjs';
 import React from 'react';
 import { Image, StyleSheet, View } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 import { Text, TouchableRipple } from 'react-native-paper';
 import Feather from 'react-native-vector-icons/Feather';
+import config from '../config/MainConfig';
 import ICryptocurrency from '../interfaces/cryptocurrency/ICryptocurrency';
 import { TextColor } from '../util/ColorPalette';
 import { calculateBrightness, LightenDarkenColor } from '../util/ColorUtil';
-import { formatCurrency as format } from '@coingecko/cryptoformat';
-import config from '../config/MainConfig';
 
 type Props = ICryptocurrency & { lastElementInList: boolean };
 
 const dateFormat = config.defaults.dateFormat;
-const baseCode = config.defaults.baseCurrency.code;
-const baseSymbol = config.defaults.baseCurrency.symbol;
 
 const formatCurrency = (currency: number) => {
   return format(
@@ -78,7 +76,7 @@ const CryptocurrencyCard = (props: Props) => {
     <View
       style={[
         styles.container,
-        { marginBottom: props.lastElementInList ? 15 : 0 },
+        { marginBottom: props.lastElementInList ? 5 : 15 },
       ]}
     >
       <TouchableRipple
@@ -139,33 +137,46 @@ const CryptocurrencyCard = (props: Props) => {
                 ] ? (
                   <Text style={{ marginStart: 10 }}>{priceChangeText()}</Text>
                 ) : (
-                  <Text>No price data!</Text>
+                  <Text style={[styles.noData, { marginStart: 15 }]}>
+                    No price data!
+                  </Text>
                 )}
               </View>
             </View>
-            <View style={styles.sparkline}>
-              <LineChart
-                style={{ paddingRight: 0, margin: 0, shadowColor: 'green' }}
-                data={data}
-                height={60}
-                width={160}
-                chartConfig={{
-                  color: () => color,
-                  backgroundGradientFrom: 'white',
-                  backgroundGradientTo: 'white',
-                  fillShadowGradientOpacity: 0.2,
-                  strokeWidth: 1,
-                }}
-                withDots={false}
-                withHorizontalLabels={false}
-                withInnerLines={false}
-                withHorizontalLines={false}
-                withOuterLines={false}
-                withScrollableDot={false}
-                withVerticalLabels={false}
-                withVerticalLines={false}
-              />
-            </View>
+            {props.sparkline_in_7d.price.length >= 3 ? (
+              <View style={styles.sparkline}>
+                <LineChart
+                  style={{ paddingRight: 0, margin: 0, shadowColor: 'green' }}
+                  data={data}
+                  height={60}
+                  width={160}
+                  chartConfig={{
+                    color: () => color,
+                    backgroundGradientFrom: 'white',
+                    backgroundGradientTo: 'white',
+                    fillShadowGradientOpacity: 0.2,
+                    strokeWidth: 1,
+                  }}
+                  withDots={false}
+                  withHorizontalLabels={false}
+                  withInnerLines={false}
+                  withHorizontalLines={false}
+                  withOuterLines={false}
+                  withScrollableDot={false}
+                  withVerticalLabels={false}
+                  withVerticalLines={false}
+                />
+              </View>
+            ) : (
+              <Text
+                style={[
+                  styles.noData,
+                  { position: 'relative', marginRight: 80, marginTop: 10 },
+                ]}
+              >
+                No price data!
+              </Text>
+            )}
           </View>
         </>
       </TouchableRipple>
@@ -176,7 +187,7 @@ const CryptocurrencyCard = (props: Props) => {
 const styles = StyleSheet.create({
   container: {
     width: '90%',
-    marginTop: 15,
+    marginTop: 5,
     borderRadius: 20,
     display: 'flex',
     flexDirection: 'column',
@@ -244,7 +255,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   priceChange: {
-    flex: 4,
+    flex: 1,
     marginTop: 10,
     marginStart: 5,
     flexDirection: 'column',
@@ -254,9 +265,12 @@ const styles = StyleSheet.create({
   priceChangeIcon: { flex: 1, marginStart: 35 },
   priceChangeText: { flex: 1 },
   sparkline: {
-    marginStart: -5,
-    flex: 5,
+    flex: 1,
+    marginRight: 35,
+  },
+  noData: {
+    color: 'red',
   },
 });
 
-export default CryptocurrencyCard;
+export default React.memo(CryptocurrencyCard);

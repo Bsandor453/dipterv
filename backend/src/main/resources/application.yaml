@@ -32,11 +32,11 @@ logging:
 bsandor:
   app:
     jwtSecret: jwtSecretKey
-    # JWT access token expiration time (3600000 ms = 1 hour)
+    # JWT access token expiration time (14400000 ms = 4 hours)
     # For testing: jwtExpirationMs: 60000 (60000 ms = 1 minute)
-    jwtExpirationMs: 3600000
+    jwtExpirationMs: 14400000
     # JWT refresh token expiration time (86400000 ms = 1 day)
-    # For testing: jwtRefreshExpirationMs: 120000 (60000 ms = 1 minute)
+    # For testing: jwtRefreshExpirationMs: 120000 (120000 ms = 2 minutes)
     jwtRefreshExpirationMs: 86400000
     # Coingecko API base url and endpoints
     cryptocurrencyBaseUrl: https://api.coingecko.com/api/v3
