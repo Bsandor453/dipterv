@@ -11,6 +11,10 @@ export const store = configureStore({
     snackbar: snackbarReducer,
     crypto: cryptocurrencyReducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: false,
+    }),
 });
 
 export type RootState = ReturnType<typeof store.getState>;
