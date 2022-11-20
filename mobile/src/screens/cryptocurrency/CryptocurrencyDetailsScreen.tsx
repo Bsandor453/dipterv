@@ -1,11 +1,14 @@
 import { formatCurrency as format } from '@coingecko/cryptoformat';
 import { DrawerScreenProps } from '@react-navigation/drawer';
 import { default as dayjs } from 'dayjs';
+import { LinearGradient } from 'expo-linear-gradient';
 import React, { useEffect, useLayoutEffect, useState } from 'react';
 import {
+  Dimensions,
   Image,
   ScrollView,
   StyleSheet,
+  TouchableOpacity,
   useWindowDimensions,
   View,
 } from 'react-native';
@@ -38,6 +41,7 @@ const CryptocurrencyDetailsScreen = ({
   const coinId = route.params.coinId;
 
   const coin = useSelector((state: RootState) => state.crypto.coin);
+  const history = useSelector((state: RootState) => state.crypto.history);
 
   const [openBuyDialog, setOpenBuyDialog] = useState(false);
   const [openSellDialog, setOpenSellDialog] = useState(false);
@@ -51,6 +55,8 @@ const CryptocurrencyDetailsScreen = ({
     brightness > 160
       ? LightenDarkenColor(originalColor ?? '#000000', 160 - brightness)
       : originalColor;
+
+  const lighterColor = LightenDarkenColor(color ?? '#000000', 60);
 
   const dispatch = useDispatch<AppDispatch>();
 
@@ -81,7 +87,9 @@ const CryptocurrencyDetailsScreen = ({
   */
 
   const dateFormat = config.defaults.dateFormat;
-  const dateFormatShort = 'DD MM, YYYY';
+  const maxDateLabelCount = 4;
+  let labelsCreated = 0;
+  const dateFormatShort = 'DD/MM/YYYY';
   const allTimeHighDate = dayjs(coin?.ath_date).format(dateFormatShort);
   const allTimeLowDate = dayjs(coin?.atl_date).format(dateFormatShort);
   const { width } = useWindowDimensions();
@@ -126,13 +134,65 @@ const CryptocurrencyDetailsScreen = ({
     );
   };
 
+  const createNameFromTimeframe = (tf: string) => {
+    switch (tf) {
+      case '24h':
+        return '24 hours';
+      case '7d':
+        return '7 days';
+      case '30d':
+        return '30 days';
+      case '1y':
+        return '1 year';
+      case 'max':
+        return 'Max';
+    }
+  };
+
+  const getDataByTimeframe = (tf: string) => {
+    switch (tf) {
+      case '24h':
+        return history?.history_24h ?? [];
+      case '7d':
+        return history?.history_7d ?? [];
+      case '30d':
+        return history?.history_30d ?? [];
+      case '1y':
+        return history?.history_1y ?? [];
+      case 'max':
+        return history?.history_max ?? [];
+      default:
+        return history?.history_7d ?? [];
+    }
+  };
+
+  const calculateLabels = (timeframe: string) => {
+    const initialLabels =
+      getDataByTimeframe(timeframe).map((historyEntry) =>
+        typeof historyEntry.timestamp === 'number'
+          ? historyEntry.timestamp
+          : Number(0)
+      ) ?? [];
+
+    const labelRadix = Math.max(
+      Math.floor(initialLabels.length / maxDateLabelCount),
+      1
+    );
+
+    return initialLabels.map((label, idx) =>
+      idx % labelRadix === 0 ? label.toString() : ''
+    );
+  };
+
   const priceData = {
-    labels: [],
+    labels: calculateLabels(timeframe),
     datasets: [
       {
         data:
-          coin?.sparkline_in_7d?.price.map((v) =>
-            typeof v === 'number' ? v : Number(0.0)
+          getDataByTimeframe(timeframe).map((historyEntry) =>
+            typeof historyEntry.price === 'number'
+              ? historyEntry.price
+              : Number(0)
           ) ?? [],
         color: () => color ?? 'black',
       },
@@ -220,29 +280,93 @@ const CryptocurrencyDetailsScreen = ({
       </View>
       <View>
         <Text style={styles.title}>Price history</Text>
+        <View style={styles.priceChartButtons}>
+          {['24h', '7d', '30d', '1y', 'max'].map((tf) => {
+            return (
+              <View key={tf}>
+                <TouchableOpacity
+                  onPress={async () => {
+                    await dispatch(
+                      getCryptocurrencyHistory({ id: coinId, timeframe: tf })
+                    );
+                    setTimeframe(tf);
+                  }}
+                  disabled={false}
+                >
+                  <LinearGradient
+                    colors={
+                      timeframe === tf
+                        ? [lighterColor ?? 'yellow', color ?? 'orange']
+                        : ['white', 'white']
+                    }
+                    style={
+                      timeframe === tf
+                        ? styles.priceChartButtonFull
+                        : [
+                            styles.priceChartButtonOutlined,
+                            { borderColor: color },
+                          ]
+                    }
+                  >
+                    <Text
+                      style={[
+                        styles.priceChartButtonsText,
+                        { color: timeframe === tf ? 'white' : color },
+                      ]}
+                    >
+                      {createNameFromTimeframe(tf)}
+                    </Text>
+                  </LinearGradient>
+                </TouchableOpacity>
+              </View>
+            );
+          })}
+        </View>
         {coin?.sparkline_in_7d?.price &&
         coin?.sparkline_in_7d?.price?.length >= 3 ? (
           <View style={styles.priceChart}>
             <LineChart
-              style={{ paddingRight: 0, margin: 0 }}
+              style={{ paddingRight: 65 }}
               data={priceData}
-              height={60}
-              width={160}
+              height={220}
+              width={Dimensions.get('window').width}
               chartConfig={{
-                color: () => color ?? 'white',
+                color: () => TextColor ?? 'white',
                 backgroundGradientFrom: 'white',
                 backgroundGradientTo: 'white',
                 fillShadowGradientOpacity: 0.2,
                 strokeWidth: 1,
+                useShadowColorFromDataset: true,
+                propsForBackgroundLines: {
+                  strokeDasharray: 2,
+                },
+                propsForHorizontalLabels: {
+                  fontSize: 10,
+                },
+                propsForVerticalLabels: {
+                  fontSize: 10,
+                },
               }}
+              bezier
               withDots={false}
-              withHorizontalLabels={false}
               withInnerLines={false}
-              withHorizontalLines={false}
-              withOuterLines={false}
-              withScrollableDot={false}
-              withVerticalLabels={false}
-              withVerticalLines={false}
+              withShadow={true}
+              xLabelsOffset={0}
+              formatYLabel={(value) => formatCurrency(Number(value))}
+              formatXLabel={(value) => {
+                if (value === '') {
+                  return '';
+                } else {
+                  labelsCreated++;
+                  if (labelsCreated <= maxDateLabelCount) {
+                    return dayjs
+                      .unix(Number(value) / 1000)
+                      .format(dateFormatShort);
+                  } else {
+                    return '';
+                  }
+                }
+              }}
             />
           </View>
         ) : (
@@ -305,7 +429,7 @@ const styles = StyleSheet.create({
   },
   nameTextLabel: {
     fontWeight: '700',
-    marginRight: 10,
+    marginRight: 11,
     marginBottom: 5,
     fontSize: 20,
     color: TextColor,
@@ -397,9 +521,31 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: TextColor,
   },
-  priceChart: {
-    flex: 1,
-    marginRight: 35,
+  priceChart: {},
+  priceChartButtons: {
+    flexDirection: 'row',
+    color: TextColor,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 15,
+    marginBottom: 10,
+  },
+  priceChartButtonFull: {
+    overflow: 'hidden',
+    borderRadius: 10,
+    marginEnd: 10,
+    padding: 5,
+  },
+  priceChartButtonOutlined: {
+    borderRadius: 10,
+    marginEnd: 10,
+    padding: 5,
+    borderWidth: 1,
+  },
+  priceChartButtonsText: {
+    fontWeight: '500',
+    fontSize: 14,
+    color: TextColor,
   },
   description: { color: TextColor, lineHeight: 20, marginBottom: 30 },
   noData: {

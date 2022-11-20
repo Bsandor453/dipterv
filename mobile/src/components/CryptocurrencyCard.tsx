@@ -165,6 +165,7 @@ const CryptocurrencyCard = (props: Props) => {
                     fillShadowGradientOpacity: 0.2,
                     strokeWidth: 1,
                   }}
+                  bezier
                   withDots={false}
                   withHorizontalLabels={false}
                   withInnerLines={false}
