@@ -5,6 +5,8 @@ import React, { useEffect, useLayoutEffect, useState } from 'react';
 import { Image, ScrollView, StyleSheet, View } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 import { Text } from 'react-native-paper';
+import { useWindowDimensions } from 'react-native';
+import RenderHtml from 'react-native-render-html';
 import Feather from 'react-native-vector-icons/Feather';
 import { useDispatch, useSelector } from 'react-redux';
 import config from '../../config/MainConfig';
@@ -67,6 +69,7 @@ const CryptocurrencyDetailsScreen = ({
 
   const dateFormat = config.defaults.dateFormat;
   const allTimeHighDate = dayjs(coin?.ath_date).format(dateFormat);
+  const { width } = useWindowDimensions();
 
   const formatCurrency = (currency: number) => {
     return format(
@@ -222,6 +225,10 @@ const CryptocurrencyDetailsScreen = ({
           )}
         </View>
       </>
+      <RenderHtml
+        contentWidth={width}
+        source={{ html: coin?.description ?? '' }}
+      />
     </ScrollView>
   );
 };
