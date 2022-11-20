@@ -1,7 +1,10 @@
 import { AxiosResponse } from 'axios';
 import config from '../config/MainConfig';
 import ICryptocurrency from '../interfaces/cryptocurrency/ICryptocurrency';
+import ICryptocurrencyDetails from '../interfaces/cryptocurrency/ICryptocurrencyDetails';
+import ICryptocurrencyHistory from '../interfaces/cryptocurrency/ICryptocurrencyHistory';
 import IPageable from '../interfaces/IPageable';
+import IWallet from '../interfaces/IWallet';
 import { readObject } from '../util/AsyncStorageUtils';
 import AxiosWithInterceptors from '../util/AxiosWithInterceptors';
 
@@ -42,7 +45,9 @@ const getCryptocurrencies = async (
   );
 };
 
-const getCryptocurrency = async (id: string): Promise<AxiosResponse<any>> => {
+const getCryptocurrency = async (
+  id: string
+): Promise<AxiosResponse<ICryptocurrencyDetails>> => {
   return httpClient.get(
     config.urls.crypto.coin(id),
     await tokenAuthUrlConfig()
@@ -77,7 +82,7 @@ const getCryptocurrenciesInTransactions = async (): Promise<
 const getCryptocurrencyHistory = async (
   id: string,
   timeframe: string
-): Promise<AxiosResponse<any>> => {
+): Promise<AxiosResponse<ICryptocurrencyHistory>> => {
   return httpClient.get(
     config.urls.crypto.history(id, timeframe),
     await tokenAuthUrlConfig()
@@ -124,7 +129,7 @@ const resetMoney = async (): Promise<AxiosResponse<any>> => {
   );
 };
 
-const getWallet = async (): Promise<AxiosResponse<any>> => {
+const getWallet = async (): Promise<AxiosResponse<IWallet>> => {
   return httpClient.get(config.urls.crypto.wallet, await tokenAuthUrlConfig());
 };
 

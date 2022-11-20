@@ -154,7 +154,7 @@ const CryptocurrencyCard = (props: Props) => {
             {props.sparkline_in_7d.price.length >= 3 ? (
               <View style={styles.sparkline}>
                 <LineChart
-                  style={{ paddingRight: 0, margin: 0, shadowColor: 'green' }}
+                  style={{ paddingRight: 0, margin: 0 }}
                   data={data}
                   height={60}
                   width={160}

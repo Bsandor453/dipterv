@@ -10,7 +10,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useDispatch, useSelector } from 'react-redux';
 import CryptocurrencyCard from '../../components/CryptocurrencyCard';
-import getCryptocurrencies from '../../redux/action_creators/cryptocurrency';
+import { getCryptocurrencies } from '../../redux/action_creators/cryptocurrency';
 import { AppDispatch, RootState } from '../../redux/store';
 import { TextColor } from '../../util/ColorPalette';
 import { DrawerParamList } from '../navigation/DrawerNavigationScreen';

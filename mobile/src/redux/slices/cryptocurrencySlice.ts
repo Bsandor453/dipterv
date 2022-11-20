@@ -6,7 +6,12 @@ import IPageable from '../../interfaces/IPageable';
 import ISummary from '../../interfaces/ISummary';
 import ITransaction from '../../interfaces/ITransaction';
 import IWallet from '../../interfaces/IWallet';
-import getCryptocurrencies from '../action_creators/cryptocurrency';
+import {
+  getCryptocurrencies,
+  getCryptocurrency,
+  getCryptocurrencyHistory,
+  getWallet,
+} from '../action_creators/cryptocurrency';
 
 export interface CryptocurrencyState {
   summary?: ISummary | null;
@@ -68,6 +73,42 @@ export const cryptocurrencySlice = createSlice({
       )
       .addCase(getCryptocurrencies.rejected, (state, action) => {
         state._status.coins = action.error?.message ?? 'error';
+      })
+      .addCase(getCryptocurrencyHistory.pending, (state) => {
+        state._status.history = 'pending';
+      })
+      .addCase(
+        getCryptocurrencyHistory.fulfilled,
+        (state, action: PayloadAction<ICryptocurrencyHistory>) => {
+          state._status.history = 'success';
+          state.history = action.payload;
+        }
+      )
+      .addCase(getCryptocurrencyHistory.rejected, (state, action) => {
+        state._status.history = action.error?.message ?? 'error';
+      })
+      .addCase(getCryptocurrency.pending, (state) => {
+        state._status.coin = 'pending';
+      })
+      .addCase(
+        getCryptocurrency.fulfilled,
+        (state, action: PayloadAction<ICryptocurrencyDetails>) => {
+          state._status.coin = 'success';
+          state.coin = action.payload;
+        }
+      )
+      .addCase(getCryptocurrency.rejected, (state, action) => {
+        state._status.coin = action.error?.message ?? 'error';
+      })
+      .addCase(getWallet.pending, (state) => {
+        state._status.wallet = 'pending';
+      })
+      .addCase(getWallet.fulfilled, (state, action: PayloadAction<IWallet>) => {
+        state._status.wallet = 'success';
+        state.wallet = action.payload;
+      })
+      .addCase(getWallet.rejected, (state, action) => {
+        state._status.wallet = action.error?.message ?? 'error';
       });
   },
 });
