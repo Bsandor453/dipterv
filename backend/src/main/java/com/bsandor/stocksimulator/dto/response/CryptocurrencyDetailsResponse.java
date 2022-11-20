@@ -33,6 +33,9 @@ public class CryptocurrencyDetailsResponse {
     @JsonProperty("current_price")
     private double currentPrice;
 
+    @JsonProperty("color")
+    private String color;
+
     @JsonProperty("market_cap")
     private double marketCap;
 

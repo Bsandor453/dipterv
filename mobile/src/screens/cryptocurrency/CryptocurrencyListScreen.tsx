@@ -9,6 +9,7 @@ import SelectDropdown from 'react-native-select-dropdown';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useDispatch, useSelector } from 'react-redux';
+import { useInterval } from 'usehooks-ts';
 import CryptocurrencyCard from '../../components/CryptocurrencyCard';
 import { getCryptocurrencies } from '../../redux/action_creators/cryptocurrency';
 import { AppDispatch, RootState } from '../../redux/store';
@@ -76,6 +77,19 @@ const CryptocurrencyListScreen = ({ route, navigation }: NavigationProps) => {
       })
     );
   }, []);
+
+  const interval = 20000;
+  useInterval(() => {
+    dispatch(
+      getCryptocurrencies({
+        page,
+        size: pageSize,
+        sortBy,
+        asc,
+        search: searchText,
+      })
+    );
+  }, interval);
 
   const SortBySelect = () => {
     return (

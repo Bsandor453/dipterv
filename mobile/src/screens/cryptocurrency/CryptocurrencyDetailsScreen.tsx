@@ -2,13 +2,19 @@ import { formatCurrency as format } from '@coingecko/cryptoformat';
 import { DrawerScreenProps } from '@react-navigation/drawer';
 import { default as dayjs } from 'dayjs';
 import React, { useEffect, useLayoutEffect, useState } from 'react';
-import { Image, ScrollView, StyleSheet, View } from 'react-native';
+import {
+  Image,
+  ScrollView,
+  StyleSheet,
+  useWindowDimensions,
+  View,
+} from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 import { Text } from 'react-native-paper';
-import { useWindowDimensions } from 'react-native';
 import RenderHtml from 'react-native-render-html';
 import Feather from 'react-native-vector-icons/Feather';
 import { useDispatch, useSelector } from 'react-redux';
+import { useInterval } from 'usehooks-ts';
 import config from '../../config/MainConfig';
 import {
   getCryptocurrency,
@@ -52,6 +58,13 @@ const CryptocurrencyDetailsScreen = ({
     dispatch(getCryptocurrency({ id: coinId }));
     dispatch(getCryptocurrencyHistory({ id: coinId, timeframe }));
   }, [coinId]);
+
+  const interval = 20000;
+  useInterval(() => {
+    dispatch(getCryptocurrency({ id: coinId }));
+    (timeframe === '24h' || timeframe === '7d') &&
+      getCryptocurrencyHistory({ id: coinId, timeframe });
+  }, interval);
 
   useEffect(() => {
     dispatch(getWallet());
@@ -140,11 +153,15 @@ const CryptocurrencyDetailsScreen = ({
         <View style={styles.baseData}>
           <View style={styles.baseDataRow}>
             <Text style={styles.nameTextLabel}>Name: </Text>
-            <Text style={styles.nameText}>{coin?.name}</Text>
+            <Text style={[styles.nameText, { color: color }]}>
+              {coin?.name}
+            </Text>
           </View>
           <View style={styles.baseDataRow}>
             <Text style={styles.signTextLabel}>Sign: </Text>
-            <Text style={styles.signText}>{coin?.symbol?.toUpperCase()}</Text>
+            <Text style={[styles.signText, { color: color }]}>
+              {coin?.symbol?.toUpperCase()}
+            </Text>
           </View>
         </View>
       </View>
@@ -207,7 +224,7 @@ const CryptocurrencyDetailsScreen = ({
         coin?.sparkline_in_7d?.price?.length >= 3 ? (
           <View style={styles.priceChart}>
             <LineChart
-              style={{ paddingRight: 0, margin: 0, shadowColor: 'green' }}
+              style={{ paddingRight: 0, margin: 0 }}
               data={priceData}
               height={60}
               width={160}
@@ -287,7 +304,7 @@ const styles = StyleSheet.create({
     flex: 5,
   },
   nameTextLabel: {
-    fontWeight: '500',
+    fontWeight: '700',
     marginRight: 10,
     marginBottom: 5,
     fontSize: 20,
@@ -300,7 +317,7 @@ const styles = StyleSheet.create({
     color: TextColor,
   },
   signTextLabel: {
-    fontWeight: '500',
+    fontWeight: '700',
     marginRight: 24,
     marginBottom: 5,
     fontSize: 20,
@@ -331,14 +348,14 @@ const styles = StyleSheet.create({
     color: TextColor,
   },
   priceTextLabel: {
-    fontWeight: '500',
+    fontWeight: '600',
     marginRight: 42,
     marginBottom: 5,
     fontSize: 20,
     color: TextColor,
   },
   priceText: {
-    fontWeight: '500',
+    fontWeight: '700',
     marginBottom: 5,
     fontSize: 20,
     color: TextColor,
