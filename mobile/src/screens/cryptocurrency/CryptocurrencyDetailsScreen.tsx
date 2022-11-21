@@ -322,7 +322,7 @@ const CryptocurrencyDetailsScreen = ({
           )}
         </View>
       ),
-      [chartDataLoaded, coinId]
+      [chartDataLoaded, coinId, history]
     );
   };
 
