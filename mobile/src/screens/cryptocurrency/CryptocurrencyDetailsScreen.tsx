@@ -6,6 +6,7 @@ import React, { useEffect, useLayoutEffect, useState } from 'react';
 import {
   Dimensions,
   Image,
+  Linking,
   ScrollView,
   StyleSheet,
   TextInput,
@@ -14,9 +15,20 @@ import {
   View,
 } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
-import { ActivityIndicator, Dialog, Portal, Text } from 'react-native-paper';
+import {
+  ActivityIndicator,
+  Avatar,
+  Dialog,
+  Paragraph,
+  Portal,
+  Text,
+} from 'react-native-paper';
 import RenderHtml from 'react-native-render-html';
 import Feather from 'react-native-vector-icons/Feather';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import Octicons from 'react-native-vector-icons/Octicons';
 import { useDispatch, useSelector } from 'react-redux';
 import { useInterval } from 'usehooks-ts';
 import config from '../../config/MainConfig';
@@ -369,6 +381,395 @@ const CryptocurrencyDetailsScreen = ({
     );
   };
 
+  const createSubredditNameFromLink = (redditLink: string): string => {
+    if (redditLink.slice(-1) === '/') {
+      return redditLink.substring(redditLink.indexOf('r/')).slice(0, -1);
+    }
+    return redditLink.substring(redditLink.indexOf('r/'));
+  };
+
+  const CryptocurrencyLinks = () => (
+    <View style={{ marginBottom: 30 }}>
+      <Text style={styles.title}>Links and socials</Text>
+      {/* Homepage */}
+      {coin?.links?.homepage?.length !== 0 && (
+        <>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              marginTop: 10,
+            }}
+          >
+            <MaterialCommunityIcons
+              name="home"
+              size={25}
+              color={TextColor}
+              style={{ marginRight: 10 }}
+            />
+            <Text style={styles.linkTitle}>
+              {coin?.links?.homepage?.length === 1 ? 'Homepage' : 'Homepages'}
+            </Text>
+          </View>
+          <View>
+            {coin?.links?.homepage?.map((item) => {
+              return (
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <Octicons
+                    name="dot-fill"
+                    size={20}
+                    color={color ?? 'blue'}
+                    style={{
+                      marginLeft: 30,
+                      marginRight: 10,
+                      marginVertical: 10,
+                    }}
+                  />
+                  <Paragraph
+                    style={[
+                      styles.link,
+                      { color: color ?? 'blue', marginRight: 30 },
+                    ]}
+                    onPress={() => Linking.openURL(item)}
+                  >
+                    {item}
+                  </Paragraph>
+                </View>
+              );
+            })}
+          </View>
+        </>
+      )}
+      {/* Official forum */}
+      {coin?.links?.official_forum_url?.length !== 0 && (
+        <>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              marginTop: 10,
+            }}
+          >
+            <MaterialCommunityIcons
+              name="forum"
+              size={25}
+              color={TextColor}
+              style={{ marginRight: 10 }}
+            />
+            <Text style={styles.linkTitle}>
+              {coin?.links?.official_forum_url?.length === 1
+                ? 'Official forum'
+                : 'Official forums'}
+            </Text>
+          </View>
+          <View>
+            {coin?.links?.official_forum_url?.map((item) => {
+              return (
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <Octicons
+                    name="dot-fill"
+                    size={20}
+                    color={color ?? 'blue'}
+                    style={{
+                      marginLeft: 30,
+                      marginRight: 10,
+                      marginVertical: 10,
+                    }}
+                  />
+                  <Paragraph
+                    style={[
+                      styles.link,
+                      { color: color ?? 'blue', marginRight: 30 },
+                    ]}
+                    onPress={() => Linking.openURL(item)}
+                  >
+                    {item}
+                  </Paragraph>
+                </View>
+              );
+            })}
+          </View>
+        </>
+      )}
+      {/* On social media */}
+      {(coin?.links?.facebook_username ||
+        coin?.links?.twitter_username ||
+        coin?.links?.subreddit_url) && (
+        <>
+          <View>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                marginTop: 10,
+              }}
+            >
+              <Ionicons
+                name="people"
+                size={25}
+                color={TextColor}
+                style={{ marginRight: 10 }}
+              />
+              <Text style={styles.linkTitle}>On social media</Text>
+            </View>
+            <View>
+              {coin?.links?.facebook_username && (
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <Avatar.Image
+                    source={require('../../../assets/facebook_logo.png')}
+                    size={30}
+                    style={{
+                      backgroundColor: 'white',
+                      marginLeft: 20,
+                      marginRight: 10,
+                      marginVertical: 10,
+                    }}
+                  />
+                  <Paragraph
+                    style={[
+                      styles.link,
+                      { color: color ?? 'blue', marginRight: 30 },
+                    ]}
+                    onPress={() =>
+                      coin?.links?.facebook_username &&
+                      Linking.openURL(
+                        'https://www.facebook.com/' +
+                          coin?.links?.facebook_username
+                      )
+                    }
+                  >
+                    {coin?.links?.facebook_username}
+                  </Paragraph>
+                </View>
+              )}
+            </View>
+            <View>
+              {coin?.links?.twitter_username && (
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <Avatar.Image
+                    source={require('../../../assets/twitter_logo.png')}
+                    size={30}
+                    style={{
+                      backgroundColor: 'white',
+                      marginLeft: 20,
+                      marginRight: 10,
+                      marginVertical: 10,
+                    }}
+                  />
+                  <Paragraph
+                    style={[styles.link, { color: color ?? 'blue' }]}
+                    onPress={() =>
+                      coin?.links?.twitter_username &&
+                      Linking.openURL(
+                        'https://www.twitter.com/' +
+                          coin?.links?.twitter_username
+                      )
+                    }
+                  >
+                    {coin?.links?.twitter_username}
+                  </Paragraph>
+                  {coin?.community_data?.twitter_followers && (
+                    <Text style={{ marginLeft: 10, marginRight: 30 }}>
+                      {`(Followers: ${coin.community_data.twitter_followers})`}
+                    </Text>
+                  )}
+                </View>
+              )}
+            </View>
+            <View>
+              {coin?.links?.subreddit_url && (
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <Avatar.Image
+                    source={require('../../../assets/reddit_logo.png')}
+                    size={30}
+                    style={{
+                      backgroundColor: 'white',
+                      marginLeft: 20,
+                      marginRight: 10,
+                      marginVertical: 10,
+                    }}
+                  />
+                  <Paragraph
+                    style={[styles.link, { color: color ?? 'blue' }]}
+                    onPress={() =>
+                      coin?.links?.subreddit_url &&
+                      Linking.openURL(coin?.links?.subreddit_url)
+                    }
+                  >
+                    {createSubredditNameFromLink(coin?.links?.subreddit_url)}
+                  </Paragraph>
+                  {coin?.community_data?.reddit_subscribers && (
+                    <Text style={{ marginLeft: 10, marginRight: 30 }}>
+                      {`(Subscribers: ${coin.community_data.reddit_subscribers})`}
+                    </Text>
+                  )}
+                </View>
+              )}
+            </View>
+          </View>
+        </>
+      )}
+      {/* Chat url */}
+      {coin?.links?.chat_url?.length !== 0 && (
+        <>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              marginTop: 10,
+            }}
+          >
+            <MaterialCommunityIcons
+              name="chat"
+              size={25}
+              color={TextColor}
+              style={{ marginRight: 10 }}
+            />
+            <Text style={styles.linkTitle}>
+              {coin?.links?.chat_url?.length === 1 ? 'Chat url' : 'Chat urls'}
+            </Text>
+          </View>
+          <View>
+            {coin?.links?.chat_url?.map((item) => {
+              return (
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <Octicons
+                    name="dot-fill"
+                    size={20}
+                    color={color ?? 'blue'}
+                    style={{
+                      marginLeft: 30,
+                      marginRight: 10,
+                      marginVertical: 10,
+                    }}
+                  />
+                  <Paragraph
+                    style={[
+                      styles.link,
+                      { color: color ?? 'blue', marginRight: 30 },
+                    ]}
+                    onPress={() => Linking.openURL(item)}
+                  >
+                    {item}
+                  </Paragraph>
+                </View>
+              );
+            })}
+          </View>
+        </>
+      )}
+      {/* Announcement url */}
+      {coin?.links?.announcement_url?.length !== 0 && (
+        <>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              marginTop: 10,
+            }}
+          >
+            <MaterialIcons
+              name="campaign"
+              size={25}
+              color={TextColor}
+              style={{ marginRight: 10 }}
+            />
+            <Text style={styles.linkTitle}>
+              {coin?.links?.announcement_url?.length === 1
+                ? 'Announcement url'
+                : 'Announcement urls'}
+            </Text>
+          </View>
+          <View>
+            {coin?.links?.announcement_url?.map((item) => {
+              return (
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <Octicons
+                    name="dot-fill"
+                    size={20}
+                    color={color ?? 'blue'}
+                    style={{
+                      marginLeft: 30,
+                      marginRight: 10,
+                      marginVertical: 10,
+                    }}
+                  />
+                  <Paragraph
+                    style={[
+                      styles.link,
+                      { color: color ?? 'blue', marginRight: 30 },
+                    ]}
+                    onPress={() => Linking.openURL(item)}
+                  >
+                    {item}
+                  </Paragraph>
+                </View>
+              );
+            })}
+          </View>
+        </>
+      )}
+      {/* Blockchain site */}
+      {coin?.links?.blockchain_site?.length !== 0 && (
+        <>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              marginTop: 10,
+            }}
+          >
+            <MaterialCommunityIcons
+              name="widgets"
+              size={25}
+              color={TextColor}
+              style={{ marginRight: 10 }}
+            />
+            <Text style={styles.linkTitle}>
+              {coin?.links?.blockchain_site?.length === 1
+                ? 'Blockchain site'
+                : 'Blockchain sites'}
+            </Text>
+          </View>
+          <View>
+            {coin?.links?.blockchain_site?.map((item) => {
+              return (
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    marginVertical: 5,
+                    marginRight: 30,
+                  }}
+                >
+                  <Octicons
+                    name="dot-fill"
+                    size={20}
+                    color={color ?? 'blue'}
+                    style={{
+                      marginLeft: 30,
+                      marginRight: 10,
+                      marginVertical: 10,
+                    }}
+                  />
+                  <Paragraph
+                    style={[
+                      styles.link,
+                      { color: color ?? 'blue', marginRight: 30 },
+                    ]}
+                    onPress={() => Linking.openURL(item)}
+                  >
+                    {item}
+                  </Paragraph>
+                </View>
+              );
+            })}
+          </View>
+        </>
+      )}
+    </View>
+  );
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.headerTop}>
@@ -665,6 +1066,7 @@ const CryptocurrencyDetailsScreen = ({
           />
         </View>
       </View>
+      {CryptocurrencyLinks()}
     </ScrollView>
   );
 };
@@ -865,7 +1267,7 @@ const styles = StyleSheet.create({
     padding: 0,
     margin: 0,
   },
-  description: { color: TextColor, lineHeight: 20, marginBottom: 30 },
+  description: { color: TextColor, lineHeight: 20 },
   noData: {
     color: 'red',
   },
@@ -881,6 +1283,14 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     fontSize: 22,
     color: 'white',
+  },
+  linkTitle: {
+    fontSize: 22,
+    color: TextColor,
+  },
+  link: {
+    textDecorationLine: 'underline',
+    fontSize: 16,
   },
 });
 
