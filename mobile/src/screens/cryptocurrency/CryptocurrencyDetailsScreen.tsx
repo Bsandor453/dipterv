@@ -599,11 +599,11 @@ const CryptocurrencyDetailsScreen = ({
                   >
                     {coin?.links?.twitter_username}
                   </Paragraph>
-                  {coin?.community_data?.twitter_followers && (
+                  {coin?.community_data?.twitter_followers ? (
                     <Text style={{ marginLeft: 10, marginRight: 30 }}>
                       {`(Followers: ${coin.community_data.twitter_followers})`}
                     </Text>
-                  )}
+                  ) : null}
                 </View>
               )}
             </View>
@@ -629,11 +629,11 @@ const CryptocurrencyDetailsScreen = ({
                   >
                     {createSubredditNameFromLink(coin?.links?.subreddit_url)}
                   </Paragraph>
-                  {coin?.community_data?.reddit_subscribers && (
+                  {coin?.community_data?.reddit_subscribers ? (
                     <Text style={{ marginLeft: 10, marginRight: 30 }}>
                       {`(Subscribers: ${coin.community_data.reddit_subscribers})`}
                     </Text>
-                  )}
+                  ) : null}
                 </View>
               )}
             </View>
@@ -878,7 +878,14 @@ const CryptocurrencyDetailsScreen = ({
           <View>
             {coin?.links?.github_repos?.map((item) => {
               return (
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    marginVertical: 5,
+                    marginRight: 30,
+                  }}
+                >
                   <Octicons
                     name="dot-fill"
                     size={20}
@@ -1148,7 +1155,7 @@ const CryptocurrencyDetailsScreen = ({
           <Text
             style={[styles.developerDataText, { color: color ?? TextColor }]}
           >
-            {allTimeHighDate !== 'Invalid date' ? allTimeHighDate : '?'}
+            {allTimeHighDate !== 'Invalid Date' ? allTimeHighDate : '?'}
           </Text>
         </View>
         <View style={{ flexDirection: 'row' }}>
@@ -1174,7 +1181,7 @@ const CryptocurrencyDetailsScreen = ({
           <Text
             style={[styles.developerDataText, { color: color ?? TextColor }]}
           >
-            {allTimeLowDate !== 'Invalid date' ? allTimeLowDate : '?'}
+            {allTimeLowDate !== 'Invalid Date' ? allTimeLowDate : '?'}
           </Text>
         </View>
         <View style={{ flexDirection: 'row' }}>
@@ -1182,7 +1189,7 @@ const CryptocurrencyDetailsScreen = ({
           <Text
             style={[styles.developerDataText, { color: color ?? TextColor }]}
           >
-            {genesisDate !== 'Invalid date' ? genesisDate : '?'}
+            {genesisDate !== 'Invalid Date' ? genesisDate : '?'}
           </Text>
         </View>
       </View>
