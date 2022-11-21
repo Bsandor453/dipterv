@@ -69,8 +69,6 @@ const CryptocurrencyDetailsScreen = ({
   const [sellAmount, setSellAmount] = useState('');
   const [timeframe, setTimeframe] = useState('7d');
 
-  console.log('Render');
-
   const originalColor = coin?.color;
   const brightness = calculateBrightness(originalColor ?? '#000000');
   const color =
@@ -92,16 +90,16 @@ const CryptocurrencyDetailsScreen = ({
 
   useLayoutEffect(() => {
     dispatch(getCryptocurrency({ id: coinId }));
-    dispatch(getCryptocurrencyHistory({ id: coinId, timeframe })).then(() =>
-      setChartDataLoaded(true)
-    );
+    dispatch(getCryptocurrencyHistory({ id: coinId, timeframe })).then(() => {
+      setChartDataLoaded(true);
+    });
   }, [coinId]);
 
   const interval = 20000;
   useInterval(() => {
     dispatch(getCryptocurrency({ id: coinId }));
     (timeframe === '24h' || timeframe === '7d') &&
-      getCryptocurrencyHistory({ id: coinId, timeframe });
+      dispatch(getCryptocurrencyHistory({ id: coinId, timeframe }));
   }, interval);
 
   useEffect(() => {
@@ -112,12 +110,6 @@ const CryptocurrencyDetailsScreen = ({
     setBuyAmount('');
     setSellAmount('');
   }, [coinId]);
-
-  useEffect(() => {
-    dispatch(getCryptocurrencyHistory({ id: coinId, timeframe })).then(() =>
-      setChartDataLoaded(true)
-    );
-  }, [timeframe]);
 
   const dateFormat = config.defaults.dateFormat;
   const maxDateLabelCount = 4;
@@ -330,7 +322,7 @@ const CryptocurrencyDetailsScreen = ({
           )}
         </View>
       ),
-      [history]
+      [chartDataLoaded, coinId]
     );
   };
 
@@ -1457,6 +1449,7 @@ const CryptocurrencyDetailsScreen = ({
                     await dispatch(
                       getCryptocurrencyHistory({ id: coinId, timeframe: tf })
                     );
+                    setChartDataLoaded(true);
                   }}
                   disabled={false}
                 >
