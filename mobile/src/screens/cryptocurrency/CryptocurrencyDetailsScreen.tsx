@@ -773,7 +773,7 @@ const CryptocurrencyDetailsScreen = ({
   const CryptocurrencyRatings = () => (
     <>
       <Text style={styles.title}>Ratings and opinions</Text>
-      <View style={{ marginBottom: 30 }}>
+      <View>
         <View style={{ flexDirection: 'row' }}>
           <Text style={styles.ratingLabel}>Upvotes from community:</Text>
           <Text style={[styles.ratingText, { color: color ?? TextColor }]}>
@@ -814,6 +814,122 @@ const CryptocurrencyDetailsScreen = ({
           <Text style={styles.ratingLabel}>Public interest score:</Text>
           <Text style={[styles.ratingText, { color: color ?? TextColor }]}>
             {coin?.public_interest_score ?? '?'}
+          </Text>
+        </View>
+      </View>
+    </>
+  );
+
+  const DeveloperData = () => (
+    <>
+      <Text style={styles.title}>Developer data</Text>
+      {/* Github repos */}
+      {coin?.links?.github_repos?.length !== 0 && (
+        <>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+            }}
+          >
+            <MaterialCommunityIcons
+              name="github"
+              size={25}
+              color={TextColor}
+              style={{ marginRight: 10 }}
+            />
+            <Text style={styles.linkTitle}>
+              {coin?.links?.announcement_url?.length === 1
+                ? 'Github repo'
+                : 'Github repos'}
+            </Text>
+          </View>
+          <View>
+            {coin?.links?.github_repos?.map((item) => {
+              return (
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <Octicons
+                    name="dot-fill"
+                    size={20}
+                    color={color ?? 'blue'}
+                    style={{
+                      marginLeft: 30,
+                      marginRight: 10,
+                      marginVertical: 10,
+                    }}
+                  />
+                  <Paragraph
+                    style={[
+                      styles.link,
+                      { color: color ?? 'blue', marginRight: 30 },
+                    ]}
+                    onPress={() => Linking.openURL(item)}
+                  >
+                    {item}
+                  </Paragraph>
+                </View>
+              );
+            })}
+          </View>
+        </>
+      )}
+      <View style={{ marginBottom: 30 }}>
+        <View style={{ flexDirection: 'row', marginTop: 10 }}>
+          <Text style={styles.developerDataLabel}>Forks:</Text>
+          <Text
+            style={[styles.developerDataText, { color: color ?? TextColor }]}
+          >
+            {coin?.developer_data?.forks ?? '?'}
+          </Text>
+        </View>
+        <View style={{ flexDirection: 'row' }}>
+          <Text style={styles.developerDataLabel}>Stars:</Text>
+          <Text
+            style={[styles.developerDataText, { color: color ?? TextColor }]}
+          >
+            {coin?.developer_data?.stars ?? '?'}
+          </Text>
+        </View>
+        <View style={{ flexDirection: 'row' }}>
+          <Text style={styles.developerDataLabel}>Subscribers:</Text>
+          <Text
+            style={[styles.developerDataText, { color: color ?? TextColor }]}
+          >
+            {coin?.developer_data?.subscribers ?? '?'}
+          </Text>
+        </View>
+        <View style={{ flexDirection: 'row' }}>
+          <Text style={styles.developerDataLabel}>Total issues:</Text>
+          <Text
+            style={[styles.developerDataText, { color: color ?? TextColor }]}
+          >
+            {coin?.developer_data?.total_issues ?? '?'}
+          </Text>
+        </View>
+        <View style={{ flexDirection: 'row' }}>
+          <Text style={styles.developerDataLabel}>Closed issues:</Text>
+          <Text
+            style={[styles.developerDataText, { color: color ?? TextColor }]}
+          >
+            {coin?.developer_data?.closed_issues ?? '?'}
+          </Text>
+        </View>
+        <View style={{ flexDirection: 'row' }}>
+          <Text style={styles.developerDataLabel}>Pull requests merged:</Text>
+          <Text
+            style={[styles.developerDataText, { color: color ?? TextColor }]}
+          >
+            {coin?.developer_data?.pull_requests_merged ?? '?'}
+          </Text>
+        </View>
+        <View style={{ flexDirection: 'row' }}>
+          <Text style={styles.developerDataLabel}>
+            Pull request contributors:
+          </Text>
+          <Text
+            style={[styles.developerDataText, { color: color ?? TextColor }]}
+          >
+            {coin?.developer_data?.pull_request_contributors ?? '?'}
           </Text>
         </View>
       </View>
@@ -1118,6 +1234,7 @@ const CryptocurrencyDetailsScreen = ({
       </View>
       {CryptocurrencyLinks()}
       {CryptocurrencyRatings()}
+      {DeveloperData()}
     </ScrollView>
   );
 };
@@ -1345,6 +1462,14 @@ const styles = StyleSheet.create({
   },
   ratingLabel: { fontSize: 16, color: TextColor },
   ratingText: {
+    fontSize: 16,
+    color: TextColor,
+    marginStart: 5,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  developerDataLabel: { fontSize: 16, color: TextColor },
+  developerDataText: {
     fontSize: 16,
     color: TextColor,
     marginStart: 5,
