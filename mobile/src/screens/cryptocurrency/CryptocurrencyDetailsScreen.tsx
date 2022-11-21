@@ -2,7 +2,7 @@ import { formatCurrency as format } from '@coingecko/cryptoformat';
 import { DrawerScreenProps } from '@react-navigation/drawer';
 import { default as dayjs } from 'dayjs';
 import { LinearGradient } from 'expo-linear-gradient';
-import React, { useEffect, useLayoutEffect, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import {
   Dimensions,
   Image,
@@ -68,6 +68,8 @@ const CryptocurrencyDetailsScreen = ({
   const [buyAmount, setBuyAmount] = useState('');
   const [sellAmount, setSellAmount] = useState('');
   const [timeframe, setTimeframe] = useState('7d');
+
+  console.log('Render');
 
   const originalColor = coin?.color;
   const brightness = calculateBrightness(originalColor ?? '#000000');
@@ -257,6 +259,79 @@ const CryptocurrencyDetailsScreen = ({
         color: () => color ?? 'black',
       },
     ],
+  };
+
+  const PriceChart = () => {
+    return useMemo(
+      () => (
+        <View>
+          {chartDataLoaded ? (
+            coin?.sparkline_in_7d?.price &&
+            coin?.sparkline_in_7d?.price?.length >= 3 ? (
+              <View style={styles.priceChart}>
+                <LineChart
+                  style={{ paddingRight: 65 }}
+                  data={priceData}
+                  height={220}
+                  width={Dimensions.get('window').width}
+                  chartConfig={{
+                    color: () => TextColor ?? 'white',
+                    backgroundGradientFrom: 'white',
+                    backgroundGradientTo: 'white',
+                    fillShadowGradientOpacity: 0.2,
+                    strokeWidth: 1,
+                    useShadowColorFromDataset: true,
+                    propsForBackgroundLines: {
+                      strokeDasharray: 2,
+                    },
+                    propsForHorizontalLabels: {
+                      fontSize: 10,
+                    },
+                    propsForVerticalLabels: {
+                      fontSize: 10,
+                    },
+                  }}
+                  bezier
+                  withDots={false}
+                  withInnerLines={false}
+                  withShadow={true}
+                  xLabelsOffset={0}
+                  formatYLabel={(value) => formatCurrency(Number(value))}
+                  formatXLabel={(value) => {
+                    if (value === '') {
+                      return '';
+                    } else {
+                      labelsCreated++;
+                      if (labelsCreated <= maxDateLabelCount) {
+                        return dayjs
+                          .unix(Number(value) / 1000)
+                          .format(dateFormatShort);
+                      } else {
+                        return '';
+                      }
+                    }
+                  }}
+                />
+              </View>
+            ) : (
+              <Text
+                style={[
+                  styles.noData,
+                  { position: 'relative', marginRight: 80, marginTop: 10 },
+                ]}
+              >
+                No price data!
+              </Text>
+            )
+          ) : (
+            <View style={{ flex: 1, padding: 20, marginVertical: 30 }}>
+              <ActivityIndicator color={TextColor} size={40} />
+            </View>
+          )}
+        </View>
+      ),
+      [history]
+    );
   };
 
   const [buyDialogVisible, setBuyDialogVisible] = useState(false);
@@ -1414,73 +1489,9 @@ const CryptocurrencyDetailsScreen = ({
             );
           })}
         </View>
+        {PriceChart()}
         {BuyDialog()}
         {SellDialog()}
-        {/* LineChart */}
-        {chartDataLoaded ? (
-          coin?.sparkline_in_7d?.price &&
-          coin?.sparkline_in_7d?.price?.length >= 3 ? (
-            <View style={styles.priceChart}>
-              <LineChart
-                style={{ paddingRight: 65 }}
-                data={priceData}
-                height={220}
-                width={Dimensions.get('window').width}
-                chartConfig={{
-                  color: () => TextColor ?? 'white',
-                  backgroundGradientFrom: 'white',
-                  backgroundGradientTo: 'white',
-                  fillShadowGradientOpacity: 0.2,
-                  strokeWidth: 1,
-                  useShadowColorFromDataset: true,
-                  propsForBackgroundLines: {
-                    strokeDasharray: 2,
-                  },
-                  propsForHorizontalLabels: {
-                    fontSize: 10,
-                  },
-                  propsForVerticalLabels: {
-                    fontSize: 10,
-                  },
-                }}
-                bezier
-                withDots={false}
-                withInnerLines={false}
-                withShadow={true}
-                xLabelsOffset={0}
-                formatYLabel={(value) => formatCurrency(Number(value))}
-                formatXLabel={(value) => {
-                  if (value === '') {
-                    return '';
-                  } else {
-                    labelsCreated++;
-                    if (labelsCreated <= maxDateLabelCount) {
-                      return dayjs
-                        .unix(Number(value) / 1000)
-                        .format(dateFormatShort);
-                    } else {
-                      return '';
-                    }
-                  }
-                }}
-              />
-            </View>
-          ) : (
-            <Text
-              style={[
-                styles.noData,
-                { position: 'relative', marginRight: 80, marginTop: 10 },
-              ]}
-            >
-              No price data!
-            </Text>
-          )
-        ) : (
-          <View style={{ flex: 1, padding: 20, marginVertical: 30 }}>
-            <ActivityIndicator color={TextColor} size={40} />
-          </View>
-        )}
-        {/* LineChart end */}
       </View>
       <View>
         <Text style={styles.title}>Description</Text>
