@@ -1150,7 +1150,7 @@ const CryptocurrencyDetailsScreen = ({
           <Text
             style={[styles.developerDataText, { color: color ?? TextColor }]}
           >
-            {allTimeHighDate}
+            {allTimeHighDate === 'Invalid date' ? allTimeHighDate : '?'}
           </Text>
         </View>
         <View style={{ flexDirection: 'row' }}>
@@ -1178,7 +1178,7 @@ const CryptocurrencyDetailsScreen = ({
           <Text
             style={[styles.developerDataText, { color: color ?? TextColor }]}
           >
-            {allTimeLowDate}
+            {allTimeLowDate === 'Invalid date' ? allTimeLowDate : '?'}
           </Text>
         </View>
         <View style={{ flexDirection: 'row' }}>
@@ -1186,7 +1186,7 @@ const CryptocurrencyDetailsScreen = ({
           <Text
             style={[styles.developerDataText, { color: color ?? TextColor }]}
           >
-            {genesisDate}
+            {genesisDate === 'Invalid date' ? genesisDate : '?'}
           </Text>
         </View>
       </View>
