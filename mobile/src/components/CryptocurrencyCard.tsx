@@ -19,11 +19,21 @@ type Props = ICryptocurrency & {
 const dateFormat = config.defaults.dateFormat;
 
 const formatCurrency = (currency: number) => {
-  return format(
+  const formatted = format(
     currency,
     config.defaults.baseCurrency.symbol,
     config.defaults.localeShort
   );
+  if (
+    Number(
+      formatted.slice(-1) === config.defaults.baseCurrency.symbol
+        ? formatted.slice(0, -2)
+        : formatted
+    ) < 1
+  ) {
+    return formatted;
+  }
+  return formatted.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 };
 
 const priceChange = (history: number[]) => {

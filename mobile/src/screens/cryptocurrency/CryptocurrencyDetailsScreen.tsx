@@ -121,16 +121,47 @@ const CryptocurrencyDetailsScreen = ({
   const maxDateLabelCount = 4;
   let labelsCreated = 0;
   const dateFormatShort = 'DD/MM/YYYY';
-  const allTimeHighDate = dayjs(coin?.ath_date).format(dateFormatShort);
-  const allTimeLowDate = dayjs(coin?.atl_date).format(dateFormatShort);
+  const allTimeHighDate = dayjs(coin?.ath_date).format(dateFormat);
+  const allTimeLowDate = dayjs(coin?.atl_date).format(dateFormat);
+  const genesisDate = dayjs(coin?.genesis_date).format(dateFormat);
   const { width } = useWindowDimensions();
 
-  const formatCurrency = (currency: number) => {
-    return format(
+  const formatCurrency = (
+    currency: number,
+    toFixed?: number,
+    isCurrency = true
+  ) => {
+    let formatted = format(
       currency,
       config.defaults.baseCurrency.symbol,
       config.defaults.localeShort
     );
+
+    if (formatted.length > 20) {
+      formatted =
+        currency.toFixed(toFixed ?? 3) +
+        ' ' +
+        config.defaults.baseCurrency.symbol;
+    }
+
+    // Don't add thousand separator for numbers lower than one absolute value
+    if (
+      Math.abs(
+        Number(
+          formatted.slice(-1) === config.defaults.baseCurrency.symbol
+            ? formatted.slice(0, -2)
+            : formatted
+        )
+      ) < 1
+    ) {
+      return formatted;
+    }
+
+    if (!isCurrency) {
+      formatted = formatted.slice(0, -2);
+    }
+
+    return formatted.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   };
 
   const priceChange = (history: number[]) => {
@@ -873,7 +904,7 @@ const CryptocurrencyDetailsScreen = ({
           </View>
         </>
       )}
-      <View style={{ marginBottom: 30 }}>
+      <View>
         <View style={{ flexDirection: 'row', marginTop: 10 }}>
           <Text style={styles.developerDataLabel}>Forks:</Text>
           <Text
@@ -930,6 +961,232 @@ const CryptocurrencyDetailsScreen = ({
             style={[styles.developerDataText, { color: color ?? TextColor }]}
           >
             {coin?.developer_data?.pull_request_contributors ?? '?'}
+          </Text>
+        </View>
+      </View>
+    </>
+  );
+
+  const CoinDetails = () => (
+    <>
+      <View style={{ marginBottom: 30 }}>
+        <Text style={styles.title}>Details</Text>
+        <View style={{ flexDirection: 'row' }}>
+          <Text style={styles.developerDataLabel}>Market capitalization:</Text>
+          <Text
+            style={[styles.developerDataText, { color: color ?? TextColor }]}
+          >
+            {coin?.market_cap ? formatCurrency(coin?.market_cap) : '?'}
+          </Text>
+        </View>
+        <View style={{ flexDirection: 'row' }}>
+          <Text style={styles.developerDataLabel}>
+            Fully diluted valuation:
+          </Text>
+          <Text
+            style={[styles.developerDataText, { color: color ?? TextColor }]}
+          >
+            {coin?.fully_diluted_valuation
+              ? formatCurrency(coin?.fully_diluted_valuation)
+              : '?'}
+          </Text>
+        </View>
+        <View style={{ flexDirection: 'row' }}>
+          <Text style={styles.developerDataLabel}>Total volume:</Text>
+          <Text
+            style={[styles.developerDataText, { color: color ?? TextColor }]}
+          >
+            {coin?.total_volume ? formatCurrency(coin?.total_volume) : '?'}
+          </Text>
+        </View>
+        <View style={{ flexDirection: 'row' }}>
+          <Text style={styles.developerDataLabel}>24h high:</Text>
+          <Text
+            style={[styles.developerDataText, { color: color ?? TextColor }]}
+          >
+            {coin?.high_24h ? formatCurrency(coin?.high_24h) : '?'}
+          </Text>
+        </View>
+        <View style={{ flexDirection: 'row' }}>
+          <Text style={styles.developerDataLabel}>24h low:</Text>
+          <Text
+            style={[styles.developerDataText, { color: color ?? TextColor }]}
+          >
+            {coin?.low_24h ? formatCurrency(coin?.low_24h) : '?'}
+          </Text>
+        </View>
+        <View style={{ flexDirection: 'row' }}>
+          <Text style={styles.developerDataLabel}>
+            1h price change percentage:
+          </Text>
+          <Text
+            style={[styles.developerDataText, { color: color ?? TextColor }]}
+          >
+            {coin?.price_change_percentage_1h_in_currency
+              ? coin?.price_change_percentage_1h_in_currency.toFixed(3) + '%'
+              : '?'}
+          </Text>
+        </View>
+        <View style={{ flexDirection: 'row' }}>
+          <Text style={styles.developerDataLabel}>24h price change:</Text>
+          <Text
+            style={[styles.developerDataText, { color: color ?? TextColor }]}
+          >
+            {coin?.price_change_24h
+              ? formatCurrency(
+                  parseFloat(
+                    coin?.price_change_24h.toFixed(
+                      coin?.price_change_24h > 1 ? 3 : 10
+                    )
+                  )
+                )
+              : '?'}
+          </Text>
+        </View>
+        <View style={{ flexDirection: 'row' }}>
+          <Text style={styles.developerDataLabel}>
+            7d price change percentage:
+          </Text>
+          <Text
+            style={[styles.developerDataText, { color: color ?? TextColor }]}
+          >
+            {coin?.price_change_percentage_7d_in_currency
+              ? coin?.price_change_percentage_7d_in_currency.toFixed(3) + '%'
+              : '?'}
+          </Text>
+        </View>
+        <View style={{ flexDirection: 'row' }}>
+          <Text style={styles.developerDataLabel}>
+            24h price change percentage:
+          </Text>
+          <Text
+            style={[styles.developerDataText, { color: color ?? TextColor }]}
+          >
+            {coin?.price_change_percentage_24h_in_currency
+              ? coin?.price_change_percentage_24h_in_currency.toFixed(3) + '%'
+              : '?'}
+          </Text>
+        </View>
+        <View style={{ flexDirection: 'row' }}>
+          <Text style={styles.developerDataLabel}>24h m. cap change:</Text>
+          <Text
+            style={[styles.developerDataText, { color: color ?? TextColor }]}
+          >
+            {coin?.market_cap_change_24h
+              ? formatCurrency(
+                  parseFloat(
+                    coin?.market_cap_change_24h.toFixed(
+                      coin?.market_cap_change_24h > 1 ? 3 : 10
+                    )
+                  )
+                )
+              : '?'}
+          </Text>
+        </View>
+        <View style={{ flexDirection: 'row' }}>
+          <Text style={styles.developerDataLabel}>
+            24h m. cap change percentage:
+          </Text>
+          <Text
+            style={[styles.developerDataText, { color: color ?? TextColor }]}
+          >
+            {coin?.price_change_percentage_24h_in_currency
+              ? coin?.price_change_percentage_24h_in_currency.toFixed(3) + '%'
+              : '?'}
+          </Text>
+        </View>
+        <View style={{ flexDirection: 'row' }}>
+          <Text style={styles.developerDataLabel}>Circulating supply:</Text>
+          <Text
+            style={[styles.developerDataText, { color: color ?? TextColor }]}
+          >
+            {coin?.circulating_supply
+              ? formatCurrency(coin?.circulating_supply, 0, false)
+              : '?'}
+          </Text>
+        </View>
+        <View style={{ flexDirection: 'row' }}>
+          <Text style={styles.developerDataLabel}>Total supply:</Text>
+          <Text
+            style={[styles.developerDataText, { color: color ?? TextColor }]}
+          >
+            {coin?.total_supply
+              ? formatCurrency(coin?.total_supply, 0, false)
+              : '?'}
+          </Text>
+        </View>
+        <View style={{ flexDirection: 'row' }}>
+          <Text style={styles.developerDataLabel}>Max supply:</Text>
+          <Text
+            style={[styles.developerDataText, { color: color ?? TextColor }]}
+          >
+            {coin?.max_supply
+              ? formatCurrency(coin?.max_supply, 0, false)
+              : '?'}
+          </Text>
+        </View>
+        <View style={{ flexDirection: 'row' }}>
+          <Text style={styles.developerDataLabel}>All time high:</Text>
+          <Text
+            style={[styles.developerDataText, { color: color ?? TextColor }]}
+          >
+            {coin?.ath ? formatCurrency(coin?.ath) : '?'}
+          </Text>
+        </View>
+        <View style={{ flexDirection: 'row' }}>
+          <Text style={styles.developerDataLabel}>
+            All time high change percentage:
+          </Text>
+          <Text
+            style={[styles.developerDataText, { color: color ?? TextColor }]}
+          >
+            {coin?.ath_change_percentage
+              ? coin?.ath_change_percentage.toFixed(3) + '%'
+              : '?'}
+          </Text>
+        </View>
+        <View style={{ flexDirection: 'row' }}>
+          <Text style={styles.developerDataLabel}>All time high date:</Text>
+          <Text
+            style={[styles.developerDataText, { color: color ?? TextColor }]}
+          >
+            {allTimeHighDate}
+          </Text>
+        </View>
+        <View style={{ flexDirection: 'row' }}>
+          <Text style={styles.developerDataLabel}>All time low:</Text>
+          <Text
+            style={[styles.developerDataText, { color: color ?? TextColor }]}
+          >
+            {coin?.atl ? formatCurrency(coin?.atl) : '?'}
+          </Text>
+        </View>
+        <View style={{ flexDirection: 'row' }}>
+          <Text style={styles.developerDataLabel}>
+            All time low change percentage:
+          </Text>
+          <Text
+            style={[styles.developerDataText, { color: color ?? TextColor }]}
+          >
+            {coin?.atl_change_percentage
+              ? coin?.atl_change_percentage.toFixed(3) + '%'
+              : '?'}
+          </Text>
+        </View>
+        <View style={{ flexDirection: 'row' }}>
+          <Text style={styles.developerDataLabel}>All time low date:</Text>
+          <Text
+            style={[styles.developerDataText, { color: color ?? TextColor }]}
+          >
+            {allTimeLowDate}
+          </Text>
+        </View>
+        <View style={{ flexDirection: 'row' }}>
+          <Text style={styles.developerDataLabel}>Genesis date:</Text>
+          <Text
+            style={[styles.developerDataText, { color: color ?? TextColor }]}
+          >
+            {genesisDate}
           </Text>
         </View>
       </View>
@@ -1235,6 +1492,7 @@ const CryptocurrencyDetailsScreen = ({
       {CryptocurrencyLinks()}
       {CryptocurrencyRatings()}
       {DeveloperData()}
+      {CoinDetails()}
     </ScrollView>
   );
 };

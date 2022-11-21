@@ -82,7 +82,7 @@ const config = {
     locale: 'en-GB',
     localeShort: 'en',
     fallbackNumberPrecision: 7,
-    dateFormat: 'DD MMMM, YYYY',
+    dateFormat: 'D MMMM, YYYY',
     axiosTimeout: 5000,
     snackbarDuration: 10000,
   },
