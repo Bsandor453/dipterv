@@ -389,7 +389,7 @@ const CryptocurrencyDetailsScreen = ({
   };
 
   const CryptocurrencyLinks = () => (
-    <View style={{ marginBottom: 30 }}>
+    <View>
       <Text style={styles.title}>Links and socials</Text>
       {/* Homepage */}
       {coin?.links?.homepage?.length !== 0 && (
@@ -770,6 +770,56 @@ const CryptocurrencyDetailsScreen = ({
     </View>
   );
 
+  const CryptocurrencyRatings = () => (
+    <>
+      <Text style={styles.title}>Ratings and opinions</Text>
+      <View style={{ marginBottom: 30 }}>
+        <View style={{ flexDirection: 'row' }}>
+          <Text style={styles.ratingLabel}>Upvotes from community:</Text>
+          <Text style={[styles.ratingText, { color: color ?? TextColor }]}>
+            {coin?.votes_up_percentage + '%' ?? '?'}
+          </Text>
+        </View>
+        <View style={{ flexDirection: 'row' }}>
+          <Text style={styles.ratingLabel}>Downvotes from community:</Text>
+          <Text style={[styles.ratingText, { color: color ?? TextColor }]}>
+            {coin?.votes_down_percentage + '%' ?? '?'}
+          </Text>
+        </View>
+        <View style={{ flexDirection: 'row' }}>
+          <Text style={styles.ratingLabel}>Coingecko score:</Text>
+          <Text style={[styles.ratingText, { color: color ?? TextColor }]}>
+            {coin?.coingecko_score ?? '?'}
+          </Text>
+        </View>
+        <View style={{ flexDirection: 'row' }}>
+          <Text style={styles.ratingLabel}>Developer score:</Text>
+          <Text style={[styles.ratingText, { color: color ?? TextColor }]}>
+            {coin?.developer_score ?? '?'}
+          </Text>
+        </View>
+        <View style={{ flexDirection: 'row' }}>
+          <Text style={styles.ratingLabel}>Community score:</Text>
+          <Text style={[styles.ratingText, { color: color ?? TextColor }]}>
+            {coin?.community_score ?? '?'}
+          </Text>
+        </View>
+        <View style={{ flexDirection: 'row' }}>
+          <Text style={styles.ratingLabel}>Liquidity score:</Text>
+          <Text style={[styles.ratingText, { color: color ?? TextColor }]}>
+            {coin?.liquidity_score ?? '?'}
+          </Text>
+        </View>
+        <View style={{ flexDirection: 'row' }}>
+          <Text style={styles.ratingLabel}>Public interest score:</Text>
+          <Text style={[styles.ratingText, { color: color ?? TextColor }]}>
+            {coin?.public_interest_score ?? '?'}
+          </Text>
+        </View>
+      </View>
+    </>
+  );
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.headerTop}>
@@ -1067,6 +1117,7 @@ const CryptocurrencyDetailsScreen = ({
         </View>
       </View>
       {CryptocurrencyLinks()}
+      {CryptocurrencyRatings()}
     </ScrollView>
   );
 };
@@ -1291,6 +1342,14 @@ const styles = StyleSheet.create({
   link: {
     textDecorationLine: 'underline',
     fontSize: 16,
+  },
+  ratingLabel: { fontSize: 16, color: TextColor },
+  ratingText: {
+    fontSize: 16,
+    color: TextColor,
+    marginStart: 5,
+    fontWeight: 'bold',
+    marginBottom: 10,
   },
 });
 
