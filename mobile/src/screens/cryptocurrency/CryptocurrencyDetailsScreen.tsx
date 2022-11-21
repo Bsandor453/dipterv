@@ -8,25 +8,30 @@ import {
   Image,
   ScrollView,
   StyleSheet,
+  TextInput,
   TouchableOpacity,
   useWindowDimensions,
   View,
 } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
-import { Text } from 'react-native-paper';
+import { ActivityIndicator, Dialog, Portal, Text } from 'react-native-paper';
 import RenderHtml from 'react-native-render-html';
 import Feather from 'react-native-vector-icons/Feather';
 import { useDispatch, useSelector } from 'react-redux';
 import { useInterval } from 'usehooks-ts';
 import config from '../../config/MainConfig';
 import {
+  buyCryptocurrency,
   getCryptocurrency,
   getCryptocurrencyHistory,
   getWallet,
+  sellCryptocurrency,
 } from '../../redux/action_creators/cryptocurrency';
+import { show } from '../../redux/slices/snackbarSlice';
 import { AppDispatch, RootState } from '../../redux/store';
 import { TextColor } from '../../util/ColorPalette';
 import { calculateBrightness, LightenDarkenColor } from '../../util/ColorUtil';
+import { setFloat } from '../../util/NumberUtilts';
 import { DrawerParamList } from '../navigation/DrawerNavigationScreen';
 
 type NavigationProps = DrawerScreenProps<
@@ -42,11 +47,14 @@ const CryptocurrencyDetailsScreen = ({
 
   const coin = useSelector((state: RootState) => state.crypto.coin);
   const history = useSelector((state: RootState) => state.crypto.history);
-
-  const [openBuyDialog, setOpenBuyDialog] = useState(false);
-  const [openSellDialog, setOpenSellDialog] = useState(false);
-  const [buyAmount, setBuyAmount] = useState(0.0);
-  const [sellAmount, setSellAmount] = useState(0.0);
+  const wallet = useSelector((state: RootState) => state.crypto.wallet);
+  const buyStatus = useSelector((state: RootState) => state.crypto._status.buy);
+  const sellStatus = useSelector(
+    (state: RootState) => state.crypto._status.sell
+  );
+  const [chartDataLoaded, setChartDataLoaded] = useState(false);
+  const [buyAmount, setBuyAmount] = useState('');
+  const [sellAmount, setSellAmount] = useState('');
   const [timeframe, setTimeframe] = useState('7d');
 
   const originalColor = coin?.color;
@@ -60,9 +68,19 @@ const CryptocurrencyDetailsScreen = ({
 
   const dispatch = useDispatch<AppDispatch>();
 
+  const walletEntry =
+    wallet?.cryptocurrencies &&
+    Object.entries(wallet?.cryptocurrencies).find(([key]) => {
+      return key === coin?.id;
+    });
+
+  const walletAmount = walletEntry ? walletEntry[1] : 0.0;
+
   useLayoutEffect(() => {
     dispatch(getCryptocurrency({ id: coinId }));
-    dispatch(getCryptocurrencyHistory({ id: coinId, timeframe }));
+    dispatch(getCryptocurrencyHistory({ id: coinId, timeframe })).then(() =>
+      setChartDataLoaded(true)
+    );
   }, [coinId]);
 
   const interval = 20000;
@@ -77,14 +95,15 @@ const CryptocurrencyDetailsScreen = ({
   }, []);
 
   useEffect(() => {
-    getCryptocurrencyHistory({ id: coinId, timeframe });
-  }, [timeframe]);
+    setBuyAmount('');
+    setSellAmount('');
+  }, [coinId]);
 
-  /*
   useEffect(() => {
-    getWallet();
-  }, [infoMessage]);
-  */
+    dispatch(getCryptocurrencyHistory({ id: coinId, timeframe })).then(() =>
+      setChartDataLoaded(true)
+    );
+  }, [timeframe]);
 
   const dateFormat = config.defaults.dateFormat;
   const maxDateLabelCount = 4;
@@ -167,12 +186,11 @@ const CryptocurrencyDetailsScreen = ({
   };
 
   const calculateLabels = (timeframe: string) => {
-    const initialLabels =
-      getDataByTimeframe(timeframe).map((historyEntry) =>
-        typeof historyEntry.timestamp === 'number'
-          ? historyEntry.timestamp
-          : Number(0)
-      ) ?? [];
+    const initialLabels = getDataByTimeframe(timeframe).map((historyEntry) =>
+      typeof historyEntry.timestamp === 'number'
+        ? historyEntry.timestamp
+        : Number(0)
+    ) ?? ['', ''];
 
     const labelRadix = Math.max(
       Math.floor(initialLabels.length / maxDateLabelCount),
@@ -185,18 +203,170 @@ const CryptocurrencyDetailsScreen = ({
   };
 
   const priceData = {
-    labels: calculateLabels(timeframe),
+    labels: calculateLabels(timeframe) ?? ['', ''],
     datasets: [
       {
-        data:
-          getDataByTimeframe(timeframe).map((historyEntry) =>
-            typeof historyEntry.price === 'number'
-              ? historyEntry.price
-              : Number(0)
-          ) ?? [],
+        data: getDataByTimeframe(timeframe).map((historyEntry) =>
+          typeof historyEntry.price === 'number'
+            ? historyEntry.price
+            : Number(0)
+        ) ?? [0, 0],
         color: () => color ?? 'black',
       },
     ],
+  };
+
+  const [buyDialogVisible, setBuyDialogVisible] = useState(false);
+  const hideBuyDialog = () => setBuyDialogVisible(false);
+
+  const BuyDialog = () => {
+    return (
+      <Portal>
+        <Dialog
+          visible={buyDialogVisible}
+          onDismiss={hideBuyDialog}
+          style={styles.buyDialog}
+        >
+          <Dialog.Title style={{ fontSize: 20 }}>
+            {`Are you sure you want to buy ${
+              buyAmount !== '' ? buyAmount : 0
+            }\u00A0${coin?.name ?? 'coin'} for ${
+              coin?.current_price
+                ? formatCurrency(Number(buyAmount) * coin?.current_price)
+                    .toString()
+                    .replace(' ', '\u00A0')
+                : '?'
+            } ?`}
+          </Dialog.Title>
+          <Dialog.Content>
+            <View
+              style={{
+                flexDirection: 'row',
+              }}
+            >
+              <TouchableOpacity
+                onPress={async () => {
+                  await dispatch(
+                    buyCryptocurrency({ id: coinId, amount: Number(buyAmount) })
+                  );
+                  if (buyStatus.slice(0, 7) === 'success') {
+                    dispatch(
+                      show({
+                        message: `Successfully bought ${Number(
+                          buyAmount
+                        )}\u00A0${coin?.name}!`,
+                        type: 'success',
+                      })
+                    );
+                    dispatch(getWallet());
+                  }
+                  hideBuyDialog();
+                }}
+                disabled={false}
+              >
+                <LinearGradient
+                  colors={['green', '#11b50e']}
+                  style={[styles.tradeButton, { marginRight: 100 }]}
+                >
+                  <Text style={styles.tradeButtonText}>Yes</Text>
+                </LinearGradient>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  hideBuyDialog();
+                }}
+                disabled={false}
+              >
+                <LinearGradient
+                  colors={['#961805', 'red']}
+                  style={styles.tradeButton}
+                >
+                  <Text style={styles.tradeButtonText}>No</Text>
+                </LinearGradient>
+              </TouchableOpacity>
+            </View>
+          </Dialog.Content>
+        </Dialog>
+      </Portal>
+    );
+  };
+
+  const [sellDialogVisible, setSellDialogVisible] = useState(false);
+  const hideSellDialog = () => setSellDialogVisible(false);
+
+  const SellDialog = () => {
+    return (
+      <Portal>
+        <Dialog
+          visible={sellDialogVisible}
+          onDismiss={hideSellDialog}
+          style={styles.sellDialog}
+        >
+          <Dialog.Title style={{ fontSize: 20 }}>
+            {`Are you sure you want to sell ${
+              sellAmount !== '' ? sellAmount : 0
+            }\u00A0${coin?.name ?? 'coin'} for ${
+              coin?.current_price
+                ? formatCurrency(Number(sellAmount) * coin?.current_price)
+                    .toString()
+                    .replace(' ', '\u00A0')
+                : '?'
+            } ?`}
+          </Dialog.Title>
+          <Dialog.Content>
+            <View
+              style={{
+                flexDirection: 'row',
+              }}
+            >
+              <TouchableOpacity
+                onPress={async () => {
+                  await dispatch(
+                    sellCryptocurrency({
+                      id: coinId,
+                      amount: Number(sellAmount),
+                    })
+                  );
+                  if (sellStatus.slice(0, 7) === 'success') {
+                    dispatch(
+                      show({
+                        message: `Successfully sold ${Number(
+                          sellAmount
+                        )}\u00A0${coin?.name}!`,
+                        type: 'success',
+                      })
+                    );
+                    dispatch(getWallet());
+                  }
+                  hideSellDialog();
+                }}
+                disabled={false}
+              >
+                <LinearGradient
+                  colors={['green', '#11b50e']}
+                  style={[styles.tradeButton, { marginRight: 100 }]}
+                >
+                  <Text style={styles.tradeButtonText}>Yes</Text>
+                </LinearGradient>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  hideSellDialog();
+                }}
+                disabled={false}
+              >
+                <LinearGradient
+                  colors={['#961805', 'red']}
+                  style={styles.tradeButton}
+                >
+                  <Text style={styles.tradeButtonText}>No</Text>
+                </LinearGradient>
+              </TouchableOpacity>
+            </View>
+          </Dialog.Content>
+        </Dialog>
+      </Portal>
+    );
   };
 
   return (
@@ -214,13 +384,13 @@ const CryptocurrencyDetailsScreen = ({
           <View style={styles.baseDataRow}>
             <Text style={styles.nameTextLabel}>Name: </Text>
             <Text style={[styles.nameText, { color: color }]}>
-              {coin?.name}
+              {coin?.name ?? '?'}
             </Text>
           </View>
           <View style={styles.baseDataRow}>
             <Text style={styles.signTextLabel}>Sign: </Text>
             <Text style={[styles.signText, { color: color }]}>
-              {coin?.symbol?.toUpperCase()}
+              {coin?.symbol?.toUpperCase() ?? '?'}
             </Text>
           </View>
         </View>
@@ -228,7 +398,9 @@ const CryptocurrencyDetailsScreen = ({
       <View style={styles.headerBottom}>
         <View style={styles.dataRow}>
           <Text style={styles.rankTextLabel}>Coingecko rank:</Text>
-          <Text style={styles.rankText}>{' #' + coin?.market_cap_rank}</Text>
+          <Text style={styles.rankText}>
+            {(coin?.market_cap_rank && ' #' + coin?.market_cap_rank) ?? '?'}
+          </Text>
         </View>
         <View style={styles.dataRow}>
           <Text style={styles.priceTextLabel}>Current price: </Text>
@@ -279,6 +451,98 @@ const CryptocurrencyDetailsScreen = ({
         </View>
       </View>
       <View>
+        <Text style={styles.title}>
+          Buy or sell {coin?.name ?? 'this coin'}
+        </Text>
+        <View style={{ flexDirection: 'row' }}>
+          <Text style={styles.labelText}>Your wealth: </Text>
+          <Text style={[styles.text, { color: 'green', fontWeight: 'bold' }]}>
+            {formatCurrency(wallet?.referenceCurrency ?? 0)}
+          </Text>
+        </View>
+        <View style={{ flexDirection: 'row', marginBottom: 10 }}>
+          <Text style={styles.labelText}>
+            Your {coin?.name ?? 'coin'} stock:
+          </Text>
+          <Text
+            style={[
+              styles.text,
+              { color: color ?? TextColor, fontWeight: 'bold' },
+            ]}
+          >
+            {formatCurrency(walletAmount ?? 0)}
+          </Text>
+        </View>
+        <View style={{ flexDirection: 'row' }}>
+          <TouchableOpacity
+            onPress={async () => {
+              setBuyDialogVisible(true);
+            }}
+            disabled={buyAmount === ''}
+          >
+            <LinearGradient
+              colors={
+                buyAmount === ''
+                  ? ['#dedede', '#ededed']
+                  : [lighterColor ?? 'yellow', color ?? 'orange']
+              }
+              style={styles.tradeButtonFull}
+            >
+              <Text
+                style={[
+                  styles.tradeButtonsText,
+                  { color: buyAmount === '' ? 'gray' : 'white' },
+                ]}
+              >
+                {'Buy ' + coin?.name ?? 'coin'}
+              </Text>
+            </LinearGradient>
+          </TouchableOpacity>
+          <TextInput
+            style={styles.numberInput}
+            placeholder="Amount"
+            autoCapitalize="none"
+            onChangeText={(v) => setFloat(v, setBuyAmount)}
+            value={buyAmount.toString()}
+            keyboardType="numeric"
+            underlineColorAndroid={TextColor}
+          />
+        </View>
+        <View style={{ flexDirection: 'row' }}>
+          <TouchableOpacity
+            onPress={async () => {
+              setSellDialogVisible(true);
+            }}
+            disabled={sellAmount === ''}
+          >
+            <LinearGradient
+              colors={
+                sellAmount === ''
+                  ? ['#dedede', '#ededed']
+                  : [lighterColor ?? 'yellow', color ?? 'orange']
+              }
+              style={styles.tradeButtonFull}
+            >
+              <Text
+                style={[
+                  styles.tradeButtonsText,
+                  { color: sellAmount === '' ? 'gray' : 'white' },
+                ]}
+              >
+                {'Sell ' + coin?.name ?? 'coin'}
+              </Text>
+            </LinearGradient>
+          </TouchableOpacity>
+          <TextInput
+            style={styles.numberInput}
+            placeholder="Amount"
+            autoCapitalize="none"
+            onChangeText={(v) => setFloat(v, setSellAmount)}
+            value={sellAmount.toString()}
+            keyboardType="numeric"
+            underlineColorAndroid={TextColor}
+          />
+        </View>
         <Text style={styles.title}>Price history</Text>
         <View style={styles.priceChartButtons}>
           {['24h', '7d', '30d', '1y', 'max'].map((tf) => {
@@ -286,10 +550,11 @@ const CryptocurrencyDetailsScreen = ({
               <View key={tf}>
                 <TouchableOpacity
                   onPress={async () => {
+                    setChartDataLoaded(false);
+                    setTimeframe(tf);
                     await dispatch(
                       getCryptocurrencyHistory({ id: coinId, timeframe: tf })
                     );
-                    setTimeframe(tf);
                   }}
                   disabled={false}
                 >
@@ -322,63 +587,73 @@ const CryptocurrencyDetailsScreen = ({
             );
           })}
         </View>
-        {coin?.sparkline_in_7d?.price &&
-        coin?.sparkline_in_7d?.price?.length >= 3 ? (
-          <View style={styles.priceChart}>
-            <LineChart
-              style={{ paddingRight: 65 }}
-              data={priceData}
-              height={220}
-              width={Dimensions.get('window').width}
-              chartConfig={{
-                color: () => TextColor ?? 'white',
-                backgroundGradientFrom: 'white',
-                backgroundGradientTo: 'white',
-                fillShadowGradientOpacity: 0.2,
-                strokeWidth: 1,
-                useShadowColorFromDataset: true,
-                propsForBackgroundLines: {
-                  strokeDasharray: 2,
-                },
-                propsForHorizontalLabels: {
-                  fontSize: 10,
-                },
-                propsForVerticalLabels: {
-                  fontSize: 10,
-                },
-              }}
-              bezier
-              withDots={false}
-              withInnerLines={false}
-              withShadow={true}
-              xLabelsOffset={0}
-              formatYLabel={(value) => formatCurrency(Number(value))}
-              formatXLabel={(value) => {
-                if (value === '') {
-                  return '';
-                } else {
-                  labelsCreated++;
-                  if (labelsCreated <= maxDateLabelCount) {
-                    return dayjs
-                      .unix(Number(value) / 1000)
-                      .format(dateFormatShort);
-                  } else {
+        {BuyDialog()}
+        {SellDialog()}
+        {/* LineChart */}
+        {chartDataLoaded ? (
+          coin?.sparkline_in_7d?.price &&
+          coin?.sparkline_in_7d?.price?.length >= 3 ? (
+            <View style={styles.priceChart}>
+              <LineChart
+                style={{ paddingRight: 65 }}
+                data={priceData}
+                height={220}
+                width={Dimensions.get('window').width}
+                chartConfig={{
+                  color: () => TextColor ?? 'white',
+                  backgroundGradientFrom: 'white',
+                  backgroundGradientTo: 'white',
+                  fillShadowGradientOpacity: 0.2,
+                  strokeWidth: 1,
+                  useShadowColorFromDataset: true,
+                  propsForBackgroundLines: {
+                    strokeDasharray: 2,
+                  },
+                  propsForHorizontalLabels: {
+                    fontSize: 10,
+                  },
+                  propsForVerticalLabels: {
+                    fontSize: 10,
+                  },
+                }}
+                bezier
+                withDots={false}
+                withInnerLines={false}
+                withShadow={true}
+                xLabelsOffset={0}
+                formatYLabel={(value) => formatCurrency(Number(value))}
+                formatXLabel={(value) => {
+                  if (value === '') {
                     return '';
+                  } else {
+                    labelsCreated++;
+                    if (labelsCreated <= maxDateLabelCount) {
+                      return dayjs
+                        .unix(Number(value) / 1000)
+                        .format(dateFormatShort);
+                    } else {
+                      return '';
+                    }
                   }
-                }
-              }}
-            />
-          </View>
+                }}
+              />
+            </View>
+          ) : (
+            <Text
+              style={[
+                styles.noData,
+                { position: 'relative', marginRight: 80, marginTop: 10 },
+              ]}
+            >
+              No price data!
+            </Text>
+          )
         ) : (
-          <Text
-            style={[
-              styles.noData,
-              { position: 'relative', marginRight: 80, marginTop: 10 },
-            ]}
-          >
-            No price data!
-          </Text>
+          <View style={{ flex: 1, padding: 20, marginVertical: 30 }}>
+            <ActivityIndicator color={TextColor} size={40} />
+          </View>
         )}
+        {/* LineChart end */}
       </View>
       <View>
         <Text style={styles.title}>Description</Text>
@@ -404,6 +679,18 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginBottom: 10,
     fontSize: 30,
+    color: TextColor,
+  },
+  labelText: {
+    fontWeight: '500',
+    marginRight: 10,
+    marginBottom: 5,
+    fontSize: 18,
+    color: TextColor,
+  },
+  text: {
+    fontWeight: '500',
+    fontSize: 18,
     color: TextColor,
   },
   headerTop: {
@@ -547,9 +834,53 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: TextColor,
   },
+  tradeButtonFull: {
+    marginVertical: 10,
+    borderRadius: 10,
+    marginEnd: 10,
+    padding: 5,
+  },
+  tradeButtonsText: {
+    marginHorizontal: 10,
+    fontWeight: '500',
+    fontSize: 22,
+    color: TextColor,
+  },
+  buyDialog: {
+    margin: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#e8e8e8',
+  },
+  sellDialog: {
+    margin: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#e8e8e8',
+  },
+  numberInput: {
+    flex: 1,
+    paddingLeft: 10,
+    color: TextColor,
+    padding: 0,
+    margin: 0,
+  },
   description: { color: TextColor, lineHeight: 20, marginBottom: 30 },
   noData: {
     color: 'red',
+  },
+  tradeButton: {
+    marginVertical: 10,
+    overflow: 'hidden',
+    borderRadius: 10,
+    marginEnd: 10,
+    padding: 5,
+  },
+  tradeButtonText: {
+    marginHorizontal: 10,
+    fontWeight: '500',
+    fontSize: 22,
+    color: 'white',
   },
 });
 

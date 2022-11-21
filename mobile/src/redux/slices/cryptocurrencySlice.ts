@@ -7,10 +7,12 @@ import ISummary from '../../interfaces/ISummary';
 import ITransaction from '../../interfaces/ITransaction';
 import IWallet from '../../interfaces/IWallet';
 import {
+  buyCryptocurrency,
   getCryptocurrencies,
   getCryptocurrency,
   getCryptocurrencyHistory,
   getWallet,
+  sellCryptocurrency,
 } from '../action_creators/cryptocurrency';
 
 export interface CryptocurrencyState {
@@ -31,6 +33,8 @@ export interface CryptocurrencyState {
     history: string;
     wallet: string;
     transactions: string;
+    buy: string;
+    sell: string;
   };
 }
 
@@ -52,6 +56,8 @@ const initialState: CryptocurrencyState = {
     history: 'init',
     wallet: 'init',
     transactions: 'init',
+    buy: 'init',
+    sell: 'init',
   },
 };
 
@@ -109,6 +115,30 @@ export const cryptocurrencySlice = createSlice({
       })
       .addCase(getWallet.rejected, (state, action) => {
         state._status.wallet = action.error?.message ?? 'error';
+      })
+      .addCase(buyCryptocurrency.pending, (state) => {
+        state._status.buy = 'pending';
+      })
+      .addCase(
+        buyCryptocurrency.fulfilled,
+        (state, action: PayloadAction<String>) => {
+          state._status.buy = `success (${action.payload})`;
+        }
+      )
+      .addCase(buyCryptocurrency.rejected, (state, action) => {
+        state._status.buy = action.error?.message ?? 'error';
+      })
+      .addCase(sellCryptocurrency.pending, (state) => {
+        state._status.sell = 'pending';
+      })
+      .addCase(
+        sellCryptocurrency.fulfilled,
+        (state, action: PayloadAction<String>) => {
+          state._status.sell = `success (${action.payload})`;
+        }
+      )
+      .addCase(sellCryptocurrency.rejected, (state, action) => {
+        state._status.sell = action.error?.message ?? 'error';
       });
   },
 });

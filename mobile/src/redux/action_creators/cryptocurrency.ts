@@ -6,6 +6,7 @@ import ICryptocurrencyHistory from '../../interfaces/cryptocurrency/ICryptocurre
 import IPageable from '../../interfaces/IPageable';
 import IWallet from '../../interfaces/IWallet';
 import CryptocurrencyService from '../../service/CryptocurrencyService';
+import { show } from '../slices/snackbarSlice';
 import { RootState } from '../store';
 
 export const getCryptocurrencies = createAsyncThunk<
@@ -115,7 +116,7 @@ export const getCryptocurrencyHistory = createAsyncThunk<
     timeframe: string;
   },
   { state: RootState }
->('cryptocurrency/getCryptocurrencyHistory/', async (data, thunkAPI) => {
+>('cryptocurrency/getCryptocurrencyHistory', async (data, thunkAPI) => {
   try {
     const response = await CryptocurrencyService.getCryptocurrencyHistory(
       data.id,
@@ -123,21 +124,133 @@ export const getCryptocurrencyHistory = createAsyncThunk<
     );
     return response.data;
   } catch (error: any) {
-    logging.error(error, 'cryptocurrency/getCryptocurrencyHistory/');
+    logging.error(error, 'cryptocurrency/getCryptocurrencyHistory');
     if (error?.response?.data?.error && error?.response?.data?.message) {
       logging.error(
         `${error.response.data.error}: ${error.response.data.message}`,
-        'cryptocurrency/getCryptocurrencyHistory/'
+        'cryptocurrency/getCryptocurrencyHistory'
       );
     }
     if (error.name && error.message) {
       logging.error(
         `${error.name}: ${error.message}`,
-        'cryptocurrency/getCryptocurrencyHistory/'
+        'cryptocurrency/getCryptocurrencyHistory'
       );
       return thunkAPI.rejectWithValue(`${error.name}: ${error.message}`);
     } else {
-      logging.error(error, 'cryptocurrency/getCryptocurrencyHistory/');
+      logging.error(error, 'cryptocurrency/getCryptocurrencyHistory');
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+});
+
+export const buyCryptocurrency = createAsyncThunk<
+  String,
+  {
+    id: string;
+    amount: number;
+  },
+  { state: RootState }
+>('cryptocurrency/buyCryptocurrency', async (data, thunkAPI) => {
+  try {
+    await CryptocurrencyService.buyCryptocurrency(data.id, data.amount);
+    return data.id;
+  } catch (error: any) {
+    if (error?.response?.data?.error && error?.response?.data?.message) {
+      if (error.response.data.message === 'Not enough money!') {
+        thunkAPI.dispatch(
+          show({ message: 'Not enough money!', type: 'error' })
+        );
+      } else {
+        thunkAPI.dispatch(
+          show({
+            message: `${error.response.data.error}: ${error.response.data.message}`,
+            type: 'error',
+          })
+        );
+      }
+      logging.error(
+        `${error.response.data.error}: ${error.response.data.message}`,
+        'cryptocurrency/buyCryptocurrency'
+      );
+      return thunkAPI.rejectWithValue(
+        `${error.response.data.error}: ${error.response.data.message}`
+      );
+    }
+    if (error.name && error.message) {
+      if (error.name === 'AxiosError') {
+        thunkAPI.dispatch(
+          show({ message: 'Server is unavailable!', type: 'error' })
+        );
+      } else {
+        thunkAPI.dispatch(
+          show({ message: `${error.name}: ${error.message}`, type: 'error' })
+        );
+      }
+      logging.error(
+        `${error.name}: ${error.message}`,
+        'cryptocurrency/buyCryptocurrency'
+      );
+      return thunkAPI.rejectWithValue(`${error.name}: ${error.message}`);
+    } else {
+      logging.error(error, 'cryptocurrency/buyCryptocurrency');
+      thunkAPI.dispatch(show({ message: error, type: 'error' }));
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+});
+
+export const sellCryptocurrency = createAsyncThunk<
+  String,
+  {
+    id: string;
+    amount: number;
+  },
+  { state: RootState }
+>('cryptocurrency/sellCryptocurrency', async (data, thunkAPI) => {
+  try {
+    await CryptocurrencyService.sellCryptocurrency(data.id, data.amount);
+    return data.id;
+  } catch (error: any) {
+    if (error?.response?.data?.error && error?.response?.data?.message) {
+      if (error.response.data.message === 'Not enough cryptocurrency!') {
+        thunkAPI.dispatch(
+          show({ message: 'Not enough cryptocurrency!', type: 'error' })
+        );
+      } else {
+        thunkAPI.dispatch(
+          show({
+            message: `${error.response.data.error}: ${error.response.data.message}`,
+            type: 'error',
+          })
+        );
+      }
+      logging.error(
+        `${error.response.data.error}: ${error.response.data.message}`,
+        'cryptocurrency/sellCryptocurrency'
+      );
+      return thunkAPI.rejectWithValue(
+        `${error.response.data.error}: ${error.response.data.message}`
+      );
+    }
+    if (error.name && error.message) {
+      if (error.name === 'AxiosError') {
+        thunkAPI.dispatch(
+          show({ message: 'Server is unavailable!', type: 'error' })
+        );
+      } else {
+        thunkAPI.dispatch(
+          show({ message: `${error.name}: ${error.message}`, type: 'error' })
+        );
+      }
+      logging.error(
+        `${error.name}: ${error.message}`,
+        'cryptocurrency/sellCryptocurrency'
+      );
+      return thunkAPI.rejectWithValue(`${error.name}: ${error.message}`);
+    } else {
+      logging.error(error, 'cryptocurrency/sellCryptocurrency');
+      thunkAPI.dispatch(show({ message: error, type: 'error' }));
       return thunkAPI.rejectWithValue(error);
     }
   }

@@ -91,24 +91,22 @@ const getCryptocurrencyHistory = async (
 
 const buyCryptocurrency = async (
   id: string,
-  amount: number,
-  price: number
-): Promise<AxiosResponse<any>> => {
+  amount: number
+): Promise<AxiosResponse<String>> => {
   return httpClient.post(
     config.urls.crypto.buy,
-    { id, amount, price },
+    { id, amount },
     await tokenAuthUrlConfig()
   );
 };
 
 const sellCryptocurrency = async (
   id: string,
-  amount: number,
-  price: number
-): Promise<AxiosResponse<any>> => {
+  amount: number
+): Promise<AxiosResponse<String>> => {
   return httpClient.post(
     config.urls.crypto.sell,
-    { id, amount, price },
+    { id, amount },
     await tokenAuthUrlConfig()
   );
 };
