@@ -1134,9 +1134,7 @@ const CryptocurrencyDetailsScreen = ({
           </Text>
         </View>
         <View style={{ flexDirection: 'row' }}>
-          <Text style={styles.developerDataLabel}>
-            All time high change percentage:
-          </Text>
+          <Text style={styles.developerDataLabel}>ATH change percentage:</Text>
           <Text
             style={[styles.developerDataText, { color: color ?? TextColor }]}
           >
@@ -1150,7 +1148,7 @@ const CryptocurrencyDetailsScreen = ({
           <Text
             style={[styles.developerDataText, { color: color ?? TextColor }]}
           >
-            {allTimeHighDate === 'Invalid date' ? allTimeHighDate : '?'}
+            {allTimeHighDate !== 'Invalid date' ? allTimeHighDate : '?'}
           </Text>
         </View>
         <View style={{ flexDirection: 'row' }}>
@@ -1162,9 +1160,7 @@ const CryptocurrencyDetailsScreen = ({
           </Text>
         </View>
         <View style={{ flexDirection: 'row' }}>
-          <Text style={styles.developerDataLabel}>
-            All time low change percentage:
-          </Text>
+          <Text style={styles.developerDataLabel}>ATL change percentage:</Text>
           <Text
             style={[styles.developerDataText, { color: color ?? TextColor }]}
           >
@@ -1178,7 +1174,7 @@ const CryptocurrencyDetailsScreen = ({
           <Text
             style={[styles.developerDataText, { color: color ?? TextColor }]}
           >
-            {allTimeLowDate === 'Invalid date' ? allTimeLowDate : '?'}
+            {allTimeLowDate !== 'Invalid date' ? allTimeLowDate : '?'}
           </Text>
         </View>
         <View style={{ flexDirection: 'row' }}>
@@ -1186,7 +1182,7 @@ const CryptocurrencyDetailsScreen = ({
           <Text
             style={[styles.developerDataText, { color: color ?? TextColor }]}
           >
-            {genesisDate === 'Invalid date' ? genesisDate : '?'}
+            {genesisDate !== 'Invalid date' ? genesisDate : '?'}
           </Text>
         </View>
       </View>
