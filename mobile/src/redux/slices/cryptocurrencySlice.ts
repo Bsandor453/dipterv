@@ -8,10 +8,13 @@ import ITransaction from '../../interfaces/ITransaction';
 import IWallet from '../../interfaces/IWallet';
 import {
   buyCryptocurrency,
+  depositMoney,
   getCryptocurrencies,
+  getCryptocurrenciesInWallet,
   getCryptocurrency,
   getCryptocurrencyHistory,
   getWallet,
+  resetMoney,
   sellCryptocurrency,
 } from '../action_creators/cryptocurrency';
 
@@ -32,6 +35,8 @@ export interface CryptocurrencyState {
     coinsTransactions: string;
     history: string;
     wallet: string;
+    moneyDeposit: string;
+    moneyReset: string;
     transactions: string;
     buy: string;
     sell: string;
@@ -55,6 +60,8 @@ const initialState: CryptocurrencyState = {
     coinsTransactions: 'init',
     history: 'init',
     wallet: 'init',
+    moneyDeposit: 'init',
+    moneyReset: 'init',
     transactions: 'init',
     buy: 'init',
     sell: 'init',
@@ -139,6 +146,36 @@ export const cryptocurrencySlice = createSlice({
       )
       .addCase(sellCryptocurrency.rejected, (state, action) => {
         state._status.sell = action.error?.message ?? 'error';
+      })
+      .addCase(getCryptocurrenciesInWallet.pending, (state) => {
+        state._status.coinsWallet = 'pending';
+      })
+      .addCase(getCryptocurrenciesInWallet.fulfilled, (state) => {
+        state._status.coinsWallet = 'success';
+      })
+      .addCase(getCryptocurrenciesInWallet.rejected, (state, action) => {
+        state._status.coinsWallet = action.error?.message ?? 'error';
+      })
+      .addCase(depositMoney.pending, (state) => {
+        state._status.moneyDeposit = 'pending';
+      })
+      .addCase(
+        depositMoney.fulfilled,
+        (state, action: PayloadAction<string>) => {
+          state._status.moneyDeposit = `success (${action.payload})`;
+        }
+      )
+      .addCase(depositMoney.rejected, (state, action) => {
+        state._status.moneyDeposit = action.error?.message ?? 'error';
+      })
+      .addCase(resetMoney.pending, (state) => {
+        state._status.moneyReset = 'pending';
+      })
+      .addCase(resetMoney.fulfilled, (state, action: PayloadAction<string>) => {
+        state._status.moneyReset = `success (${action.payload})`;
+      })
+      .addCase(resetMoney.rejected, (state, action) => {
+        state._status.moneyReset = action.error?.message ?? 'error';
       });
   },
 });

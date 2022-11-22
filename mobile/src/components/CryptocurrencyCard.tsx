@@ -1,4 +1,3 @@
-import { formatCurrency as format } from '@coingecko/cryptoformat';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { useNavigation } from '@react-navigation/native';
 import { default as dayjs } from 'dayjs';
@@ -11,30 +10,13 @@ import config from '../config/MainConfig';
 import ICryptocurrency from '../interfaces/cryptocurrency/ICryptocurrency';
 import { TextColor } from '../util/ColorPalette';
 import { calculateBrightness, LightenDarkenColor } from '../util/ColorUtil';
+import { formatCurrency } from '../util/CurrencyUtils';
 
 type Props = ICryptocurrency & {
   lastElementInList: boolean;
 };
 
 const dateFormat = config.defaults.dateFormat;
-
-const formatCurrency = (currency: number) => {
-  const formatted = format(
-    currency,
-    config.defaults.baseCurrency.symbol,
-    config.defaults.localeShort
-  );
-  if (
-    Number(
-      formatted.slice(-1) === config.defaults.baseCurrency.symbol
-        ? formatted.slice(0, -2)
-        : formatted
-    ) < 1
-  ) {
-    return formatted;
-  }
-  return formatted.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-};
 
 const priceChange = (history: number[]) => {
   const lastElement = history[history.length - 1];

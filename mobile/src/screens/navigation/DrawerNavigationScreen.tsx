@@ -5,10 +5,10 @@ import {
 import React from 'react';
 import NavigationDrawer from '../../components/NavigationDrawer';
 import CryptocurrencyDetailsScreen from '../cryptocurrency/CryptocurrencyDetailsScreen';
-import ProfileScreen from '../public/ProfileScreen';
-import CryptocurrencyTabNavigationScreen from './TabNavigationScreen';
 import HomeScreen from '../public/HomeScreen';
+import ProfileScreen from '../public/ProfileScreen';
 import TestScreen from '../public/TestScreen';
+import CryptocurrencyTabNavigationScreen from './TabNavigationScreen';
 
 export type DrawerParamList = {
   Test: { username: string };

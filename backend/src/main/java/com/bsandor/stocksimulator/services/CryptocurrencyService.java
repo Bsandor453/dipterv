@@ -360,6 +360,10 @@ public class CryptocurrencyService {
 
     @Transactional
     public void depositMoney(Double amount) {
+        if (amount == 0) {
+            throw new RuntimeException("Deposit amount can't be 0!");
+        }
+
         User currentUser = userService.getCurrentUserEntity();
         Wallet currentUserWallet = currentUser.getWallet();
         Double money = currentUserWallet.getReferenceCurrency();

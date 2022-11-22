@@ -63,7 +63,9 @@ const getCryptocurrenciesWithIds = async (
   );
 };
 
-const getCryptocurrenciesInWallet = async (): Promise<AxiosResponse<any>> => {
+const getCryptocurrenciesInWallet = async (): Promise<
+  AxiosResponse<ICryptocurrency[]>
+> => {
   return httpClient.get(
     config.urls.crypto.coinsInWallet,
     await tokenAuthUrlConfig()
@@ -111,7 +113,7 @@ const sellCryptocurrency = async (
   );
 };
 
-const depositMoney = async (amount: number): Promise<AxiosResponse<any>> => {
+const depositMoney = async (amount: number): Promise<AxiosResponse<string>> => {
   return httpClient.post(
     config.urls.crypto.depositMoney(amount),
     {},
@@ -119,7 +121,7 @@ const depositMoney = async (amount: number): Promise<AxiosResponse<any>> => {
   );
 };
 
-const resetMoney = async (): Promise<AxiosResponse<any>> => {
+const resetMoney = async (): Promise<AxiosResponse<string>> => {
   return httpClient.post(
     config.urls.crypto.resetMoney,
     {},

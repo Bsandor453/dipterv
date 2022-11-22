@@ -54,7 +54,7 @@ const Wallet: React.FC<RouteComponentProps<any>> = () => {
                 Reference money
               </Typography>
               <Typography variant="body1" gutterBottom sx={{ mt: 2, mb: 3 }}>
-                You can buy cryptocurrencies from the reference fiat money. The reference money is
+                You can buy cryptocurrencies for the reference fiat money. The reference money is
                 <strong>{' ' + baseCurrency.code + ' (' + baseCurrency.symbol + ')  .'}</strong>
               </Typography>
               <Typography variant="h5" gutterBottom sx={{ mt: 3, mr: 2, display: 'inline' }}>

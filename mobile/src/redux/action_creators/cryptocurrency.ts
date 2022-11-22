@@ -109,6 +109,92 @@ export const getWallet = createAsyncThunk<IWallet, void, { state: RootState }>(
   }
 );
 
+export const getCryptocurrenciesInWallet = createAsyncThunk<
+  ICryptocurrency[],
+  void,
+  { state: RootState }
+>('cryptocurrency/getCryptocurrenciesInWallet', async (_, thunkAPI) => {
+  try {
+    const response = await CryptocurrencyService.getCryptocurrenciesInWallet();
+    return response.data;
+  } catch (error: any) {
+    logging.error(error, 'cryptocurrency/getCryptocurrenciesInWallet');
+    if (error?.response?.data?.error && error?.response?.data?.message) {
+      logging.error(
+        `${error.response.data.error}: ${error.response.data.message}`,
+        'cryptocurrency/getCryptocurrenciesInWallet'
+      );
+    }
+    if (error.name && error.message) {
+      logging.error(
+        `${error.name}: ${error.message}`,
+        'cryptocurrency/getCryptocurrenciesInWallet'
+      );
+      return thunkAPI.rejectWithValue(`${error.name}: ${error.message}`);
+    } else {
+      logging.error(error, 'cryptocurrency/getCryptocurrenciesInWallet');
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+});
+
+export const depositMoney = createAsyncThunk<
+  string,
+  { amount: number },
+  { state: RootState }
+>('cryptocurrency/depositMoney', async (data, thunkAPI) => {
+  try {
+    const response = await CryptocurrencyService.depositMoney(data.amount);
+    return response.data;
+  } catch (error: any) {
+    logging.error(error, 'cryptocurrency/depositMoney');
+    if (error?.response?.data?.error && error?.response?.data?.message) {
+      logging.error(
+        `${error.response.data.error}: ${error.response.data.message}`,
+        'cryptocurrency/depositMoney'
+      );
+    }
+    if (error.name && error.message) {
+      logging.error(
+        `${error.name}: ${error.message}`,
+        'cryptocurrency/depositMoney'
+      );
+      return thunkAPI.rejectWithValue(`${error.name}: ${error.message}`);
+    } else {
+      logging.error(error, 'cryptocurrency/depositMoney');
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+});
+
+export const resetMoney = createAsyncThunk<string, void, { state: RootState }>(
+  'cryptocurrency/resetMoney',
+  async (_, thunkAPI) => {
+    try {
+      const response = await CryptocurrencyService.resetMoney();
+      return response.data;
+    } catch (error: any) {
+      logging.error(error, 'cryptocurrency/resetMoney');
+      if (error?.response?.data?.error && error?.response?.data?.message) {
+        logging.error(
+          `${error.response.data.error}: ${error.response.data.message}`,
+          'cryptocurrency/resetMoney'
+        );
+      }
+      if (error.name && error.message) {
+        logging.error(
+          `${error.name}: ${error.message}`,
+          'cryptocurrency/resetMoney'
+        );
+        return thunkAPI.rejectWithValue(`${error.name}: ${error.message}`);
+      } else {
+        logging.error(error, 'cryptocurrency/resetMoney');
+        return thunkAPI.rejectWithValue(error);
+      }
+    }
+  }
+);
+
 export const getCryptocurrencyHistory = createAsyncThunk<
   ICryptocurrencyHistory,
   {

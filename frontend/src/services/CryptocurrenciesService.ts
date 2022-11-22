@@ -67,7 +67,7 @@ const sellCryptocurrency = (
   return httpClient.post(config.urls.crypto.sell, { id, amount, price }, tokenAuthUrlConfig());
 };
 
-const depositMoney = (amount: number): Promise<AxiosResponse<any>> => {
+const depositMoney = (amount: number): Promise<AxiosResponse<void>> => {
   return httpClient.post(config.urls.crypto.depositMoney(amount), {}, tokenAuthUrlConfig());
 };
 

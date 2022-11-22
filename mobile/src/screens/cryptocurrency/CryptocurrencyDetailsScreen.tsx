@@ -1,4 +1,3 @@
-import { formatCurrency as format } from '@coingecko/cryptoformat';
 import { DrawerScreenProps } from '@react-navigation/drawer';
 import { default as dayjs } from 'dayjs';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -43,6 +42,7 @@ import { show } from '../../redux/slices/snackbarSlice';
 import { AppDispatch, RootState } from '../../redux/store';
 import { TextColor } from '../../util/ColorPalette';
 import { calculateBrightness, LightenDarkenColor } from '../../util/ColorUtil';
+import { formatCurrency } from '../../util/CurrencyUtils';
 import { setFloat } from '../../util/NumberUtilts';
 import { DrawerParamList } from '../navigation/DrawerNavigationScreen';
 
@@ -119,44 +119,6 @@ const CryptocurrencyDetailsScreen = ({
   const allTimeLowDate = dayjs(coin?.atl_date).format(dateFormat);
   const genesisDate = dayjs(coin?.genesis_date).format(dateFormat);
   const { width } = useWindowDimensions();
-
-  const formatCurrency = (
-    currency: number,
-    toFixed?: number,
-    isCurrency = true
-  ) => {
-    let formatted = format(
-      currency,
-      config.defaults.baseCurrency.symbol,
-      config.defaults.localeShort
-    );
-
-    if (formatted.length > 20) {
-      formatted =
-        currency.toFixed(toFixed ?? 3) +
-        ' ' +
-        config.defaults.baseCurrency.symbol;
-    }
-
-    // Don't add thousand separator for numbers lower than one absolute value
-    if (
-      Math.abs(
-        Number(
-          formatted.slice(-1) === config.defaults.baseCurrency.symbol
-            ? formatted.slice(0, -2)
-            : formatted
-        )
-      ) < 1
-    ) {
-      return formatted;
-    }
-
-    if (!isCurrency) {
-      formatted = formatted.slice(0, -2);
-    }
-
-    return formatted.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-  };
 
   const priceChange = (history: number[]) => {
     const lastElement = history[history.length - 1];
