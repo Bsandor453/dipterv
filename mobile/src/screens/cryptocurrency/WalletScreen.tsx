@@ -1,6 +1,7 @@
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { DrawerScreenProps } from '@react-navigation/drawer';
 import { CompositeScreenProps } from '@react-navigation/native';
+import { LinearGradient } from 'expo-linear-gradient';
 import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
@@ -13,6 +14,7 @@ import {
 import { Text } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 import { useInterval } from 'usehooks-ts';
+import WalletEntry from '../../components/WalletEntry';
 import config from '../../config/MainConfig';
 import {
   depositMoney,
@@ -20,13 +22,12 @@ import {
   getWallet,
   resetMoney,
 } from '../../redux/action_creators/cryptocurrency';
+import { show } from '../../redux/slices/snackbarSlice';
 import { AppDispatch, RootState } from '../../redux/store';
 import { TextColor } from '../../util/ColorPalette';
+import { setFloat } from '../../util/NumberUtilts';
 import { DrawerParamList } from '../navigation/DrawerNavigationScreen';
 import { TabParamList } from '../navigation/TabNavigationScreen';
-import { show } from '../../redux/slices/snackbarSlice';
-import { LinearGradient } from 'expo-linear-gradient';
-import { setFloat } from '../../util/NumberUtilts';
 
 type NavigationProps = CompositeScreenProps<
   BottomTabScreenProps<TabParamList, 'Wallet'>,
@@ -111,79 +112,131 @@ const WalletScreen = ({ route, navigation }: NavigationProps) => {
           underlineColorAndroid={TextColor}
         />
       </View>
-      <TouchableOpacity
-        onPress={() => {
-          dispatch(
-            depositMoney({ amount: depositAmount !== '' ? depositAmount : 0 })
-          ).then(() => {
-            if (depositStatus.slice(0, 7) === 'success') {
-              setDepositAmount('');
-              dispatch(
-                show({
-                  message: `Successfully deposited ${Number(
-                    depositAmount
-                  )}\u00A0${baseCurrency.symbol}!`,
-                  type: 'success',
-                })
-              );
-              dispatch(getWallet());
-            }
-          });
-        }}
-        disabled={depositAmount === ''}
-      >
-        <LinearGradient
-          colors={
-            depositAmount === '' ? ['#dedede', '#ededed'] : ['green', '#11b50e']
-          }
-          style={[styles.button, { marginRight: 100 }]}
+      <View style={{ marginRight: 100 }}>
+        <TouchableOpacity
+          onPress={() => {
+            dispatch(
+              depositMoney({ amount: depositAmount !== '' ? depositAmount : 0 })
+            ).then(() => {
+              if (depositStatus.slice(0, 7) === 'success') {
+                setDepositAmount('');
+                dispatch(
+                  show({
+                    message: `Successfully deposited ${Number(
+                      depositAmount
+                    )}\u00A0${baseCurrency.symbol}!`,
+                    type: 'success',
+                  })
+                );
+                dispatch(getWallet());
+              }
+            });
+          }}
+          disabled={depositAmount === ''}
         >
-          <Text
-            style={[
-              styles.buttonText,
-              { color: depositAmount === '' ? 'gray' : 'white' },
-            ]}
-          >
-            Deposit money
-          </Text>
-        </LinearGradient>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => {
-          dispatch(resetMoney()).then(() => {
-            if (resetStatus.slice(0, 7) === 'success') {
-              console.log('okay lets go');
-              dispatch(
-                show({
-                  message: 'Successfully reset money!',
-                  type: 'success',
-                })
-              );
-              dispatch(getWallet());
+          <LinearGradient
+            colors={
+              depositAmount === ''
+                ? ['#dedede', '#ededed']
+                : ['green', '#11b50e']
             }
-          });
-        }}
-        disabled={wallet?.referenceCurrency === 0}
-      >
-        <LinearGradient
-          colors={
-            wallet?.referenceCurrency === 0
-              ? ['#dedede', '#ededed']
-              : ['#961805', 'red']
-          }
-          style={[styles.button, { marginRight: 100 }]}
-        >
-          <Text
-            style={[
-              styles.buttonText,
-              { color: wallet?.referenceCurrency === 0 ? 'gray' : 'white' },
-            ]}
+            style={styles.button}
           >
-            Reset money
-          </Text>
-        </LinearGradient>
-      </TouchableOpacity>
+            <Text
+              style={[
+                styles.buttonText,
+                { color: depositAmount === '' ? 'gray' : 'white' },
+              ]}
+            >
+              Deposit money
+            </Text>
+          </LinearGradient>
+        </TouchableOpacity>
+      </View>
+      <View style={{ marginRight: 100 }}>
+        <TouchableOpacity
+          onPress={() => {
+            dispatch(resetMoney()).then(() => {
+              if (resetStatus.slice(0, 7) === 'success') {
+                dispatch(
+                  show({
+                    message: 'Successfully reset money!',
+                    type: 'success',
+                  })
+                );
+                dispatch(getWallet());
+              }
+            });
+          }}
+          disabled={wallet?.referenceCurrency === 0}
+        >
+          <LinearGradient
+            colors={
+              wallet?.referenceCurrency === 0
+                ? ['#dedede', '#ededed']
+                : ['#961805', 'red']
+            }
+            style={styles.button}
+          >
+            <Text
+              style={[
+                styles.buttonText,
+                { color: wallet?.referenceCurrency === 0 ? 'gray' : 'white' },
+              ]}
+            >
+              Reset money
+            </Text>
+          </LinearGradient>
+        </TouchableOpacity>
+      </View>
       <Text style={styles.title}>Your cryptocurrencies {depositAmount}</Text>
+      {wallet?.cryptocurrencies &&
+        Object.entries(wallet?.cryptocurrencies).length !== 0 && (
+          <View style={styles.coinListHeader}>
+            <Text
+              style={{
+                marginLeft: 58,
+                flex: 1,
+                fontSize: 16,
+                fontWeight: 'bold',
+              }}
+            >
+              Name
+            </Text>
+            <Text
+              style={{
+                marginLeft: 25,
+                flex: 1,
+                fontSize: 16,
+                fontWeight: 'bold',
+              }}
+            >
+              Amount/Worth
+            </Text>
+          </View>
+        )}
+      {wallet?.cryptocurrencies &&
+        Object.entries(wallet?.cryptocurrencies).map(([key, value]) => {
+          const cryptocurrency = coinsWallet?.find((coin) => coin.id === key);
+          return (
+            cryptocurrency &&
+            value !== 0 && (
+              <WalletEntry
+                {...cryptocurrency}
+                lastElementInList={
+                  (wallet?.cryptocurrencies &&
+                    wallet.cryptocurrencies[
+                      Object.keys(wallet?.cryptocurrencies)[
+                        Object.keys(wallet?.cryptocurrencies).length - 1
+                      ]
+                    ] === value) ??
+                  false
+                }
+                amount={value}
+              />
+            )
+          );
+        })}
     </ScrollView>
   );
 };
@@ -236,6 +289,12 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     marginRight: 100,
     tintColor: TextColor,
+  },
+  coinListHeader: {
+    marginTop: 20,
+    flexDirection: 'row',
+    marginBottom: 10,
+    alignItems: 'center',
   },
 });
 

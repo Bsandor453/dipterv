@@ -135,7 +135,17 @@ const CryptocurrencyCard = (props: Props) => {
                 props.sparkline_in_7d.price[
                   props.sparkline_in_7d.price.length - 2
                 ] ? (
-                  <Text style={{ marginStart: 10 }}>{priceChangeText()}</Text>
+                  <Text
+                    style={{
+                      fontSize:
+                        priceChange(props.sparkline_in_7d.price).toString()
+                          .length < 10
+                          ? 16
+                          : 12,
+                    }}
+                  >
+                    {priceChangeText()}
+                  </Text>
                 ) : (
                   <Text style={[styles.noData, { marginStart: 15 }]}>
                     No price data!
@@ -211,11 +221,8 @@ const styles = StyleSheet.create({
     flex: 4,
   },
   logo: {
-    marginStart: 10,
-    width: 100,
-    height: 100,
-    maxHeight: 100,
-    maxWidth: 100,
+    flex: 0.75,
+    resizeMode: 'contain',
   },
   baseData: {
     flex: 5,
@@ -254,17 +261,16 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
   },
   priceChange: {
     flex: 1,
-    marginTop: 10,
-    marginStart: 5,
     flexDirection: 'column',
-    justifyContent: 'flex-start',
-    alignItems: 'flex-start',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  priceChangeIcon: { flex: 1, marginStart: 35 },
-  priceChangeText: { flex: 1 },
+  priceChangeIcon: { flex: 1 },
+  priceChangeText: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   sparkline: {
     flex: 1,
     marginRight: 35,

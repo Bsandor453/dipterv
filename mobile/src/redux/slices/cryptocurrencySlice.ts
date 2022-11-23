@@ -150,9 +150,13 @@ export const cryptocurrencySlice = createSlice({
       .addCase(getCryptocurrenciesInWallet.pending, (state) => {
         state._status.coinsWallet = 'pending';
       })
-      .addCase(getCryptocurrenciesInWallet.fulfilled, (state) => {
-        state._status.coinsWallet = 'success';
-      })
+      .addCase(
+        getCryptocurrenciesInWallet.fulfilled,
+        (state, action: PayloadAction<ICryptocurrency[]>) => {
+          state._status.coinsWallet = 'success';
+          state.coinsWallet = action.payload;
+        }
+      )
       .addCase(getCryptocurrenciesInWallet.rejected, (state, action) => {
         state._status.coinsWallet = action.error?.message ?? 'error';
       })

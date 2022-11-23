@@ -42,7 +42,7 @@ import { show } from '../../redux/slices/snackbarSlice';
 import { AppDispatch, RootState } from '../../redux/store';
 import { TextColor } from '../../util/ColorPalette';
 import { calculateBrightness, LightenDarkenColor } from '../../util/ColorUtil';
-import { formatCurrency } from '../../util/CurrencyUtils';
+import { formatAmount, formatCurrency } from '../../util/CurrencyUtils';
 import { setFloat } from '../../util/NumberUtilts';
 import { DrawerParamList } from '../navigation/DrawerNavigationScreen';
 
@@ -1326,7 +1326,7 @@ const CryptocurrencyDetailsScreen = ({
               { color: color ?? TextColor, fontWeight: 'bold' },
             ]}
           >
-            {formatCurrency(walletAmount ?? 0)}
+            {formatAmount(walletAmount ?? 0)}
           </Text>
         </View>
         <View style={{ flexDirection: 'row' }}>
