@@ -120,17 +120,26 @@ const TransactionHistoryScreen = ({ route, navigation }: NavigationProps) => {
   const SortBySelect = () => {
     return (
       <>
-        <TouchableOpacity
-          onPress={() => setSortDialogvisible(true)}
-          style={styles.sortButton}
+        <View
+          style={{
+            flexDirection: 'row',
+          }}
         >
-          <MaterialIcons
-            name="sort"
-            color="grey"
-            size={35}
-            style={{ alignSelf: 'flex-end' }}
-          />
-        </TouchableOpacity>
+          <Text style={styles.title}>Transaction history</Text>
+          <View style={{ alignSelf: 'flex-end', flex: 1 }}>
+            <TouchableOpacity
+              onPress={() => setSortDialogvisible(true)}
+              style={styles.sortButton}
+            >
+              <MaterialIcons
+                name="sort"
+                color="grey"
+                size={35}
+                style={{ alignSelf: 'center', justifyContent: 'center' }}
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
         <Portal>
           <Dialog
             visible={sortDialogvisible}
@@ -331,6 +340,12 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     padding: 15,
   },
+  title: {
+    marginTop: 20,
+    marginBottom: 10,
+    fontSize: 30,
+    color: TextColor,
+  },
   transactionListHeader: {
     marginTop: 10,
     flexDirection: 'row',
@@ -345,6 +360,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 5,
     alignSelf: 'flex-end',
+    justifyContent: 'flex-end',
   },
   pagination: {},
   sortByDialog: {

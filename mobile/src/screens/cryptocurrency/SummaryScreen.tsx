@@ -4,6 +4,7 @@ import { CompositeScreenProps } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
+  Image,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
@@ -16,6 +17,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useDispatch, useSelector } from 'react-redux';
 import { useInterval } from 'usehooks-ts';
 import SummaryEntry from '../../components/SummaryEntry';
+import config from '../../config/MainConfig';
 import {
   getCryptocurrenciesInTransactions,
   getSummary,
@@ -23,6 +25,7 @@ import {
 } from '../../redux/action_creators/cryptocurrency';
 import { AppDispatch, RootState } from '../../redux/store';
 import { TextColor } from '../../util/ColorPalette';
+import { formatAmount, formatCurrency } from '../../util/CurrencyUtils';
 import { DrawerParamList } from '../navigation/DrawerNavigationScreen';
 import { TabParamList } from '../navigation/TabNavigationScreen';
 
@@ -52,6 +55,20 @@ const sortByDirections = [
     name: 'Ascending',
   },
 ];
+
+const calculateProfitColor = (profit: number) => {
+  if (profit === 0) {
+    return TextColor;
+  }
+  if (profit > 0) {
+    return 'green';
+  }
+  if (profit < 0) {
+    return 'red';
+  }
+};
+
+const baseCurrency = config.defaults.baseCurrency;
 
 const SummaryScreen = ({ route, navigation }: NavigationProps) => {
   const [isLoading, setIsLoading] = useState(true);
@@ -113,17 +130,26 @@ const SummaryScreen = ({ route, navigation }: NavigationProps) => {
   const SortBySelect = () => {
     return (
       <>
-        <TouchableOpacity
-          onPress={() => setSortDialogvisible(true)}
-          style={styles.sortButton}
+        <View
+          style={{
+            flexDirection: 'row',
+          }}
         >
-          <MaterialIcons
-            name="sort"
-            color="grey"
-            size={35}
-            style={{ alignSelf: 'flex-end' }}
-          />
-        </TouchableOpacity>
+          <Text style={styles.title}>Profit by coins</Text>
+          <View style={{ alignSelf: 'flex-end', flex: 1 }}>
+            <TouchableOpacity
+              onPress={() => setSortDialogvisible(true)}
+              style={styles.sortButton}
+            >
+              <MaterialIcons
+                name="sort"
+                color="grey"
+                size={35}
+                style={{ alignSelf: 'center', justifyContent: 'center' }}
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
         <Portal>
           <Dialog
             visible={sortDialogvisible}
@@ -267,10 +293,134 @@ const SummaryScreen = ({ route, navigation }: NavigationProps) => {
 
   return (
     <ScrollView style={styles.container}>
+      <Text style={styles.title}>Profit statistics</Text>
+      <View style={{ flexDirection: 'row' }}>
+        <Text style={styles.textLabel}>Profit:</Text>
+        <Text
+          style={[
+            styles.text,
+            { color: calculateProfitColor(summary?.profit ?? 0) },
+          ]}
+        >
+          {formatCurrency(summary?.profit ?? 0)}
+        </Text>
+      </View>
+      <View>
+        <Text style={styles.textLabel}>Most profitable cryptocurrency:</Text>
+        <View style={{ flexDirection: 'row' }}>
+          <View style={styles.logoView}>
+            <Image
+              style={styles.logo}
+              source={{ uri: summary?.mostProfitableCoin.imageUrl }}
+            />
+          </View>
+          <Text style={styles.text}>
+            {summary?.mostProfitableCoin.name + ' ' ?? '?'}
+          </Text>
+          <Text
+            style={[
+              styles.text,
+              {
+                color: calculateProfitColor(
+                  summary?.mostProfitableCoin.profit ?? 0
+                ),
+                marginLeft: 0,
+              },
+            ]}
+          >
+            {`(${formatCurrency(summary?.mostProfitableCoin.profit ?? 0)})`}
+          </Text>
+        </View>
+        <Text style={styles.textLabel}>Least profitable cryptocurrency:</Text>
+        <View style={{ flexDirection: 'row' }}>
+          <View style={styles.logoView}>
+            <Image
+              style={styles.logo}
+              source={{ uri: summary?.leastProfitableCoin.imageUrl }}
+            />
+          </View>
+          <Text style={styles.text}>
+            {summary?.leastProfitableCoin.name + ' ' ?? '?'}
+          </Text>
+          <Text
+            style={[
+              styles.text,
+              {
+                color: calculateProfitColor(
+                  summary?.leastProfitableCoin.profit ?? 0
+                ),
+                marginLeft: 0,
+              },
+            ]}
+          >
+            {`(${formatCurrency(summary?.leastProfitableCoin.profit ?? 0)})`}
+          </Text>
+        </View>
+      </View>
+      <View>
+        <Text style={styles.title}>Trade statistics</Text>
+        <View style={{ flexDirection: 'row' }}>
+          <Text style={styles.textLabel}>Total number of deposits:</Text>
+          <Text style={styles.text}>{summary?.depositCount}</Text>
+        </View>
+        <View style={{ flexDirection: 'row' }}>
+          <Text style={styles.textLabel}>Total number of purchases:</Text>
+          <Text style={styles.text}>{summary?.purchaseCount}</Text>
+        </View>
+        <View style={{ flexDirection: 'row' }}>
+          <Text style={styles.textLabel}>Total number of sales:</Text>
+          <Text style={styles.text}>{summary?.saleCount}</Text>
+        </View>
+        <View style={{ flexDirection: 'row' }}>
+          <Text style={styles.textLabel}>Total number of money resets:</Text>
+          <Text style={styles.text}>{summary?.moneyResetCount}</Text>
+        </View>
+      </View>
+      <View>
+        <Text style={styles.title}>Money statistics</Text>
+        <View style={{ flexDirection: 'row' }}>
+          <Text style={styles.textLabel}>Money in wallet:</Text>
+          <Text
+            style={[
+              styles.text,
+              { color: calculateProfitColor(summary?.moneyInWallet ?? 0) },
+            ]}
+          >
+            {formatCurrency(summary?.moneyInWallet ?? 0)}
+          </Text>
+        </View>
+        <View style={{ flexDirection: 'row' }}>
+          <Text style={styles.textLabel}>Total money deposited:</Text>
+          <Text style={styles.text}>
+            {formatCurrency(summary?.totalMoneyDeposited ?? 0)}
+          </Text>
+        </View>
+        <View style={{ flexDirection: 'row' }}>
+          <Text style={styles.textLabel}>Total buy amount:</Text>
+          <Text style={styles.text}>
+            {formatAmount(summary?.totalPurchaseAmount ?? 0) +
+              ' ' +
+              baseCurrency.symbol}
+          </Text>
+        </View>
+        <View style={{ flexDirection: 'row' }}>
+          <Text style={styles.textLabel}>Total sale amount:</Text>
+          <Text
+            style={[
+              styles.text,
+              { color: calculateProfitColor(summary?.totalSaleAmount ?? 0) },
+            ]}
+          >
+            {formatAmount(summary?.totalSaleAmount ?? 0) +
+              ' ' +
+              baseCurrency.symbol}
+          </Text>
+        </View>
+      </View>
       {SortBySelect()}
       <View style={styles.pagination}>{Pagination()}</View>
       {summary?.profitOnCryptocurrencyPage.content.length !== 0 && (
-        <View style={styles.transactionListHeader}>
+        <View style={styles.summaryListHeader}>
           <Text
             style={{
               marginLeft: 58,
@@ -336,7 +486,32 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     padding: 15,
   },
-  transactionListHeader: {
+  title: {
+    marginTop: 30,
+    marginBottom: 10,
+    fontSize: 30,
+    color: TextColor,
+  },
+  textLabel: {
+    marginTop: 10,
+    fontWeight: '500',
+    fontSize: 20,
+    color: TextColor,
+  },
+  text: {
+    marginTop: 10,
+    marginLeft: 10,
+    fontWeight: 'bold',
+    fontSize: 20,
+    color: TextColor,
+  },
+  logoView: { marginTop: 5, justifyContent: 'center', alignItems: 'center' },
+  logo: {
+    resizeMode: 'contain',
+    width: 40,
+    height: 40,
+  },
+  summaryListHeader: {
     marginTop: 10,
     flexDirection: 'row',
     marginBottom: 10,

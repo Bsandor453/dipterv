@@ -131,7 +131,7 @@ const Summary: React.FC = () => {
                 Trade summary
               </Typography>
               <Typography variant="h4" gutterBottom sx={{ mt: 3 }}>
-                Profit
+                Profit statistics
               </Typography>
               <Box id="wallet-summary">
                 <Typography
