@@ -10,9 +10,11 @@ import {
   buyCryptocurrency,
   depositMoney,
   getCryptocurrencies,
+  getCryptocurrenciesInTransactions,
   getCryptocurrenciesInWallet,
   getCryptocurrency,
   getCryptocurrencyHistory,
+  getTransactionHistory,
   getWallet,
   resetMoney,
   sellCryptocurrency,
@@ -180,6 +182,32 @@ export const cryptocurrencySlice = createSlice({
       })
       .addCase(resetMoney.rejected, (state, action) => {
         state._status.moneyReset = action.error?.message ?? 'error';
+      })
+      .addCase(getTransactionHistory.pending, (state) => {
+        state._status.transactions = 'pending';
+      })
+      .addCase(
+        getTransactionHistory.fulfilled,
+        (state, action: PayloadAction<IPageable<ITransaction>>) => {
+          state.transactions = action.payload;
+          state._status.transactions = 'success';
+        }
+      )
+      .addCase(getTransactionHistory.rejected, (state, action) => {
+        state._status.transactions = action.error?.message ?? 'error';
+      })
+      .addCase(getCryptocurrenciesInTransactions.pending, (state) => {
+        state._status.coinsTransactions = 'pending';
+      })
+      .addCase(
+        getCryptocurrenciesInTransactions.fulfilled,
+        (state, action: PayloadAction<ICryptocurrency[]>) => {
+          state.coinsTransactions = action.payload;
+          state._status.coinsTransactions = 'success';
+        }
+      )
+      .addCase(getCryptocurrenciesInTransactions.rejected, (state, action) => {
+        state._status.coinsTransactions = action.error?.message ?? 'error';
       });
   },
 });

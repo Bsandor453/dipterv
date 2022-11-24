@@ -4,6 +4,7 @@ import ICryptocurrency from '../../interfaces/cryptocurrency/ICryptocurrency';
 import ICryptocurrencyDetails from '../../interfaces/cryptocurrency/ICryptocurrencyDetails';
 import ICryptocurrencyHistory from '../../interfaces/cryptocurrency/ICryptocurrencyHistory';
 import IPageable from '../../interfaces/IPageable';
+import ITransaction from '../../interfaces/ITransaction';
 import IWallet from '../../interfaces/IWallet';
 import CryptocurrencyService from '../../service/CryptocurrencyService';
 import { show } from '../slices/snackbarSlice';
@@ -133,6 +134,75 @@ export const getCryptocurrenciesInWallet = createAsyncThunk<
       return thunkAPI.rejectWithValue(`${error.name}: ${error.message}`);
     } else {
       logging.error(error, 'cryptocurrency/getCryptocurrenciesInWallet');
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+});
+
+export const getTransactionHistory = createAsyncThunk<
+  IPageable<ITransaction>,
+  {
+    page: number;
+    size: number;
+    sortBy: string;
+    asc: boolean;
+  },
+  { state: RootState }
+>('cryptocurrency/getTransactionHistory', async (data, thunkAPI) => {
+  try {
+    const response = await CryptocurrencyService.getTransactions(
+      data.page,
+      data.size,
+      data.sortBy,
+      data.asc
+    );
+    return response.data;
+  } catch (error: any) {
+    logging.error(error, 'cryptocurrency/getTransactionHistory');
+    if (error?.response?.data?.error && error?.response?.data?.message) {
+      logging.error(
+        `${error.response.data.error}: ${error.response.data.message}`,
+        'cryptocurrency/getTransactionHistory'
+      );
+    }
+    if (error.name && error.message) {
+      logging.error(
+        `${error.name}: ${error.message}`,
+        'cryptocurrency/getTransactionHistory'
+      );
+      return thunkAPI.rejectWithValue(`${error.name}: ${error.message}`);
+    } else {
+      logging.error(error, 'cryptocurrency/getTransactionHistory');
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+});
+
+export const getCryptocurrenciesInTransactions = createAsyncThunk<
+  ICryptocurrency[],
+  void,
+  { state: RootState }
+>('cryptocurrency/getCryptocurrenciesInTransactions', async (_, thunkAPI) => {
+  try {
+    const response =
+      await CryptocurrencyService.getCryptocurrenciesInTransactions();
+    return response.data;
+  } catch (error: any) {
+    logging.error(error, 'cryptocurrency/getCryptocurrenciesInTransactions');
+    if (error?.response?.data?.error && error?.response?.data?.message) {
+      logging.error(
+        `${error.response.data.error}: ${error.response.data.message}`,
+        'cryptocurrency/getCryptocurrenciesInTransactions'
+      );
+    }
+    if (error.name && error.message) {
+      logging.error(
+        `${error.name}: ${error.message}`,
+        'cryptocurrency/getCryptocurrenciesInTransactions'
+      );
+      return thunkAPI.rejectWithValue(`${error.name}: ${error.message}`);
+    } else {
+      logging.error(error, 'cryptocurrency/getCryptocurrenciesInTransactions');
       return thunkAPI.rejectWithValue(error);
     }
   }

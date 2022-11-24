@@ -79,9 +79,7 @@ const WalletScreen = ({ route, navigation }: NavigationProps) => {
 
   return (
     <ScrollView style={styles.container}>
-      <Text style={[styles.title, { marginTop: 0 }]}>
-        Reference money {isLoading.toString()}
-      </Text>
+      <Text style={[styles.title, { marginTop: 0 }]}>Reference money</Text>
       <Text>
         <Text style={styles.text}>
           You can buy cryptocurrencies for the reference fiat money. The
@@ -222,6 +220,7 @@ const WalletScreen = ({ route, navigation }: NavigationProps) => {
             cryptocurrency &&
             value !== 0 && (
               <WalletEntry
+                key={key}
                 {...cryptocurrency}
                 lastElementInList={
                   (wallet?.cryptocurrencies &&

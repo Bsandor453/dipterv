@@ -4,6 +4,7 @@ import ICryptocurrency from '../interfaces/cryptocurrency/ICryptocurrency';
 import ICryptocurrencyDetails from '../interfaces/cryptocurrency/ICryptocurrencyDetails';
 import ICryptocurrencyHistory from '../interfaces/cryptocurrency/ICryptocurrencyHistory';
 import IPageable from '../interfaces/IPageable';
+import ITransaction from '../interfaces/ITransaction';
 import IWallet from '../interfaces/IWallet';
 import { readObject } from '../util/AsyncStorageUtils';
 import AxiosWithInterceptors from '../util/AxiosWithInterceptors';
@@ -73,7 +74,7 @@ const getCryptocurrenciesInWallet = async (): Promise<
 };
 
 const getCryptocurrenciesInTransactions = async (): Promise<
-  AxiosResponse<any>
+  AxiosResponse<ICryptocurrency[]>
 > => {
   return httpClient.get(
     config.urls.crypto.coinsInTransactions,
@@ -138,7 +139,7 @@ const getTransactions = async (
   size: number,
   sortBy: string,
   asc: boolean
-): Promise<AxiosResponse<any>> => {
+): Promise<AxiosResponse<IPageable<ITransaction>>> => {
   return httpClient.get(
     config.urls.crypto.transactions(page, size, sortBy, asc),
     await tokenAuthUrlConfig()
