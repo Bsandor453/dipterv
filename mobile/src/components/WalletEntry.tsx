@@ -114,4 +114,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default WalletEntry;
+export default React.memo(WalletEntry);

@@ -170,4 +170,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default TransactionHistoryEntry;
+export default React.memo(TransactionHistoryEntry);
