@@ -4,6 +4,7 @@ import ICryptocurrency from '../../interfaces/cryptocurrency/ICryptocurrency';
 import ICryptocurrencyDetails from '../../interfaces/cryptocurrency/ICryptocurrencyDetails';
 import ICryptocurrencyHistory from '../../interfaces/cryptocurrency/ICryptocurrencyHistory';
 import IPageable from '../../interfaces/IPageable';
+import ISummary from '../../interfaces/ISummary';
 import ITransaction from '../../interfaces/ITransaction';
 import IWallet from '../../interfaces/IWallet';
 import CryptocurrencyService from '../../service/CryptocurrencyService';
@@ -407,6 +408,45 @@ export const sellCryptocurrency = createAsyncThunk<
     } else {
       logging.error(error, 'cryptocurrency/sellCryptocurrency');
       thunkAPI.dispatch(show({ message: error, type: 'error' }));
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+});
+
+export const getSummary = createAsyncThunk<
+  ISummary,
+  {
+    page: number;
+    size: number;
+    sortBy: string;
+    asc: boolean;
+  },
+  { state: RootState }
+>('cryptocurrency/getSummary', async (data, thunkAPI) => {
+  try {
+    const response = await CryptocurrencyService.getSummary(
+      data.page,
+      data.size,
+      data.sortBy,
+      data.asc
+    );
+    return response.data;
+  } catch (error: any) {
+    logging.error(error, 'cryptocurrency/getSummary');
+    if (error?.response?.data?.error && error?.response?.data?.message) {
+      logging.error(
+        `${error.response.data.error}: ${error.response.data.message}`,
+        'cryptocurrency/getSummary'
+      );
+    }
+    if (error.name && error.message) {
+      logging.error(
+        `${error.name}: ${error.message}`,
+        'cryptocurrency/getSummary'
+      );
+      return thunkAPI.rejectWithValue(`${error.name}: ${error.message}`);
+    } else {
+      logging.error(error, 'cryptocurrency/getSummary');
       return thunkAPI.rejectWithValue(error);
     }
   }

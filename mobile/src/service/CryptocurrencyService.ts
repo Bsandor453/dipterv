@@ -4,6 +4,7 @@ import ICryptocurrency from '../interfaces/cryptocurrency/ICryptocurrency';
 import ICryptocurrencyDetails from '../interfaces/cryptocurrency/ICryptocurrencyDetails';
 import ICryptocurrencyHistory from '../interfaces/cryptocurrency/ICryptocurrencyHistory';
 import IPageable from '../interfaces/IPageable';
+import ISummary from '../interfaces/ISummary';
 import ITransaction from '../interfaces/ITransaction';
 import IWallet from '../interfaces/IWallet';
 import { readObject } from '../util/AsyncStorageUtils';
@@ -26,7 +27,7 @@ const getSummary = async (
   size: number,
   sortBy: string,
   asc: boolean
-): Promise<AxiosResponse<any>> => {
+): Promise<AxiosResponse<ISummary>> => {
   return httpClient.get(
     config.urls.crypto.summary(page, size, sortBy, asc),
     await tokenAuthUrlConfig()

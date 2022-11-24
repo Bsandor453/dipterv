@@ -14,6 +14,7 @@ import {
   getCryptocurrenciesInWallet,
   getCryptocurrency,
   getCryptocurrencyHistory,
+  getSummary,
   getTransactionHistory,
   getWallet,
   resetMoney,
@@ -208,6 +209,19 @@ export const cryptocurrencySlice = createSlice({
       )
       .addCase(getCryptocurrenciesInTransactions.rejected, (state, action) => {
         state._status.coinsTransactions = action.error?.message ?? 'error';
+      })
+      .addCase(getSummary.pending, (state) => {
+        state._status.summary = 'pending';
+      })
+      .addCase(
+        getSummary.fulfilled,
+        (state, action: PayloadAction<ISummary>) => {
+          state.summary = action.payload;
+          state._status.summary = 'success';
+        }
+      )
+      .addCase(getSummary.rejected, (state, action) => {
+        state._status.summary = action.error?.message ?? 'error';
       });
   },
 });

@@ -17,7 +17,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useInterval } from 'usehooks-ts';
 import TransactionHistoryEntry from '../../components/TransactionHistoryEntry';
 import {
-  getCryptocurrencies,
   getCryptocurrenciesInTransactions,
   getTransactionHistory,
 } from '../../redux/action_creators/cryptocurrency';
