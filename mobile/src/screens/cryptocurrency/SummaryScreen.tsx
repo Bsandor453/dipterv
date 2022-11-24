@@ -293,7 +293,7 @@ const SummaryScreen = ({ route, navigation }: NavigationProps) => {
 
   return (
     <ScrollView style={styles.container}>
-      <Text style={styles.title}>Profit statistics</Text>
+      <Text style={[styles.title, { marginTop: 0 }]}>Profit statistics</Text>
       <View style={{ flexDirection: 'row' }}>
         <Text style={styles.textLabel}>Profit:</Text>
         <Text

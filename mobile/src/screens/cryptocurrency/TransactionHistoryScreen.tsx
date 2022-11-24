@@ -125,8 +125,10 @@ const TransactionHistoryScreen = ({ route, navigation }: NavigationProps) => {
             flexDirection: 'row',
           }}
         >
-          <Text style={styles.title}>Transaction history</Text>
-          <View style={{ alignSelf: 'flex-end', flex: 1 }}>
+          <Text style={[styles.title, { marginTop: 0 }]}>
+            Transaction history
+          </Text>
+          <View style={{ alignSelf: 'flex-end', flex: 1, marginTop: 0 }}>
             <TouchableOpacity
               onPress={() => setSortDialogvisible(true)}
               style={styles.sortButton}
