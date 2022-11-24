@@ -51,7 +51,7 @@ const TransactionHistoryEntry = (props: Props) => {
     <View
       style={[
         styles.container,
-        { marginBottom: props.lastElementInList ? 50 : 5 },
+        { marginBottom: props.lastElementInList ? 10 : 5 },
       ]}
     >
       <TouchableRipple

@@ -3,7 +3,7 @@ import { DrawerScreenProps } from '@react-navigation/drawer';
 import { CompositeScreenProps } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, ScrollView, StyleSheet, View } from 'react-native';
-import { Button, Text } from 'react-native-paper';
+import { Button, DataTable, Text } from 'react-native-paper';
 import { TabParamList } from '../navigation/TabNavigationScreen';
 import { DrawerParamList } from '../navigation/DrawerNavigationScreen';
 import { useDispatch, useSelector } from 'react-redux';
@@ -13,6 +13,7 @@ import {
   getCryptocurrenciesInWallet,
   getTransactionHistory,
   getCryptocurrenciesInTransactions,
+  getCryptocurrencies,
 } from '../../redux/action_creators/cryptocurrency';
 import { AppDispatch, RootState } from '../../redux/store';
 import TransactionHistoryEntry from '../../components/TransactionHistoryEntry';
@@ -65,13 +66,13 @@ const TransactionHistoryScreen = ({ route, navigation }: NavigationProps) => {
   const transactions = coins.transactions;
   const coinsTransactions = coins.coinsTransactions;
 
-  const [page, setPage] = useState(4);
+  const [page, setPage] = useState(1);
   const pageSize = 10;
   const elementCount = transactions?.elementCount ?? pageSize;
   const from = (page - 1) * pageSize;
   const to = Math.min(page * pageSize, elementCount);
   const [sortBy, setSortBy] = useState(sortByProperties[0].id);
-  const [sortDirection, setSortDirection] = useState('asc');
+  const [sortDirection, setSortDirection] = useState('desc');
   const asc = sortDirection === 'asc';
 
   useEffect(() => {
@@ -79,7 +80,7 @@ const TransactionHistoryScreen = ({ route, navigation }: NavigationProps) => {
       await Promise.all([
         dispatch(
           getTransactionHistory({
-            page: 1,
+            page: page,
             size: pageSize,
             sortBy: sortByProperties[0].id,
             asc: false,
@@ -118,8 +119,39 @@ const TransactionHistoryScreen = ({ route, navigation }: NavigationProps) => {
     );
   }
 
+  const Pagination = () => (
+    <View>
+      <DataTable>
+        <DataTable.Pagination
+          style={{
+            alignSelf: 'center',
+          }}
+          page={page - 1}
+          numberOfPages={transactions?.pageCount ?? 1}
+          onPageChange={async (p) => {
+            await dispatch(
+              getTransactionHistory({
+                page: p + 1,
+                size: pageSize,
+                sortBy,
+                asc: asc,
+              })
+            );
+            setPage(p + 1);
+          }}
+          label={`${from + 1}-${to} of ${elementCount}`}
+          showFastPaginationControls
+          numberOfItemsPerPage={pageSize}
+          onItemsPerPageChange={setPage}
+          selectPageDropdownLabel={'Rows per page'}
+        />
+      </DataTable>
+    </View>
+  );
+
   return (
     <ScrollView style={styles.container}>
+      <View style={styles.pagination}>{Pagination()}</View>
       {transactions?.content?.length !== 0 && (
         <View style={styles.transactionListHeader}>
           <Text
@@ -161,6 +193,9 @@ const TransactionHistoryScreen = ({ route, navigation }: NavigationProps) => {
             />
           );
         })}
+      <View style={[styles.pagination, { marginBottom: 30 }]}>
+        {Pagination()}
+      </View>
     </ScrollView>
   );
 };
@@ -171,11 +206,12 @@ const styles = StyleSheet.create({
     padding: 15,
   },
   transactionListHeader: {
-    marginTop: 20,
+    marginTop: 10,
     flexDirection: 'row',
     marginBottom: 10,
     alignItems: 'center',
   },
+  pagination: {},
 });
 
 export default TransactionHistoryScreen;

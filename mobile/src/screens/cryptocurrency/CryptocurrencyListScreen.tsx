@@ -226,6 +226,9 @@ const CryptocurrencyListScreen = ({ route, navigation }: NavigationProps) => {
     <View>
       <DataTable>
         <DataTable.Pagination
+          style={{
+            alignSelf: 'center',
+          }}
           page={page - 1}
           numberOfPages={coins?.pageCount ?? 1}
           onPageChange={async (p) => {
