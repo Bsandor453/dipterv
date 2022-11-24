@@ -128,7 +128,7 @@ const Summary: React.FC = () => {
           <Paper sx={{ p: 5, display: 'flex', flexDirection: 'column' }}>
             <Box sx={{ ml: 2, mr: 2, mt: 2, pb: '2em' }}>
               <Typography variant="h2" sx={{ mt: 3, mb: 8 }}>
-                Summary page
+                Trade summary
               </Typography>
               <Typography variant="h4" gutterBottom sx={{ mt: 3 }}>
                 Profit
