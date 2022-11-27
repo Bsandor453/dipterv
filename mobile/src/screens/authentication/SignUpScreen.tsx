@@ -255,7 +255,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
     paddingHorizontal: 0,
-    paddingVertical: 30,
+    paddingTop: 30,
   },
   textCard: {
     color: TextColor,
