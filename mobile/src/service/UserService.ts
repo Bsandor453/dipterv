@@ -7,18 +7,25 @@ import { readObject } from '../util/AsyncStorageUtils';
 const httpClient = AxiosWithInterceptors();
 
 const tokenAuthUrlConfig = async () => {
-  const authHeader = await readObject('user');
-  return { headers: { 'Content-Type': 'application/json', ...authHeader } };
+  const userJWT = await readObject('userJWT');
+  return {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer ' + userJWT.accessToken,
+    },
+  };
 };
 
-const getUserData = async (): Promise<AxiosResponse<any>> => {
+const getUserData = async (): Promise<AxiosResponse<IUser>> => {
   return httpClient.get(
     config.urls.user.getUserData,
     await tokenAuthUrlConfig()
   );
 };
 
-const updateUserData = async (userData: IUser): Promise<AxiosResponse<any>> => {
+const updateUserData = async (
+  userData: IUser
+): Promise<AxiosResponse<String>> => {
   return httpClient.post(
     config.urls.user.updateUserData,
     userData,

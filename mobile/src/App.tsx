@@ -4,6 +4,7 @@ import { ActivityIndicator, Snackbar } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 import config from './config/MainConfig';
 import { checkLoggedIn } from './redux/action_creators/auth';
+import { getUserData } from './redux/action_creators/user';
 import { hide } from './redux/slices/snackbarSlice';
 import { AppDispatch, RootState } from './redux/store';
 import DrawerNavigationScreen from './screens/navigation/DrawerNavigationScreen';
@@ -29,6 +30,7 @@ const App = () => {
 
   useEffect(() => {
     dispatch(checkLoggedIn()).then(() => setIsLoading(false));
+    dispatch(getUserData());
   }, []);
 
   if (isLoading) {

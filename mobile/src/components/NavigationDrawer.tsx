@@ -7,15 +7,16 @@ import React from 'react';
 import { View } from 'react-native';
 import { Avatar, Divider, Drawer, Text, Title } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../redux/slices/authSlice';
-import { AppDispatch } from '../redux/store';
-
-const username = 'John Doe';
-const role = 'User';
+import { AppDispatch, RootState } from '../redux/store';
 
 const NavigationDrawer = (props: DrawerContentComponentProps) => {
   const dispatch = useDispatch<AppDispatch>();
+  const user = useSelector((state: RootState) => state.user.user);
+  const username = user?.userName;
+  const mainRole = (user?.roles && user.roles[0]) ?? 'guest';
+  const role = mainRole.substring(5).toLocaleLowerCase();
 
   return (
     <View style={{ flex: 1 }}>
@@ -60,7 +61,7 @@ const NavigationDrawer = (props: DrawerContentComponentProps) => {
           </View>
         </View>
         <Divider style={{ marginTop: 10 }} bold />
-        <Drawer.Section title="Public" style={{ marginBottom: 0 }}>
+        <Drawer.Section title="General" style={{ marginBottom: 0 }}>
           <DrawerItem
             icon={({ color, size }) => (
               <Icon name="home-outline" color={color} size={size} />
