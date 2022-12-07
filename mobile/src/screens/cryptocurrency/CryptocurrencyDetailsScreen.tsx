@@ -224,7 +224,7 @@ const CryptocurrencyDetailsScreen = ({
             coin?.sparkline_in_7d?.price?.length >= 3 ? (
               <View style={styles.priceChart}>
                 <LineChart
-                  style={{ paddingRight: 65 }}
+                  style={{ paddingRight: 75 }}
                   data={priceData}
                   height={220}
                   width={Dimensions.get('window').width}

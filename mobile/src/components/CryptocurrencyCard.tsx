@@ -221,7 +221,7 @@ const styles = StyleSheet.create({
     flex: 4,
   },
   logo: {
-    flex: 0.75,
+    flex: 0.6,
     resizeMode: 'contain',
   },
   baseData: {

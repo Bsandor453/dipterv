@@ -85,7 +85,7 @@ const CryptocurrencyDetail: React.FC<ICryptocurrencyDetails> = (props) => {
         </Grid>
         <Grid item xs={5}>
           <Typography sx={{ fontWeight: '400', fontSize: 16, color: '#242424' }}>
-            The total trading volume tracked by coinecko.
+            The total trading volume tracked by CoinGecko.
           </Typography>
         </Grid>
       </Grid>
